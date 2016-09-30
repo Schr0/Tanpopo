@@ -1,0 +1,9 @@
+{
+	"variants":
+	{
+		"level=0": {"model": "schr0tanpopo:essence_cauldron_0"},
+		"level=1": {"model": "schr0tanpopo:essence_cauldron_1"},
+		"level=2": {"model": "schr0tanpopo:essence_cauldron_2"},
+		"level=3": {"model": "schr0tanpopo:essence_cauldron_3"}
+	}
+}

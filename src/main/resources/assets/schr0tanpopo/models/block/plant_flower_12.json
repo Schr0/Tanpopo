@@ -1,0 +1,7 @@
+{
+	"parent": "block/cross",
+	"textures":
+	{
+		"cross": "schr0tanpopo:blocks/plant_flower_12"
+	}
+}

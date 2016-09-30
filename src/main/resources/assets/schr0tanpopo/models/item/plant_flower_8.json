@@ -1,0 +1,7 @@
+{
+	"parent": "item/generated",
+	"textures":
+	{
+		"layer0": "schr0tanpopo:blocks/plant_flower_8"
+	}
+}

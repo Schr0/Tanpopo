@@ -1,0 +1,21 @@
+{
+	"variants" :
+	{
+		"color=white":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=orange":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=magenta":	{"model": "schr0tanpopo:fluff_cushion"},
+		"color=light_blue":	{"model": "schr0tanpopo:fluff_cushion"},
+		"color=yellow":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=lime":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=pink":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=gray":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=silver":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=cyan":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=purple":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=blue":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=brown":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=green":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=red":		{"model": "schr0tanpopo:fluff_cushion"},
+		"color=black":		{"model": "schr0tanpopo:fluff_cushion"}
+    }
+}

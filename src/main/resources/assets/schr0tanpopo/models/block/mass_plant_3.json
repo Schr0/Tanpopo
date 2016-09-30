@@ -1,0 +1,7 @@
+{
+	"parent": "block/cube_all",
+	"textures":
+	{
+		"all": "schr0tanpopo:blocks/mass_plant_3"
+	}
+}

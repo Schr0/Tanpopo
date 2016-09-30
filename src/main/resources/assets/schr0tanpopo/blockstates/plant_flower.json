@@ -1,0 +1,21 @@
+{
+	"variants":
+	{
+		"age=0":	{"model": "schr0tanpopo:plant_flower_0"},
+		"age=1":	{"model": "schr0tanpopo:plant_flower_1"},
+		"age=2":	{"model": "schr0tanpopo:plant_flower_2"},
+		"age=3":	{"model": "schr0tanpopo:plant_flower_3"},
+		"age=4":	{"model": "schr0tanpopo:plant_flower_4"},
+		"age=5":	{"model": "schr0tanpopo:plant_flower_5"},
+		"age=6":	{"model": "schr0tanpopo:plant_flower_6"},
+		"age=7":	{"model": "schr0tanpopo:plant_flower_7"},
+		"age=8":	{"model": "schr0tanpopo:plant_flower_8"},
+		"age=9":	{"model": "schr0tanpopo:plant_flower_9"},
+		"age=10":	{"model": "schr0tanpopo:plant_flower_10"},
+		"age=11":	{"model": "schr0tanpopo:plant_flower_11"},
+		"age=12":	{"model": "schr0tanpopo:plant_flower_12"},
+		"age=13":	{"model": "schr0tanpopo:plant_flower_13"},
+		"age=14":	{"model": "schr0tanpopo:plant_flower_14"},
+		"age=15":	{"model": "schr0tanpopo:plant_flower_15"}
+	}
+}

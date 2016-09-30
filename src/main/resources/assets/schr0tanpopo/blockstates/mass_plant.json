@@ -1,0 +1,10 @@
+{
+	"variants":
+	{
+		"stage=0": {"model": "schr0tanpopo:mass_plant_0"},
+		"stage=1": {"model": "schr0tanpopo:mass_plant_1"},
+		"stage=2": {"model": "schr0tanpopo:mass_plant_2"},
+		"stage=3": {"model": "schr0tanpopo:mass_plant_3"},
+		"stage=4": {"model": "schr0tanpopo:mass_plant_4"}
+	}
+}
