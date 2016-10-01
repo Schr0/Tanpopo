@@ -56,6 +56,10 @@ item.material_mass_0.name=Material Tanpopo Mass
 item.material_mass_1.name=Material Fermented Tanpopo Mass
 item.essence_glass_bottle.name=Tanpopo Essence Glass Bottle
 item.essence_solid_fuel.name=Tanpopo Essence Solid Fuel
+item.tool_mattock.name=TanpopoIron Mattock
+item.tool_mattock.mode_name=RangeMiningMode
+item.tool_mattock.mode_enabled=%1$s is enabled.
+item.tool_mattock.mode_disabled=%1$s is disabled.
 
 // ======================================== FLUID ===================================== //
 fluid.fluid_essence=Tanpopo Essence

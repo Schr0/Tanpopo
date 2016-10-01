@@ -32,7 +32,7 @@ public class Tanpopo
 	/**
 	 * Modのバージョン.
 	 */
-	public static final String MOD_VERSION = "1.0.0";
+	public static final String MOD_VERSION = "1.1.0";
 
 	/**
 	 * Forgeのバージョン.
