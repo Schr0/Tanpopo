@@ -1,6 +1,6 @@
 package schr0.tanpopo;
 
-public class TanpopoNBTTag
+public class TanpopoNBTTags
 {
 	private static final String TAG = Tanpopo.MOD_ID + ".";
 

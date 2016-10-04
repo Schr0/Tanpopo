@@ -3,6 +3,8 @@ package schr0.tanpopo;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -15,11 +17,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -39,7 +43,7 @@ public class ItemToolMattock extends ItemTool
 
 	public ItemToolMattock()
 	{
-		super(1.0F, -1.4F, TanpopoToolMaterial.IRON, EFFECTIVE_BLOCKS);
+		super(1.5F, -1.4F, TanpopoToolMaterials.TIER_0, EFFECTIVE_BLOCKS);
 	}
 
 	@Override
@@ -47,25 +51,41 @@ public class ItemToolMattock extends ItemTool
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
 	{
 		TextComponentTranslation textMode = new TextComponentTranslation("item.tool_mattock.mode_name", new Object[0]);
-		textMode.getStyle().setItalic(true);
-		textMode.getStyle().setBold(true);
-
-		TextComponentTranslation textSentence = new TextComponentTranslation("item.tool_mattock.mode_disabled", new Object[]
-		{
-				textMode
-		});
-		textSentence.getStyle().setColor(TextFormatting.DARK_RED);
+		TextComponentTranslation textCondition;
 
 		if (this.isRangeMode(stack))
 		{
-			textSentence = new TextComponentTranslation("item.tool_mattock.mode_enabled", new Object[]
-			{
-					textMode
-			});
-			textSentence.getStyle().setColor(TextFormatting.GREEN);
+			textCondition = new TextComponentTranslation("item.tool_mattock.mode_enabled", new Object[0]);
+			textCondition.getStyle().setColor(TextFormatting.GREEN);
+		}
+		else
+		{
+			textCondition = new TextComponentTranslation("item.tool_mattock.mode_disabled", new Object[0]);
+			textCondition.getStyle().setColor(TextFormatting.DARK_RED);
 		}
 
-		tooltip.add(textSentence.getFormattedText());
+		textMode.getStyle().setColor(TextFormatting.AQUA);
+		textCondition.getStyle().setBold(true);
+
+		tooltip.add(new TextComponentString(textMode.getFormattedText() + " : " + textCondition.getFormattedText()).getFormattedText());
+
+		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
+		{
+			if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			{
+				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
+				ItemBlock itemBlock = (ItemBlock) stackInv.getItem();
+				World world = playerIn.worldObj;
+
+				tooltip.add(new TextComponentString(itemBlock.getItemStackDisplayName(stackInv) + " x " + stackInv.stackSize).getFormattedText());
+			}
+		}
+	}
+
+	@Override
+	public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
+	{
+		return false;
 	}
 
 	@Override
@@ -77,9 +97,7 @@ public class ItemToolMattock extends ItemTool
 	@Override
 	public boolean canHarvestBlock(IBlockState blockIn)
 	{
-		int harvestLevel = blockIn.getBlock().getHarvestLevel(blockIn);
-
-		return (harvestLevel <= this.getToolMaterial().getHarvestLevel());
+		return ((blockIn.getBlock().getHarvestLevel(blockIn)) <= (this.getToolMaterial().getHarvestLevel()));
 	}
 
 	@Override
@@ -94,12 +112,6 @@ public class ItemToolMattock extends ItemTool
 	}
 
 	@Override
-	public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
-	{
-		return false;
-	}
-
-	@Override
 	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
 	{
 		if (!this.isRangeMode(stack))
@@ -107,9 +119,182 @@ public class ItemToolMattock extends ItemTool
 			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 		}
 
-		int side = ForgeHooks.rayTraceEyes(entityLiving, 5.0d).sideHit.getIndex();
-		int range = 1;
+		for (BlockPos posAround : this.getRangeModeBlockPos(stack, worldIn, pos, entityLiving))
+		{
+			if (worldIn.getBlockState(posAround) == state)
+			{
+				IBlockState stateAround = worldIn.getBlockState(posAround);
+				Block blockAround = stateAround.getBlock();
+
+				worldIn.destroyBlock(posAround, false);
+
+				blockAround.dropBlockAsItem(worldIn, posAround, stateAround, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack));
+
+				if ((double) stateAround.getBlockHardness(worldIn, posAround) != 0.0D)
+				{
+					stack.damageItem(1, entityLiving);
+				}
+
+				if (stack.getMaxDamage() <= stack.getItemDamage())
+				{
+					stack.stackSize = 0;
+
+					break;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+	{
+		if (playerIn.isSneaking())
+		{
+			boolean isRangeMode = this.isRangeMode(itemStackIn);
+
+			if (!worldIn.isRemote)
+			{
+				TextComponentString textItem = new TextComponentString(itemStackIn.getDisplayName());
+				TextComponentTranslation textMode = new TextComponentTranslation("item.tool_mattock.mode_name", new Object[0]);
+				TextComponentTranslation textCondition;
+
+				if (isRangeMode)
+				{
+					textCondition = new TextComponentTranslation("item.tool_mattock.mode_disabled", new Object[0]);
+					textCondition.getStyle().setColor(TextFormatting.DARK_RED);
+				}
+				else
+				{
+					textCondition = new TextComponentTranslation("item.tool_mattock.mode_enabled", new Object[0]);
+					textCondition.getStyle().setColor(TextFormatting.GREEN);
+				}
+
+				textItem.getStyle().setItalic(true);
+				textMode.getStyle().setColor(TextFormatting.AQUA);
+				textCondition.getStyle().setBold(true);
+
+				playerIn.addChatComponentMessage(new TextComponentString(textItem.getFormattedText() + " -> " + textMode.getFormattedText() + " : " + textCondition.getFormattedText()));
+
+				this.setRangeMode(!isRangeMode, itemStackIn);
+			}
+
+			playerIn.swingArm(hand);
+
+			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.UI_BUTTON_CLICK, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+			return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+		}
+
+		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+	}
+
+	@Override
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	{
+		if (playerIn.isSneaking())
+		{
+			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+		}
+
+		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
+		{
+			if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			{
+				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
+				ItemBlock itemBlock = (ItemBlock) stackInv.getItem();
+
+				if (this.isRangeMode(stack))
+				{
+					int isSucces = 0;
+
+					for (BlockPos posAround : this.getRangeModeBlockPos(stack, worldIn, pos, playerIn))
+					{
+						if (worldIn.isAirBlock(posAround))
+						{
+							continue;
+						}
+
+						if (itemBlock.onItemUse(stackInv, playerIn, worldIn, posAround, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
+						{
+							if (stackInv.stackSize <= 0)
+							{
+								playerIn.inventory.setInventorySlotContents(slot, (ItemStack) null);
+							}
+
+							++isSucces;
+						}
+					}
+
+					if (0 < isSucces)
+					{
+						return EnumActionResult.SUCCESS;
+					}
+				}
+				else
+				{
+					if (itemBlock.onItemUse(stackInv, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
+					{
+						if (stackInv.stackSize <= 0)
+						{
+							playerIn.inventory.setInventorySlotContents(slot, (ItemStack) null);
+						}
+
+						return EnumActionResult.SUCCESS;
+					}
+				}
+			}
+		}
+
+		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+	}
+
+	// TODO /* ======================================== MOD START =====================================*/
+
+	private boolean isRangeMode(ItemStack stack)
+	{
+		NBTTagCompound nbtStack = stack.getTagCompound();
+
+		if (nbtStack != null && nbtStack.hasKey(TanpopoNBTTags.ITEM_TOOL_MATTOCK_MODE, 3))
+		{
+			int value = nbtStack.getInteger(TanpopoNBTTags.ITEM_TOOL_MATTOCK_MODE);
+
+			return (value == 1);
+		}
+
+		return false;
+	}
+
+	private void setRangeMode(boolean isMode, ItemStack stack)
+	{
+		NBTTagCompound nbtStack = stack.getTagCompound();
+
+		if (nbtStack == null)
+		{
+			nbtStack = new NBTTagCompound();
+		}
+
+		int value = isMode ? (1) : (0);
+
+		nbtStack.setInteger(TanpopoNBTTags.ITEM_TOOL_MATTOCK_MODE, value);
+
+		stack.setTagCompound(nbtStack);
+	}
+
+	@Nullable
+	private List<BlockPos> getRangeModeBlockPos(ItemStack stack, World worldIn, BlockPos pos, EntityLivingBase entityLiving)
+	{
 		List<BlockPos> posArounds = Lists.newArrayList();
+		double length = 5.0D;
+		int range = 1;
+
+		if (ForgeHooks.rayTraceEyes(entityLiving, length) == null)
+		{
+			return posArounds;
+		}
+
+		int side = ForgeHooks.rayTraceEyes(entityLiving, length).sideHit.getIndex();
 
 		switch (side)
 		{
@@ -157,117 +342,7 @@ public class ItemToolMattock extends ItemTool
 				}
 		}
 
-		for (BlockPos posAround : posArounds)
-		{
-			double hardnessPos = state.getBlockHardness(worldIn, pos);
-			double hardnessPosAround = worldIn.getBlockState(posAround).getBlockHardness(worldIn, posAround);
-
-			if (!worldIn.isAirBlock(posAround) && (hardnessPosAround <= hardnessPos))
-			{
-				IBlockState stateAround = worldIn.getBlockState(posAround);
-				Block blockAround = stateAround.getBlock();
-				int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack);
-
-				worldIn.destroyBlock(posAround, false);
-
-				blockAround.dropBlockAsItem(worldIn, posAround, stateAround, level);
-
-				if (hardnessPosAround != 0.0D)
-				{
-					stack.damageItem(1, entityLiving);
-				}
-
-				if (stack.getMaxDamage() <= stack.getItemDamage())
-				{
-					stack.stackSize = 0;
-
-					break;
-				}
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
-	{
-		if (playerIn.isSneaking())
-		{
-			boolean isRangeMode = this.isRangeMode(itemStackIn);
-
-			if (!worldIn.isRemote)
-			{
-				TextComponentString textItem = new TextComponentString(itemStackIn.getDisplayName());
-				textItem.getStyle().setItalic(true);
-				textItem.getStyle().setBold(true);
-				textItem.appendText(" : ");
-				textItem.getStyle().setColor(TextFormatting.WHITE);
-
-				TextComponentTranslation textMode = new TextComponentTranslation("item.tool_mattock.mode_name", new Object[0]);
-				textMode.getStyle().setItalic(true);
-				textMode.getStyle().setBold(true);
-
-				TextComponentTranslation textSentence = new TextComponentTranslation("item.tool_mattock.mode_enabled", new Object[]
-				{
-						textMode
-				});
-				textSentence.getStyle().setColor(TextFormatting.GREEN);
-
-				if (this.isRangeMode(itemStackIn))
-				{
-					textSentence = new TextComponentTranslation("item.tool_mattock.mode_disabled", new Object[]
-					{
-							textMode
-					});
-					textSentence.getStyle().setColor(TextFormatting.DARK_RED);
-				}
-
-				playerIn.addChatComponentMessage(textItem.appendText(textSentence.getFormattedText()));
-
-				this.setRangeMode(!isRangeMode, itemStackIn);
-			}
-
-			playerIn.swingArm(hand);
-
-			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.UI_BUTTON_CLICK, SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-			return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
-		}
-
-		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
-	}
-
-	// TODO /* ======================================== MOD START =====================================*/
-
-	public boolean isRangeMode(ItemStack stack)
-	{
-		NBTTagCompound nbtStack = stack.getTagCompound();
-
-		if (nbtStack != null && nbtStack.hasKey(TanpopoNBTTag.ITEM_TOOL_MATTOCK_MODE, 3))
-		{
-			int value = nbtStack.getInteger(TanpopoNBTTag.ITEM_TOOL_MATTOCK_MODE);
-
-			return (value == 1);
-		}
-
-		return false;
-	}
-
-	public void setRangeMode(boolean isRangeMode, ItemStack stack)
-	{
-		NBTTagCompound nbtStack = stack.getTagCompound();
-
-		if (nbtStack == null)
-		{
-			nbtStack = new NBTTagCompound();
-		}
-
-		int value = isRangeMode ? (1) : (0);
-
-		nbtStack.setInteger(TanpopoNBTTag.ITEM_TOOL_MATTOCK_MODE, value);
-
-		stack.setTagCompound(nbtStack);
+		return posArounds;
 	}
 
 }
