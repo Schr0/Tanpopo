@@ -3,8 +3,6 @@ package schr0.tanpopo;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -43,7 +41,7 @@ public class ItemToolMattock extends ItemTool
 
 	public ItemToolMattock()
 	{
-		super(1.5F, -1.4F, TanpopoToolMaterials.TIER_0, EFFECTIVE_BLOCKS);
+		super(1.0F, -2.8F, TanpopoToolMaterials.TIER_0, EFFECTIVE_BLOCKS);
 	}
 
 	@Override
@@ -69,15 +67,18 @@ public class ItemToolMattock extends ItemTool
 
 		tooltip.add(new TextComponentString(textMode.getFormattedText() + " : " + textCondition.getFormattedText()).getFormattedText());
 
+		int num = 0;
+
 		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
 		{
 			if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
 			{
 				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
-				ItemBlock itemBlock = (ItemBlock) stackInv.getItem();
-				World world = playerIn.worldObj;
+				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
 
-				tooltip.add(new TextComponentString(itemBlock.getItemStackDisplayName(stackInv) + " x " + stackInv.stackSize).getFormattedText());
+				++num;
+
+				tooltip.add(new TextComponentString(num + " : " + itemBlockInv.getItemStackDisplayName(stackInv) + " x " + stackInv.stackSize).getFormattedText());
 			}
 		}
 	}
@@ -119,14 +120,17 @@ public class ItemToolMattock extends ItemTool
 			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 		}
 
-		for (BlockPos posAround : this.getRangeModeBlockPos(stack, worldIn, pos, entityLiving))
+		for (BlockPos posAround : this.getRangeModeBlockPos(pos, entityLiving))
 		{
 			if (worldIn.getBlockState(posAround) == state)
 			{
 				IBlockState stateAround = worldIn.getBlockState(posAround);
 				Block blockAround = stateAround.getBlock();
 
-				worldIn.destroyBlock(posAround, false);
+				if (!worldIn.isRemote)
+				{
+					worldIn.destroyBlock(posAround, false);
+				}
 
 				blockAround.dropBlockAsItem(worldIn, posAround, stateAround, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack));
 
@@ -139,7 +143,7 @@ public class ItemToolMattock extends ItemTool
 				{
 					stack.stackSize = 0;
 
-					break;
+					return true;
 				}
 			}
 		}
@@ -177,7 +181,7 @@ public class ItemToolMattock extends ItemTool
 
 				playerIn.addChatComponentMessage(new TextComponentString(textItem.getFormattedText() + " -> " + textMode.getFormattedText() + " : " + textCondition.getFormattedText()));
 
-				this.setRangeMode(!isRangeMode, itemStackIn);
+				this.setRangeMode(itemStackIn, !isRangeMode);
 			}
 
 			playerIn.swingArm(hand);
@@ -203,38 +207,40 @@ public class ItemToolMattock extends ItemTool
 			if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
 			{
 				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
-				ItemBlock itemBlock = (ItemBlock) stackInv.getItem();
+				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
 
 				if (this.isRangeMode(stack))
 				{
-					int isSucces = 0;
+					boolean isSucces = false;
 
-					for (BlockPos posAround : this.getRangeModeBlockPos(stack, worldIn, pos, playerIn))
+					for (BlockPos posAround : this.getRangeModeBlockPos(pos, playerIn))
 					{
 						if (worldIn.isAirBlock(posAround))
 						{
 							continue;
 						}
 
-						if (itemBlock.onItemUse(stackInv, playerIn, worldIn, posAround, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
+						if (itemBlockInv.onItemUse(stackInv, playerIn, worldIn, posAround, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
 						{
+							isSucces = true;
+
 							if (stackInv.stackSize <= 0)
 							{
 								playerIn.inventory.setInventorySlotContents(slot, (ItemStack) null);
-							}
 
-							++isSucces;
+								break;
+							}
 						}
 					}
 
-					if (0 < isSucces)
+					if (isSucces)
 					{
 						return EnumActionResult.SUCCESS;
 					}
 				}
 				else
 				{
-					if (itemBlock.onItemUse(stackInv, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
+					if (itemBlockInv.onItemUse(stackInv, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
 					{
 						if (stackInv.stackSize <= 0)
 						{
@@ -244,6 +250,8 @@ public class ItemToolMattock extends ItemTool
 						return EnumActionResult.SUCCESS;
 					}
 				}
+
+				return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 			}
 		}
 
@@ -266,7 +274,7 @@ public class ItemToolMattock extends ItemTool
 		return false;
 	}
 
-	private void setRangeMode(boolean isMode, ItemStack stack)
+	private void setRangeMode(ItemStack stack, boolean isMode)
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
@@ -282,19 +290,18 @@ public class ItemToolMattock extends ItemTool
 		stack.setTagCompound(nbtStack);
 	}
 
-	@Nullable
-	private List<BlockPos> getRangeModeBlockPos(ItemStack stack, World worldIn, BlockPos pos, EntityLivingBase entityLiving)
+	private List<BlockPos> getRangeModeBlockPos(BlockPos pos, EntityLivingBase owner)
 	{
-		List<BlockPos> posArounds = Lists.newArrayList();
+		List<BlockPos> posList = Lists.newArrayList(pos);
 		double length = 5.0D;
 		int range = 1;
 
-		if (ForgeHooks.rayTraceEyes(entityLiving, length) == null)
+		if (ForgeHooks.rayTraceEyes(owner, length) == null)
 		{
-			return posArounds;
+			return posList;
 		}
 
-		int side = ForgeHooks.rayTraceEyes(entityLiving, length).sideHit.getIndex();
+		int side = ForgeHooks.rayTraceEyes(owner, length).sideHit.getIndex();
 
 		switch (side)
 		{
@@ -302,7 +309,7 @@ public class ItemToolMattock extends ItemTool
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-range, -range, 0), pos.add(range, range, 0)))
 				{
-					posArounds.add(posAround);
+					posList.add(posAround);
 				}
 
 				break;
@@ -311,7 +318,7 @@ public class ItemToolMattock extends ItemTool
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(range, -range, 0), pos.add(-range, range, 0)))
 				{
-					posArounds.add(posAround);
+					posList.add(posAround);
 				}
 
 				break;
@@ -320,7 +327,7 @@ public class ItemToolMattock extends ItemTool
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(0, -range, -range), pos.add(0, range, range)))
 				{
-					posArounds.add(posAround);
+					posList.add(posAround);
 				}
 
 				break;
@@ -329,7 +336,7 @@ public class ItemToolMattock extends ItemTool
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(0, -range, range), pos.add(0, range, -range)))
 				{
-					posArounds.add(posAround);
+					posList.add(posAround);
 				}
 
 				break;
@@ -338,11 +345,11 @@ public class ItemToolMattock extends ItemTool
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-range, 0, -range), pos.add(range, 0, range)))
 				{
-					posArounds.add(posAround);
+					posList.add(posAround);
 				}
 		}
 
-		return posArounds;
+		return posList;
 	}
 
 }

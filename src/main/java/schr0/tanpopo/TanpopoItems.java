@@ -16,6 +16,7 @@ public class TanpopoItems
 	public static final Item ESSENCE_GLASS_BOTTLE;
 	public static final Item ESSENCE_SOLID_FUEL;
 	public static final Item TOOL_MATTOCK;
+	public static final Item TOOL_FELLING_AXE;
 
 	public static final String NAME_MATERIAL_ROOTS = "material_roots";
 	public static final String NAME_MATERIAL_LEAF = "material_leaf";
@@ -26,6 +27,7 @@ public class TanpopoItems
 	public static final String NAME_ESSENCE_GLASS_BOTTLE = "essence_glass_bottle";
 	public static final String NAME_ESSENCE_SOLID_FUEL = "essence_solid_fuel";
 	public static final String NAME_TOOL_MATTOCK = "tool_mattock";
+	public static final String NAME_TOOL_FELLING_AXE = "tool_felling_axe";
 
 	public static final int META_MATERIAL_ROOTS = 0;
 	public static final int META_MATERIAL_LEAF = 0;
@@ -36,6 +38,7 @@ public class TanpopoItems
 	public static final int META_ESSENCE_GLASS_BOTTLE = 0;
 	public static final int META_ESSENCE_SOLID_FUEL = 0;
 	public static final int META_TOOL_MATTOCK = 0;
+	public static final int META_TOOL_FELLING_AXE = 0;
 
 	static
 	{
@@ -48,6 +51,7 @@ public class TanpopoItems
 		ESSENCE_GLASS_BOTTLE = new ItemEssenceGlassBottle().setUnlocalizedName(NAME_ESSENCE_GLASS_BOTTLE).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		ESSENCE_SOLID_FUEL = new ItemEssenceSolidFuel().setUnlocalizedName(NAME_ESSENCE_SOLID_FUEL).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		TOOL_MATTOCK = new ItemToolMattock().setUnlocalizedName(NAME_TOOL_MATTOCK).setCreativeTab(TanpopoCreativeTabs.ITEM);
+		TOOL_FELLING_AXE = new ItemToolFellingAxe().setUnlocalizedName(NAME_TOOL_FELLING_AXE).setCreativeTab(TanpopoCreativeTabs.ITEM);
 	}
 
 	public void init()
@@ -72,6 +76,7 @@ public class TanpopoItems
 		TanpopoForgeRegistry.registerItem(ESSENCE_GLASS_BOTTLE, NAME_ESSENCE_GLASS_BOTTLE, META_ESSENCE_GLASS_BOTTLE);
 		TanpopoForgeRegistry.registerItem(ESSENCE_SOLID_FUEL, NAME_ESSENCE_SOLID_FUEL, META_ESSENCE_SOLID_FUEL);
 		TanpopoForgeRegistry.registerItem(TOOL_MATTOCK, NAME_TOOL_MATTOCK, META_TOOL_MATTOCK);
+		TanpopoForgeRegistry.registerItem(TOOL_FELLING_AXE, NAME_TOOL_FELLING_AXE, META_TOOL_FELLING_AXE);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -92,6 +97,7 @@ public class TanpopoItems
 		TanpopoModelLoader.registerModel(ESSENCE_GLASS_BOTTLE, META_ESSENCE_GLASS_BOTTLE);
 		TanpopoModelLoader.registerModel(ESSENCE_SOLID_FUEL, META_ESSENCE_SOLID_FUEL);
 		TanpopoModelLoader.registerModel(TOOL_MATTOCK, META_TOOL_MATTOCK);
+		TanpopoModelLoader.registerModel(TOOL_FELLING_AXE, META_TOOL_FELLING_AXE);
 	}
 
 }
