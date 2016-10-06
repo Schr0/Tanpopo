@@ -60,6 +60,10 @@ item.tool_mattock.name=Tanpopo Mattock
 item.tool_mattock.mode_name=RangeMode
 item.tool_mattock.mode_enabled=Enabled
 item.tool_mattock.mode_disabled=Disabled
+item.tool_felling_axe.name=Tanpopo Felling Axe
+item.tool_felling_axe.mode_name=FellingMode
+item.tool_felling_axe.mode_enabled=Enabled
+item.tool_felling_axe.mode_disabled=Disabled
 
 // ======================================== FLUID ===================================== //
 fluid.fluid_essence=Tanpopo Essence

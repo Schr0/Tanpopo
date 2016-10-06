@@ -3,5 +3,15 @@
 	"textures":
 	{
 		"layer0": "schr0tanpopo:items/tool_felling_axe"
-	}
+	},
+	"overrides":
+	[
+	        {
+			"predicate":
+			{
+				"blocking": 1
+			},
+			"model": "schr0tanpopo:item/tool_felling_axe_blocking"
+	        }
+	]
 }

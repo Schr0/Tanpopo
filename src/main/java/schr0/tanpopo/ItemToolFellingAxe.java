@@ -3,6 +3,8 @@ package schr0.tanpopo;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -13,12 +15,27 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemToolFellingAxe extends ItemTool
 {
@@ -31,6 +48,40 @@ public class ItemToolFellingAxe extends ItemTool
 	public ItemToolFellingAxe()
 	{
 		super(8.0F, -3.0F, TanpopoToolMaterials.TIER_0, EFFECTIVE_BLOCKS);
+
+		this.addPropertyOverride(new ResourceLocation("blocking"), new IItemPropertyGetter()
+		{
+			@SideOnly(Side.CLIENT)
+			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+			{
+				return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F;
+			}
+		});
+
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
+	{
+		TextComponentTranslation textMode = new TextComponentTranslation("item.tool_felling_axe.mode_name", new Object[0]);
+		TextComponentTranslation textCondition;
+
+		if (this.isFellingMode(stack))
+		{
+			textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_enabled", new Object[0]);
+			textCondition.getStyle().setColor(TextFormatting.GREEN);
+		}
+		else
+		{
+			textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_disabled", new Object[0]);
+			textCondition.getStyle().setColor(TextFormatting.DARK_RED);
+		}
+
+		textMode.getStyle().setColor(TextFormatting.AQUA);
+		textCondition.getStyle().setBold(true);
+
+		tooltip.add(new TextComponentString(textMode.getFormattedText() + " : " + textCondition.getFormattedText()).getFormattedText());
 	}
 
 	@Override
@@ -62,6 +113,13 @@ public class ItemToolFellingAxe extends ItemTool
 	@Override
 	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
 	{
+		if (!this.isFellingMode(stack))
+		{
+			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
+		}
+
+		int countFelling = 0;
+
 		for (BlockPos posFelling : this.getFellingBlockPos(pos, state, worldIn))
 		{
 			if (this.canFellingBlocks(state, worldIn.getBlockState(posFelling)))
@@ -75,13 +133,110 @@ public class ItemToolFellingAxe extends ItemTool
 				}
 
 				blockAround.dropBlockAsItem(worldIn, posFelling, stateAround, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack));
+
+				++countFelling;
 			}
 		}
 
-		return true;
+		if (0 < countFelling)
+		{
+			stack.damageItem(5, entityLiving);
+
+			return true;
+		}
+
+		return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
+	}
+
+	@Override
+	public EnumAction getItemUseAction(ItemStack stack)
+	{
+		return EnumAction.BLOCK;
+	}
+
+	@Override
+	public int getMaxItemUseDuration(ItemStack stack)
+	{
+		return 72000;
+	}
+
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+	{
+		if (playerIn.isSneaking())
+		{
+			boolean isFellingMode = this.isFellingMode(itemStackIn);
+
+			if (!worldIn.isRemote)
+			{
+				TextComponentString textItem = new TextComponentString(itemStackIn.getDisplayName());
+				TextComponentTranslation textMode = new TextComponentTranslation("item.tool_felling_axe.mode_name", new Object[0]);
+				TextComponentTranslation textCondition;
+
+				if (isFellingMode)
+				{
+					textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_disabled", new Object[0]);
+					textCondition.getStyle().setColor(TextFormatting.DARK_RED);
+				}
+				else
+				{
+					textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_enabled", new Object[0]);
+					textCondition.getStyle().setColor(TextFormatting.GREEN);
+				}
+
+				textItem.getStyle().setItalic(true);
+				textMode.getStyle().setColor(TextFormatting.AQUA);
+				textCondition.getStyle().setBold(true);
+
+				playerIn.addChatComponentMessage(new TextComponentString(textItem.getFormattedText() + " -> " + textMode.getFormattedText() + " : " + textCondition.getFormattedText()));
+
+				this.setFellingMode(itemStackIn, !isFellingMode);
+			}
+
+			playerIn.swingArm(hand);
+
+			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.UI_BUTTON_CLICK, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+			return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+		}
+
+		playerIn.setActiveHand(hand);
+
+		return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+		// return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
 	}
 
 	// TODO /* ======================================== MOD START =====================================*/
+
+	private boolean isFellingMode(ItemStack stack)
+	{
+		NBTTagCompound nbtStack = stack.getTagCompound();
+
+		if (nbtStack != null && nbtStack.hasKey(TanpopoNBTTags.ITEM_TOOL_FELLING_AXE_MODE, 3))
+		{
+			int value = nbtStack.getInteger(TanpopoNBTTags.ITEM_TOOL_FELLING_AXE_MODE);
+
+			return (value == 1);
+		}
+
+		return false;
+	}
+
+	private void setFellingMode(ItemStack stack, boolean isMode)
+	{
+		NBTTagCompound nbtStack = stack.getTagCompound();
+
+		if (nbtStack == null)
+		{
+			nbtStack = new NBTTagCompound();
+		}
+
+		int value = isMode ? (1) : (0);
+
+		nbtStack.setInteger(TanpopoNBTTags.ITEM_TOOL_FELLING_AXE_MODE, value);
+
+		stack.setTagCompound(nbtStack);
+	}
 
 	private boolean canFellingBlocks(IBlockState state, IBlockState stateFelling)
 	{

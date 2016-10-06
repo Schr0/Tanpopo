@@ -6,4 +6,6 @@ public class TanpopoNBTTags
 
 	public static final String ITEM_TOOL_MATTOCK_MODE = TAG + "itemToolMattockMode";
 
+	public static final String ITEM_TOOL_FELLING_AXE_MODE = TAG + "itemToolFellingAxeMode";
+
 }
