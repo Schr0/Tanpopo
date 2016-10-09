@@ -9,6 +9,8 @@ import net.minecraftforge.fml.common.Loader;
 public class TanpopoConfiguration
 {
 
+	public static int fellingBlockLimit;
+
 	public void init()
 	{
 		build();
@@ -21,6 +23,8 @@ public class TanpopoConfiguration
 		try
 		{
 			cfg.load();
+
+			fellingBlockLimit = cfg.getInt("FELLING_BLOCK_LIMIT", Configuration.CATEGORY_GENERAL, 1000, 2, Integer.MAX_VALUE, "The maximum number that can be destroyed by FellingMode.");
 
 			// none
 		}

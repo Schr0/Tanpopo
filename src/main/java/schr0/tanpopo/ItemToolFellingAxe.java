@@ -1,5 +1,6 @@
 package schr0.tanpopo;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -10,7 +11,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -26,6 +26,7 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -41,9 +42,11 @@ public class ItemToolFellingAxe extends ItemTool
 {
 
 	private static final Set<Block> EFFECTIVE_BLOCKS = Sets.newHashSet(new Block[]
-	{ Blocks.LOG, Blocks.LOG2 });
+	{ Blocks.LOG, Blocks.LOG2, Blocks.LEAVES, Blocks.LEAVES2 });
 
 	private static final List<Material> EFFECTIVE_MATERIALS = Lists.newArrayList(Material.WOOD, Material.PLANTS, Material.VINE);
+
+	private int fellingBlockLimit;
 
 	public ItemToolFellingAxe()
 	{
@@ -58,6 +61,7 @@ public class ItemToolFellingAxe extends ItemTool
 			}
 		});
 
+		this.fellingBlockLimit = TanpopoConfiguration.fellingBlockLimit;
 	}
 
 	@Override
@@ -113,39 +117,51 @@ public class ItemToolFellingAxe extends ItemTool
 	@Override
 	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
 	{
-		if (!this.isFellingMode(stack))
+		if (this.canStartFelling(stack, worldIn, pos))
 		{
-			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
-		}
+			Set<BlockPos> posSet = new LinkedHashSet<>();
+			List<ItemStack> dropItemList = Lists.newArrayList();
+			int countFelling = 0;
 
-		int countFelling = 0;
+			this.getFellingBlockPos(posSet, worldIn, pos);
 
-		for (BlockPos posFelling : this.getFellingBlockPos(pos, state, worldIn))
-		{
-			if (this.canFellingBlocks(state, worldIn.getBlockState(posFelling)))
+			for (BlockPos posFelling : posSet)
 			{
-				IBlockState stateAround = worldIn.getBlockState(posFelling);
-				Block blockAround = stateAround.getBlock();
-
-				if (!worldIn.isRemote)
+				for (BlockPos posAround : BlockPos.getAllInBox(posFelling.add(-1, -1, -1), posFelling.add(1, 1, 1)))
 				{
-					worldIn.setBlockToAir(posFelling);
+					if (this.isFellingBlocks(worldIn, posAround))
+					{
+						IBlockState stateAround = worldIn.getBlockState(posAround);
+						Block blockAround = stateAround.getBlock();
+
+						if (blockAround.isLeaves(stateAround, worldIn, posAround))
+						{
+							blockAround.beginLeavesDecay(stateAround, worldIn, posAround);
+						}
+						else
+						{
+							dropItemList.addAll(blockAround.getDrops(worldIn, posAround, stateAround, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
+
+							worldIn.setBlockToAir(posAround);
+
+							++countFelling;
+						}
+					}
 				}
-
-				blockAround.dropBlockAsItem(worldIn, posFelling, stateAround, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack));
-
-				++countFelling;
 			}
-		}
 
-		if (0 < countFelling)
-		{
-			stack.damageItem(5, entityLiving);
+			for (ItemStack stackDrop : dropItemList)
+			{
+				Block.spawnAsEntity(worldIn, pos, stackDrop);
+			}
 
-			return true;
+			int damage = Math.max(2, (countFelling / 8));
+
+			stack.damageItem(damage, entityLiving);
 		}
 
 		return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
+
 	}
 
 	@Override
@@ -163,47 +179,45 @@ public class ItemToolFellingAxe extends ItemTool
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
 	{
-		if (playerIn.isSneaking())
+		if (!playerIn.isSneaking())
 		{
-			boolean isFellingMode = this.isFellingMode(itemStackIn);
-
-			if (!worldIn.isRemote)
-			{
-				TextComponentString textItem = new TextComponentString(itemStackIn.getDisplayName());
-				TextComponentTranslation textMode = new TextComponentTranslation("item.tool_felling_axe.mode_name", new Object[0]);
-				TextComponentTranslation textCondition;
-
-				if (isFellingMode)
-				{
-					textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_disabled", new Object[0]);
-					textCondition.getStyle().setColor(TextFormatting.DARK_RED);
-				}
-				else
-				{
-					textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_enabled", new Object[0]);
-					textCondition.getStyle().setColor(TextFormatting.GREEN);
-				}
-
-				textItem.getStyle().setItalic(true);
-				textMode.getStyle().setColor(TextFormatting.AQUA);
-				textCondition.getStyle().setBold(true);
-
-				playerIn.addChatComponentMessage(new TextComponentString(textItem.getFormattedText() + " -> " + textMode.getFormattedText() + " : " + textCondition.getFormattedText()));
-
-				this.setFellingMode(itemStackIn, !isFellingMode);
-			}
-
-			playerIn.swingArm(hand);
-
-			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.UI_BUTTON_CLICK, SoundCategory.BLOCKS, 1.0F, 1.0F);
+			playerIn.setActiveHand(hand);
 
 			return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
 		}
 
-		playerIn.setActiveHand(hand);
+		if (!worldIn.isRemote)
+		{
+			boolean isFellingMode = this.isFellingMode(itemStackIn);
+			TextComponentString textItem = new TextComponentString(itemStackIn.getDisplayName());
+			TextComponentTranslation textMode = new TextComponentTranslation("item.tool_felling_axe.mode_name", new Object[0]);
+			TextComponentTranslation textCondition;
+
+			if (isFellingMode)
+			{
+				textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_disabled", new Object[0]);
+				textCondition.getStyle().setColor(TextFormatting.DARK_RED);
+			}
+			else
+			{
+				textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_enabled", new Object[0]);
+				textCondition.getStyle().setColor(TextFormatting.GREEN);
+			}
+
+			textItem.getStyle().setItalic(true);
+			textMode.getStyle().setColor(TextFormatting.AQUA);
+			textCondition.getStyle().setBold(true);
+
+			playerIn.addChatComponentMessage(new TextComponentString(textItem.getFormattedText() + " -> " + textMode.getFormattedText() + " : " + textCondition.getFormattedText()));
+
+			this.setFellingMode(itemStackIn, !isFellingMode);
+		}
+
+		playerIn.swingArm(hand);
+
+		worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.UI_BUTTON_CLICK, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
 		return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
-		// return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
 	}
 
 	// TODO /* ======================================== MOD START =====================================*/
@@ -238,14 +252,9 @@ public class ItemToolFellingAxe extends ItemTool
 		stack.setTagCompound(nbtStack);
 	}
 
-	private boolean canFellingBlocks(IBlockState state, IBlockState stateFelling)
+	private boolean canStartFelling(ItemStack stack, World world, BlockPos pos)
 	{
-		if (state.getBlock() == stateFelling.getBlock())
-		{
-			return true;
-		}
-
-		if (stateFelling.getBlock() instanceof BlockLeaves)
+		if (this.isFellingMode(stack) && world.getBlockState(pos).getBlock().isWood(world, pos))
 		{
 			return true;
 		}
@@ -253,368 +262,44 @@ public class ItemToolFellingAxe extends ItemTool
 		return false;
 	}
 
-	private List<BlockPos> getFellingBlockPos(BlockPos pos, IBlockState state, World world)
+	private boolean isFellingBlocks(World world, BlockPos pos)
 	{
-		List<BlockPos> posList = Lists.newArrayList(pos);
+		IBlockState state = world.getBlockState(pos);
 
-		for (int up = 0; !world.isAirBlock(pos.up(up)); ++up)
+		if (state.getBlock().isWood(world, pos))
 		{
-			BlockPos posUp = pos.up(up);
-
-			if (255 < posUp.getY())
-			{
-				break;
-			}
-
-			for (BlockPos posAround : this.getAroundBlockPos(posUp, state, world))
-			{
-				posList.add(posAround);
-			}
+			return true;
 		}
 
-		return posList;
+		if (state.getBlock().isLeaves(state, world, pos))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
-	private List<BlockPos> getAroundBlockPos(BlockPos pos, IBlockState state, World world)
+	private Set<BlockPos> getFellingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
-		List<BlockPos> posList = Lists.newArrayList();
-
-		for (BlockPos posNorth : this.getNorthBlockPos(pos, state, world))
+		for (EnumFacing facing : EnumFacing.VALUES)
 		{
-			posList.add(posNorth);
-
-			for (BlockPos posNorthUp : this.getUpBlockPos(posNorth, state, world))
+			if (this.fellingBlockLimit < posSet.size())
 			{
-				posList.add(posNorthUp);
-			}
-		}
-
-		for (BlockPos posSouth : this.getSouthBlockPos(pos, state, world))
-		{
-			posList.add(posSouth);
-
-			for (BlockPos posSouthUp : this.getUpBlockPos(posSouth, state, world))
-			{
-				posList.add(posSouthUp);
-			}
-		}
-
-		for (BlockPos posWest : this.getWestBlockPos(pos, state, world))
-		{
-			posList.add(posWest);
-
-			for (BlockPos posWestUp : this.getUpBlockPos(posWest, state, world))
-			{
-				posList.add(posWestUp);
-			}
-		}
-
-		for (BlockPos posEast : this.getEastBlockPos(pos, state, world))
-		{
-			posList.add(posEast);
-
-			for (BlockPos posEastUp : this.getUpBlockPos(posEast, state, world))
-			{
-				posList.add(posEastUp);
-			}
-		}
-
-		return posList;
-	}
-
-	private List<BlockPos> getUpBlockPos(BlockPos pos, IBlockState state, World world)
-	{
-		List<BlockPos> posList = Lists.newArrayList();
-
-		for (int up = 0; this.canFellingBlocks(state, world.getBlockState(pos.up(up))); ++up)
-		{
-			BlockPos posUp = pos.up(up);
-
-			if (255 < posUp.getY())
-			{
-				break;
+				return posSet;
 			}
 
-			posList.add(posUp);
-		}
+			BlockPos posFacing = pos.offset(facing);
 
-		return posList;
-	}
-
-	private List<BlockPos> getNorthBlockPos(BlockPos pos, IBlockState state, World world)
-	{
-		List<BlockPos> posList = Lists.newArrayList();
-
-		for (int north = 0; this.canFellingBlocks(state, world.getBlockState(pos.north(north))); ++north)
-		{
-			BlockPos posNorth = pos.north(north);
-
-			if (16 < north)
+			if (this.isFellingBlocks(world, posFacing))
 			{
-				break;
-			}
-
-			posList.add(posNorth);
-
-			for (int northWest = 0; this.canFellingBlocks(state, world.getBlockState(posNorth.west(northWest))); ++northWest)
-			{
-				BlockPos posNorthWest = posNorth.west(northWest);
-
-				if (8 < northWest)
+				if (posSet.add(posFacing))
 				{
-					break;
-				}
-
-				posList.add(posNorthWest);
-
-				for (BlockPos posNorthWestAround : BlockPos.getAllInBox(posNorthWest.add(-1, 0, -1), posNorthWest.add(1, 0, 1)))
-				{
-					if (posNorthWestAround == posNorthWest)
-					{
-						continue;
-					}
-
-					if (this.canFellingBlocks(state, world.getBlockState(posNorthWestAround)))
-					{
-						posList.add(posNorthWestAround);
-					}
-				}
-			}
-
-			for (int northEast = 0; this.canFellingBlocks(state, world.getBlockState(posNorth.east(northEast))); ++northEast)
-			{
-				BlockPos posNorthEast = posNorth.east(northEast);
-
-				if (8 < northEast)
-				{
-					break;
-				}
-
-				posList.add(posNorthEast);
-
-				for (BlockPos posNorthEastAround : BlockPos.getAllInBox(posNorthEast.add(-1, 0, -1), posNorthEast.add(1, 0, 1)))
-				{
-					if (posNorthEastAround == posNorthEast)
-					{
-						continue;
-					}
-
-					if (this.canFellingBlocks(state, world.getBlockState(posNorthEastAround)))
-					{
-						posList.add(posNorthEastAround);
-					}
+					this.getFellingBlockPos(posSet, world, posFacing);
 				}
 			}
 		}
 
-		return posList;
-	}
-
-	private List<BlockPos> getSouthBlockPos(BlockPos pos, IBlockState state, World world)
-	{
-		List<BlockPos> posList = Lists.newArrayList();
-
-		for (int south = 0; this.canFellingBlocks(state, world.getBlockState(pos.south(south))); ++south)
-		{
-			BlockPos posSouth = pos.south(south);
-
-			if (16 < south)
-			{
-				break;
-			}
-
-			posList.add(posSouth);
-
-			for (int southWest = 0; this.canFellingBlocks(state, world.getBlockState(posSouth.west(southWest))); ++southWest)
-			{
-				BlockPos posSouthWest = posSouth.west(southWest);
-
-				if (8 < southWest)
-				{
-					break;
-				}
-
-				posList.add(posSouthWest);
-
-				for (BlockPos posSouthWestAround : BlockPos.getAllInBox(posSouthWest.add(-1, 0, -1), posSouthWest.add(1, 0, 1)))
-				{
-					if (posSouthWestAround == posSouthWest)
-					{
-						continue;
-					}
-
-					if (this.canFellingBlocks(state, world.getBlockState(posSouthWestAround)))
-					{
-						posList.add(posSouthWestAround);
-					}
-				}
-			}
-
-			for (int southEast = 0; this.canFellingBlocks(state, world.getBlockState(posSouth.east(southEast))); ++southEast)
-			{
-				BlockPos posSouthEast = posSouth.east(southEast);
-
-				if (8 < southEast)
-				{
-					break;
-				}
-
-				posList.add(posSouthEast);
-
-				for (BlockPos posSouthEastAround : BlockPos.getAllInBox(posSouthEast.add(-1, 0, -1), posSouthEast.add(1, 0, 1)))
-				{
-					if (posSouthEastAround == posSouthEast)
-					{
-						continue;
-					}
-
-					if (this.canFellingBlocks(state, world.getBlockState(posSouthEastAround)))
-					{
-						posList.add(posSouthEastAround);
-					}
-				}
-			}
-		}
-
-		return posList;
-	}
-
-	private List<BlockPos> getWestBlockPos(BlockPos pos, IBlockState state, World world)
-	{
-		List<BlockPos> posList = Lists.newArrayList();
-
-		for (int west = 0; this.canFellingBlocks(state, world.getBlockState(pos.west(west))); ++west)
-		{
-			BlockPos posWest = pos.west(west);
-
-			if (16 < west)
-			{
-				break;
-			}
-
-			posList.add(posWest);
-
-			for (int westNorth = 0; this.canFellingBlocks(state, world.getBlockState(pos.north(westNorth))); ++westNorth)
-			{
-				BlockPos posWestNorth = posWest.north(westNorth);
-
-				if (8 < westNorth)
-				{
-					break;
-				}
-
-				posList.add(posWestNorth);
-
-				for (BlockPos posWestNorthAround : BlockPos.getAllInBox(posWestNorth.add(-1, 0, -1), posWestNorth.add(1, 0, 1)))
-				{
-					if (posWestNorthAround == posWestNorth)
-					{
-						continue;
-					}
-
-					if (this.canFellingBlocks(state, world.getBlockState(posWestNorthAround)))
-					{
-						posList.add(posWestNorthAround);
-					}
-				}
-			}
-
-			for (int westSouth = 0; this.canFellingBlocks(state, world.getBlockState(pos.south(westSouth))); ++westSouth)
-			{
-				BlockPos posWestSouth = posWest.south(westSouth);
-
-				if (8 < westSouth)
-				{
-					break;
-				}
-
-				posList.add(posWestSouth);
-
-				for (BlockPos posWestSouthAround : BlockPos.getAllInBox(posWestSouth.add(-1, 0, -1), posWestSouth.add(1, 0, 1)))
-				{
-					if (posWestSouthAround == posWestSouth)
-					{
-						continue;
-					}
-
-					if (this.canFellingBlocks(state, world.getBlockState(posWestSouthAround)))
-					{
-						posList.add(posWestSouthAround);
-					}
-				}
-			}
-		}
-
-		return posList;
-	}
-
-	private List<BlockPos> getEastBlockPos(BlockPos pos, IBlockState state, World world)
-	{
-		List<BlockPos> posList = Lists.newArrayList();
-
-		for (int east = 0; this.canFellingBlocks(state, world.getBlockState(pos.east(east))); ++east)
-		{
-			BlockPos posEast = pos.east(east);
-
-			if (16 < east)
-			{
-				break;
-			}
-
-			posList.add(posEast);
-
-			for (int eastNorth = 0; this.canFellingBlocks(state, world.getBlockState(pos.north(eastNorth))); ++eastNorth)
-			{
-				BlockPos posEastNorth = posEast.north(eastNorth);
-
-				if (8 < eastNorth)
-				{
-					break;
-				}
-
-				posList.add(posEastNorth);
-
-				for (BlockPos posEastNorthAround : BlockPos.getAllInBox(posEastNorth.add(-1, 0, -1), posEastNorth.add(1, 0, 1)))
-				{
-					if (posEastNorthAround == posEastNorth)
-					{
-						continue;
-					}
-
-					if (this.canFellingBlocks(state, world.getBlockState(posEastNorthAround)))
-					{
-						posList.add(posEastNorthAround);
-					}
-				}
-			}
-
-			for (int eastSouth = 0; this.canFellingBlocks(state, world.getBlockState(pos.south(eastSouth))); ++eastSouth)
-			{
-				BlockPos posEastSouth = posEast.south(eastSouth);
-
-				if (8 < eastSouth)
-				{
-					break;
-				}
-
-				posList.add(posEastSouth);
-
-				for (BlockPos posEastSouthAround : BlockPos.getAllInBox(posEastSouth.add(-1, 0, -1), posEastSouth.add(1, 0, 1)))
-				{
-					if (posEastSouthAround == posEastSouth)
-					{
-						continue;
-					}
-
-					if (this.canFellingBlocks(state, world.getBlockState(posEastSouthAround)))
-					{
-						posList.add(posEastSouthAround);
-					}
-				}
-			}
-		}
-
-		return posList;
+		return posSet;
 	}
 
 }

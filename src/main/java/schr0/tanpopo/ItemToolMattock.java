@@ -120,21 +120,20 @@ public class ItemToolMattock extends ItemTool
 			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 		}
 
-		for (BlockPos posAround : this.getRangeModeBlockPos(pos, entityLiving))
+		List<ItemStack> dropItemList = Lists.newArrayList();
+
+		for (BlockPos posRange : this.getRangeBlockPos(pos, entityLiving))
 		{
-			if (worldIn.getBlockState(posAround) == state)
+			if (worldIn.getBlockState(posRange) == state)
 			{
-				IBlockState stateAround = worldIn.getBlockState(posAround);
-				Block blockAround = stateAround.getBlock();
+				IBlockState stateRange = worldIn.getBlockState(posRange);
+				Block blockRange = stateRange.getBlock();
 
-				if (!worldIn.isRemote)
-				{
-					worldIn.destroyBlock(posAround, false);
-				}
+				dropItemList.addAll(blockRange.getDrops(worldIn, posRange, stateRange, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
 
-				blockAround.dropBlockAsItem(worldIn, posAround, stateAround, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack));
+				worldIn.destroyBlock(posRange, false);
 
-				if ((double) stateAround.getBlockHardness(worldIn, posAround) != 0.0D)
+				if ((double) stateRange.getBlockHardness(worldIn, posRange) != 0.0D)
 				{
 					stack.damageItem(1, entityLiving);
 				}
@@ -143,9 +142,14 @@ public class ItemToolMattock extends ItemTool
 				{
 					stack.stackSize = 0;
 
-					return true;
+					break;
 				}
 			}
+		}
+
+		for (ItemStack stackDrop : dropItemList)
+		{
+			Block.spawnAsEntity(worldIn, pos, stackDrop);
 		}
 
 		return true;
@@ -213,7 +217,7 @@ public class ItemToolMattock extends ItemTool
 				{
 					boolean isSucces = false;
 
-					for (BlockPos posAround : this.getRangeModeBlockPos(pos, playerIn))
+					for (BlockPos posAround : this.getRangeBlockPos(pos, playerIn))
 					{
 						if (worldIn.isAirBlock(posAround))
 						{
@@ -290,7 +294,7 @@ public class ItemToolMattock extends ItemTool
 		stack.setTagCompound(nbtStack);
 	}
 
-	private List<BlockPos> getRangeModeBlockPos(BlockPos pos, EntityLivingBase owner)
+	private List<BlockPos> getRangeBlockPos(BlockPos pos, EntityLivingBase owner)
 	{
 		List<BlockPos> posList = Lists.newArrayList(pos);
 		double length = 5.0D;
