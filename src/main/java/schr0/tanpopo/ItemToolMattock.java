@@ -45,6 +45,12 @@ public class ItemToolMattock extends ItemTool
 	}
 
 	@Override
+	public Set<String> getToolClasses(ItemStack stack)
+	{
+		return ImmutableSet.of("pickaxe");
+	}
+
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
 	{
@@ -67,7 +73,7 @@ public class ItemToolMattock extends ItemTool
 
 		tooltip.add(new TextComponentString(textMode.getFormattedText() + " : " + textCondition.getFormattedText()).getFormattedText());
 
-		int num = 0;
+		int priority = 0;
 
 		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
 		{
@@ -76,29 +82,22 @@ public class ItemToolMattock extends ItemTool
 				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
 				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
 
-				++num;
+				++priority;
 
-				tooltip.add(new TextComponentString(num + " : " + itemBlockInv.getItemStackDisplayName(stackInv) + " x " + stackInv.stackSize).getFormattedText());
+				tooltip.add(new TextComponentString(priority + " : " + itemBlockInv.getItemStackDisplayName(stackInv) + " x " + stackInv.stackSize).getFormattedText());
 			}
 		}
 	}
 
 	@Override
-	public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
-	{
-		return false;
-	}
-
-	@Override
-	public Set<String> getToolClasses(ItemStack stack)
-	{
-		return ImmutableSet.of("pickaxe");
-	}
-
-	@Override
 	public boolean canHarvestBlock(IBlockState blockIn)
 	{
-		return ((blockIn.getBlock().getHarvestLevel(blockIn)) <= (this.getToolMaterial().getHarvestLevel()));
+		if (blockIn.getBlock().getHarvestLevel(blockIn) <= this.getToolMaterial().getHarvestLevel())
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -115,87 +114,37 @@ public class ItemToolMattock extends ItemTool
 	@Override
 	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
 	{
-		if (!this.isRangeMode(stack))
+		if (!this.isRangeMode(stack) || !(entityLiving instanceof EntityPlayer))
 		{
 			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 		}
 
-		List<ItemStack> dropItemList = Lists.newArrayList();
+		EntityPlayer player = (EntityPlayer) entityLiving;
 
-		for (BlockPos posRange : this.getRangeBlockPos(pos, entityLiving))
+		for (BlockPos posRange : this.getRangeBlockPos(pos, player))
 		{
 			if (worldIn.getBlockState(posRange) == state)
 			{
 				IBlockState stateRange = worldIn.getBlockState(posRange);
 				Block blockRange = stateRange.getBlock();
 
-				dropItemList.addAll(blockRange.getDrops(worldIn, posRange, stateRange, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
+				blockRange.harvestBlock(worldIn, player, posRange, stateRange, null, stack);
+
+				if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) <= 0)
+				{
+					blockRange.dropXpOnBlockBreak(worldIn, posRange, blockRange.getExpDrop(stateRange, worldIn, posRange, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
+				}
 
 				worldIn.destroyBlock(posRange, false);
 
-				if ((double) stateRange.getBlockHardness(worldIn, posRange) != 0.0D)
+				if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
 				{
-					stack.damageItem(1, entityLiving);
-				}
-
-				if (stack.getMaxDamage() <= stack.getItemDamage())
-				{
-					stack.stackSize = 0;
-
-					break;
+					stack.damageItem(1, player);
 				}
 			}
-		}
-
-		for (ItemStack stackDrop : dropItemList)
-		{
-			Block.spawnAsEntity(worldIn, pos, stackDrop);
 		}
 
 		return true;
-	}
-
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
-	{
-		if (playerIn.isSneaking())
-		{
-			boolean isRangeMode = this.isRangeMode(itemStackIn);
-
-			if (!worldIn.isRemote)
-			{
-				TextComponentString textItem = new TextComponentString(itemStackIn.getDisplayName());
-				TextComponentTranslation textMode = new TextComponentTranslation("item.tool_mattock.mode_name", new Object[0]);
-				TextComponentTranslation textCondition;
-
-				if (isRangeMode)
-				{
-					textCondition = new TextComponentTranslation("item.tool_mattock.mode_disabled", new Object[0]);
-					textCondition.getStyle().setColor(TextFormatting.DARK_RED);
-				}
-				else
-				{
-					textCondition = new TextComponentTranslation("item.tool_mattock.mode_enabled", new Object[0]);
-					textCondition.getStyle().setColor(TextFormatting.GREEN);
-				}
-
-				textItem.getStyle().setItalic(true);
-				textMode.getStyle().setColor(TextFormatting.AQUA);
-				textCondition.getStyle().setBold(true);
-
-				playerIn.addChatComponentMessage(new TextComponentString(textItem.getFormattedText() + " -> " + textMode.getFormattedText() + " : " + textCondition.getFormattedText()));
-
-				this.setRangeMode(itemStackIn, !isRangeMode);
-			}
-
-			playerIn.swingArm(hand);
-
-			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.UI_BUTTON_CLICK, SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-			return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
-		}
-
-		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
 	}
 
 	@Override
@@ -262,9 +211,52 @@ public class ItemToolMattock extends ItemTool
 		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}
 
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+	{
+		if (!playerIn.isSneaking())
+		{
+			return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+		}
+
+		boolean isRangeMode = this.isRangeMode(itemStackIn);
+
+		if (!worldIn.isRemote)
+		{
+			TextComponentString textItem = new TextComponentString(itemStackIn.getDisplayName());
+			TextComponentTranslation textMode = new TextComponentTranslation("item.tool_mattock.mode_name", new Object[0]);
+			TextComponentTranslation textCondition;
+
+			if (isRangeMode)
+			{
+				textCondition = new TextComponentTranslation("item.tool_mattock.mode_disabled", new Object[0]);
+				textCondition.getStyle().setColor(TextFormatting.DARK_RED);
+			}
+			else
+			{
+				textCondition = new TextComponentTranslation("item.tool_mattock.mode_enabled", new Object[0]);
+				textCondition.getStyle().setColor(TextFormatting.GREEN);
+			}
+
+			textItem.getStyle().setItalic(true);
+			textMode.getStyle().setColor(TextFormatting.AQUA);
+			textCondition.getStyle().setBold(true);
+
+			playerIn.addChatComponentMessage(new TextComponentString(textItem.getFormattedText() + " -> " + textMode.getFormattedText() + " : " + textCondition.getFormattedText()));
+
+			this.setRangeMode(itemStackIn, !isRangeMode);
+		}
+
+		playerIn.swingArm(hand);
+
+		worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.UI_BUTTON_CLICK, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+		return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+	}
+
 	// TODO /* ======================================== MOD START =====================================*/
 
-	private boolean isRangeMode(ItemStack stack)
+	public boolean isRangeMode(ItemStack stack)
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
@@ -278,7 +270,7 @@ public class ItemToolMattock extends ItemTool
 		return false;
 	}
 
-	private void setRangeMode(ItemStack stack, boolean isMode)
+	public void setRangeMode(ItemStack stack, boolean isMode)
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
