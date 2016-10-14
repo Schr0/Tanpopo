@@ -37,7 +37,7 @@ public class Tanpopo
 	/**
 	 * Forgeのバージョン.
 	 */
-	public static final String MOD_DEPENDENCIES = "required-after:Forge@[1.10.2-12.18.1.2011,)";
+	public static final String MOD_DEPENDENCIES = "required-after:Forge@[1.10.2-12.18.2.2099,)";
 
 	/**
 	 * Minecraftのバージョン.

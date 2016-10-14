@@ -28,7 +28,9 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 	public IFluidTankProperties[] getTankProperties()
 	{
 		return new FluidTankProperties[]
-		{ new FluidTankProperties(this.getFluid(), CAPACITY) };
+		{
+				new FluidTankProperties(this.getFluid(), CAPACITY)
+		};
 	}
 
 	@Override
@@ -107,7 +109,7 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 
 	// TODO /* ======================================== MOD START =====================================*/
 
-	public FluidStack getFluid()
+	private FluidStack getFluid()
 	{
 		if (ItemEssenceGlassBottle.isFill(this.container))
 		{
@@ -119,12 +121,12 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 		}
 	}
 
-	public void setFill()
+	private void setFill()
 	{
 		this.container.deserializeNBT(new ItemStack(TanpopoItems.ESSENCE_GLASS_BOTTLE).serializeNBT());
 	}
 
-	public void setEmpty()
+	private void setEmpty()
 	{
 		this.container.deserializeNBT(new ItemStack(Items.GLASS_BOTTLE).serializeNBT());
 	}

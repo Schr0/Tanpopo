@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
@@ -25,11 +24,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -37,7 +36,9 @@ public class ItemToolMattock extends ItemTool
 {
 
 	private static final Set<Block> EFFECTIVE_BLOCKS = Sets.newHashSet(new Block[]
-	{ Blocks.STONE });
+	{
+			Blocks.STONE
+	});
 
 	public ItemToolMattock()
 	{
@@ -128,7 +129,7 @@ public class ItemToolMattock extends ItemTool
 				IBlockState stateRange = worldIn.getBlockState(posRange);
 				Block blockRange = stateRange.getBlock();
 
-				blockRange.harvestBlock(worldIn, player, posRange, stateRange, null, stack);
+				blockRange.harvestBlock(worldIn, player, posRange, stateRange, worldIn.getTileEntity(posRange), stack);
 
 				if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) <= 0)
 				{
@@ -162,49 +163,15 @@ public class ItemToolMattock extends ItemTool
 				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
 				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
 
-				if (this.isRangeMode(stack))
+				if (itemBlockInv.onItemUse(stackInv, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
 				{
-					boolean isSucces = false;
-
-					for (BlockPos posAround : this.getRangeBlockPos(pos, playerIn))
+					if (stackInv.stackSize <= 0)
 					{
-						if (worldIn.isAirBlock(posAround))
-						{
-							continue;
-						}
-
-						if (itemBlockInv.onItemUse(stackInv, playerIn, worldIn, posAround, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
-						{
-							isSucces = true;
-
-							if (stackInv.stackSize <= 0)
-							{
-								playerIn.inventory.setInventorySlotContents(slot, (ItemStack) null);
-
-								break;
-							}
-						}
+						playerIn.inventory.setInventorySlotContents(slot, (ItemStack) null);
 					}
 
-					if (isSucces)
-					{
-						return EnumActionResult.SUCCESS;
-					}
+					return EnumActionResult.SUCCESS;
 				}
-				else
-				{
-					if (itemBlockInv.onItemUse(stackInv, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
-					{
-						if (stackInv.stackSize <= 0)
-						{
-							playerIn.inventory.setInventorySlotContents(slot, (ItemStack) null);
-						}
-
-						return EnumActionResult.SUCCESS;
-					}
-				}
-
-				return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 			}
 		}
 
@@ -286,66 +253,67 @@ public class ItemToolMattock extends ItemTool
 		stack.setTagCompound(nbtStack);
 	}
 
-	private List<BlockPos> getRangeBlockPos(BlockPos pos, EntityLivingBase owner)
+	private Set<BlockPos> getRangeBlockPos(BlockPos pos, EntityPlayer player)
 	{
-		List<BlockPos> posList = Lists.newArrayList(pos);
-		double length = 5.0D;
-		int range = 1;
+		Set<BlockPos> posSet = Sets.newHashSet();
+		RayTraceResult rayTraceResult = this.rayTrace(player.worldObj, player, false);
+		// ForgeHooks.rayTraceEyes(player, 5.0D)
 
-		if (ForgeHooks.rayTraceEyes(owner, length) == null)
+		if (rayTraceResult == null)
 		{
-			return posList;
+			return posSet;
 		}
 
-		int side = ForgeHooks.rayTraceEyes(owner, length).sideHit.getIndex();
+		int side = rayTraceResult.sideHit.getIndex();
+		int range = 1;
 
 		switch (side)
 		{
-			case 2:
+			case 2 :
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-range, -range, 0), pos.add(range, range, 0)))
 				{
-					posList.add(posAround);
+					posSet.add(posAround);
 				}
 
 				break;
 
-			case 3:
+			case 3 :
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(range, -range, 0), pos.add(-range, range, 0)))
 				{
-					posList.add(posAround);
+					posSet.add(posAround);
 				}
 
 				break;
 
-			case 4:
+			case 4 :
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(0, -range, -range), pos.add(0, range, range)))
 				{
-					posList.add(posAround);
+					posSet.add(posAround);
 				}
 
 				break;
 
-			case 5:
+			case 5 :
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(0, -range, range), pos.add(0, range, -range)))
 				{
-					posList.add(posAround);
+					posSet.add(posAround);
 				}
 
 				break;
 
-			default:
+			default :
 
 				for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-range, 0, -range), pos.add(range, 0, range)))
 				{
-					posList.add(posAround);
+					posSet.add(posAround);
 				}
 		}
 
-		return posList;
+		return posSet;
 	}
 
 }

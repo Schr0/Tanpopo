@@ -150,22 +150,22 @@ public class BlockPlantRoots extends Block implements IPlantable, IGrowable
 
 	// TODO /* ======================================== MOD START =====================================*/
 
-	public boolean hasUpPlant(World world, BlockPos pos)
+	private boolean hasUpPlant(World world, BlockPos pos)
 	{
 		return (world.getBlockState(pos.up()).getBlock() == TanpopoBlocks.PLANT_FLOWER);
 	}
 
-	public boolean canUpdateGrow(World world, BlockPos pos)
+	private boolean canUpdateGrow(World world, BlockPos pos)
 	{
 		return world.isDaytime() && (8 < world.getLightFromNeighbors(pos.up()));
 	}
 
-	public int getCheckPosXyz()
+	private int getCheckPosXyz()
 	{
 		return 4;
 	}
 
-	public int getGrowChance(World world, BlockPos pos)
+	private int getGrowChance(World world, BlockPos pos)
 	{
 		int chance = 2;
 		int checkPosXyz = this.getCheckPosXyz();

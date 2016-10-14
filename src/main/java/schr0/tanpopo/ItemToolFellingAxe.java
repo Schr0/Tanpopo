@@ -36,42 +36,25 @@ public class ItemToolFellingAxe extends ItemTool
 {
 
 	private static final Set<Block> EFFECTIVE_BLOCKS = Sets.newHashSet(new Block[]
-	{ Blocks.LOG, Blocks.LOG2, Blocks.LEAVES, Blocks.LEAVES2 });
+	{
+			Blocks.LOG, Blocks.LOG2, Blocks.LEAVES, Blocks.LEAVES2
+	});
 
 	private static final Set<Material> EFFECTIVE_MATERIALS = Sets.newHashSet(new Material[]
-	{ Material.WOOD, Material.PLANTS, Material.VINE });
+	{
+			Material.WOOD, Material.PLANTS, Material.VINE
+	});
+
+	private static final int COOLDWON_TIME = 10 * 20;
 
 	private int fellingBlockLimit;
 
 	public ItemToolFellingAxe()
 	{
 		super(8.0F, -3.0F, TanpopoToolMaterials.TIER_0, EFFECTIVE_BLOCKS);
-/*
-		this.addPropertyOverride(new ResourceLocation("blocking"), new IItemPropertyGetter()
-		{
-			@SideOnly(Side.CLIENT)
-			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-			{
-				return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F;
-			}
-		});
-//*/
+
 		this.fellingBlockLimit = TanpopoConfiguration.fellingBlockLimit;
 	}
-
-	/*
-	@Override
-	public EnumAction getItemUseAction(ItemStack stack)
-	{
-		return EnumAction.BLOCK;
-	}
-	
-	@Override
-	public int getMaxItemUseDuration(ItemStack stack)
-	{
-		return 72000;
-	}
-	//*/
 
 	@Override
 	public Set<String> getToolClasses(ItemStack stack)
@@ -152,7 +135,7 @@ public class ItemToolFellingAxe extends ItemTool
 					}
 					else
 					{
-						blockAround.harvestBlock(worldIn, player, posAround, stateAround, null, stack);
+						blockAround.harvestBlock(worldIn, player, posAround, stateAround, worldIn.getTileEntity(posAround), stack);
 
 						if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) <= 0)
 						{
@@ -176,14 +159,34 @@ public class ItemToolFellingAxe extends ItemTool
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
-
-/*
 		if (playerIn.isSneaking())
 		{
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}
-//*/
+
+		IBlockState state = worldIn.getBlockState(pos);
+		Block block = state.getBlock();
+
+		if (block.canHarvestBlock(worldIn, pos, playerIn) && block.canSilkHarvest(worldIn, pos, state, playerIn))
+		{
+			ItemStack stackCopy = stack.copy();
+
+			stackCopy.addEnchantment(Enchantments.SILK_TOUCH, 1);
+
+			block.harvestBlock(worldIn, playerIn, pos, state, worldIn.getTileEntity(pos), stackCopy);
+
+			worldIn.setBlockToAir(pos);
+
+			stack.damageItem(2, playerIn);
+
+			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+			playerIn.getCooldownTracker().setCooldown(this, COOLDWON_TIME);
+
+			return EnumActionResult.SUCCESS;
+		}
+
+		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}
 
 	@Override
@@ -191,11 +194,6 @@ public class ItemToolFellingAxe extends ItemTool
 	{
 		if (!playerIn.isSneaking())
 		{
-/*
-			playerIn.setActiveHand(hand);
-
-			return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
-//*/
 			return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
 		}
 

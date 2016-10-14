@@ -58,9 +58,9 @@ public class BlockEssence extends BlockFluidClassic
 	{
 		super.onEntityCollidedWithBlock(worldIn, pos, state, entityIn);
 
-		if (canCatchFire(worldIn, pos))
+		if (this.canCatchFire(worldIn, pos))
 		{
-			this.onCatchFireEssence(worldIn, pos, state);
+			this.onCatchFire(worldIn, pos, state);
 		}
 	}
 
@@ -69,9 +69,9 @@ public class BlockEssence extends BlockFluidClassic
 	{
 		super.onBlockAdded(world, pos, state);
 
-		if (canCatchFire(world, pos))
+		if (this.canCatchFire(world, pos))
 		{
-			this.onCatchFireEssence(world, pos, state);
+			this.onCatchFire(world, pos, state);
 		}
 	}
 
@@ -80,9 +80,9 @@ public class BlockEssence extends BlockFluidClassic
 	{
 		super.neighborChanged(state, world, pos, neighborBlock);
 
-		if (canCatchFire(world, pos))
+		if (this.canCatchFire(world, pos))
 		{
-			this.onCatchFireEssence(world, pos, state);
+			this.onCatchFire(world, pos, state);
 		}
 	}
 
@@ -91,18 +91,18 @@ public class BlockEssence extends BlockFluidClassic
 	{
 		super.updateTick(world, pos, state, rand);
 
-		if (canCatchFire(world, pos))
+		if (this.canCatchFire(world, pos))
 		{
-			this.onCatchFireEssence(world, pos, state);
+			this.onCatchFire(world, pos, state);
 		}
 	}
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
-		if (canCatchFire(worldIn, pos))
+		if (this.canCatchFire(worldIn, pos))
 		{
-			this.onCatchFireEssence(worldIn, pos, state);
+			this.onCatchFire(worldIn, pos, state);
 
 			return true;
 		}
@@ -125,12 +125,12 @@ public class BlockEssence extends BlockFluidClassic
 		}
 	}
 
-	public static int getCheckPosXyz()
+	private int getCheckPosXyz()
 	{
 		return 4;
 	}
 
-	public static boolean canCatchFire(World world, BlockPos pos)
+	private boolean canCatchFire(World world, BlockPos pos)
 	{
 		int checkPosXyz = getCheckPosXyz();
 
@@ -153,12 +153,15 @@ public class BlockEssence extends BlockFluidClassic
 		return false;
 	}
 
-	public static void onCatchFire(World world, BlockPos pos, float strength)
+	private void onCatchFire(World world, BlockPos pos, IBlockState state)
 	{
 		if (world.isRemote)
 		{
 			return;
 		}
+
+		int meta = ((Integer) state.getValue(LEVEL)).intValue();
+		float strength = (meta == 0) ? (6.0F) : (2.0F);
 
 		world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), strength, true);
 
@@ -173,14 +176,6 @@ public class BlockEssence extends BlockFluidClassic
 				world.setBlockState(posAround, Blocks.FIRE.getDefaultState(), 2);
 			}
 		}
-	}
-
-	public void onCatchFireEssence(World world, BlockPos pos, IBlockState state)
-	{
-		int meta = ((Integer) state.getValue(LEVEL)).intValue();
-		float strength = (meta == 0) ? (6.0F) : (2.0F);
-
-		onCatchFire(world, pos, strength);
 	}
 
 }

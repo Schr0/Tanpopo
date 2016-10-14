@@ -5,6 +5,7 @@ import net.minecraftforge.common.util.EnumHelper;
 
 public class TanpopoToolMaterials
 {
+
 	public static final Item.ToolMaterial TIER_0;
 
 	public static final String NAME_TIER_0 = "tier_0";

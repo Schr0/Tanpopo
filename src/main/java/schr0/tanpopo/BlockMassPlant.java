@@ -136,7 +136,9 @@ public class BlockMassPlant extends Block
 	protected BlockStateContainer createBlockState()
 	{
 		return new BlockStateContainer(this, new IProperty[]
-		{ PROPERTY_STAGE });
+		{
+				PROPERTY_STAGE
+		});
 	}
 
 	@Override
@@ -212,29 +214,12 @@ public class BlockMassPlant extends Block
 		return (this.getMaxStage() <= ((Integer) state.getValue(this.getStageProperty())).intValue());
 	}
 
-	public int getCheckPosXyz()
+	private int getCheckPosXyz()
 	{
 		return 4;
 	}
 
-	public boolean canFerment(World world, BlockPos pos)
-	{
-		int checkPosXyz = this.getCheckPosXyz();
-
-		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-checkPosXyz, -checkPosXyz, -checkPosXyz), pos.add(checkPosXyz, checkPosXyz, checkPosXyz)))
-		{
-			IBlockState stateAround = world.getBlockState(posAround);
-
-			if (stateAround.getMaterial() == Material.WATER)
-			{
-				return (world.getLight(pos) < 13);
-			}
-		}
-
-		return false;
-	}
-
-	public int getFermentChance(World worldIn, BlockPos pos)
+	private int getFermentChance(World worldIn, BlockPos pos)
 	{
 		int chance = 8;
 		int checkPosXyz = this.getCheckPosXyz();
@@ -252,6 +237,23 @@ public class BlockMassPlant extends Block
 		chance = Math.max(2, chance);
 
 		return chance;
+	}
+
+	private boolean canFerment(World world, BlockPos pos)
+	{
+		int checkPosXyz = this.getCheckPosXyz();
+
+		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-checkPosXyz, -checkPosXyz, -checkPosXyz), pos.add(checkPosXyz, checkPosXyz, checkPosXyz)))
+		{
+			IBlockState stateAround = world.getBlockState(posAround);
+
+			if (stateAround.getMaterial() == Material.WATER)
+			{
+				return (world.getLight(pos) < 13);
+			}
+		}
+
+		return false;
 	}
 
 }

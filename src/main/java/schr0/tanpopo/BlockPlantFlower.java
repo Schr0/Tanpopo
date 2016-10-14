@@ -94,7 +94,9 @@ public class BlockPlantFlower extends BlockBush implements IGrowable
 	protected BlockStateContainer createBlockState()
 	{
 		return new BlockStateContainer(this, new IProperty[]
-		{ PROPERTY_AGE });
+		{
+				PROPERTY_AGE
+		});
 	}
 
 	@Override
@@ -193,37 +195,37 @@ public class BlockPlantFlower extends BlockBush implements IGrowable
 		return (this.getMaxAge() <= ((Integer) state.getValue(this.getAgeProperty())).intValue());
 	}
 
-	public boolean hasDownRoots(World world, BlockPos pos)
+	private boolean hasDownRoots(World world, BlockPos pos)
 	{
 		return (world.getBlockState(pos.down()).getBlock() == TanpopoBlocks.PLANT_ROOTS);
 	}
 
-	public boolean canUpdateGrow(World world, BlockPos pos)
+	private boolean canUpdateGrow(World world, BlockPos pos)
 	{
 		return world.isDaytime() && (8 < world.getLightFromNeighbors(pos.up()));
 	}
 
-	public int getCheckPosXyz()
+	private int getCheckPosXyz()
 	{
 		return 1;
 	}
 
-	public int getGrowChance(World world, BlockPos pos, int age)
+	private int getGrowChance(World world, BlockPos pos, int age)
 	{
 		int chance = 2;
 		int checkPosXyz = this.getCheckPosXyz();
 
 		switch (age)
 		{
-			case 0:
+			case 0 :
 				chance = 4;
 				break;
 
-			case 5:
+			case 5 :
 				chance = 6;
 				break;
 
-			case 10:
+			case 10 :
 				chance = 8;
 				break;
 		}

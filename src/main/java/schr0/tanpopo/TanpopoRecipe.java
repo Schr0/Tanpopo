@@ -108,12 +108,12 @@ public class TanpopoRecipe
 					'X', new ItemStack(TanpopoItems.MATERIAL_MASS, 1, itemMeta),
 			}));
 		}
-/*
-		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Items.DYE, 4, EnumDyeColor.YELLOW.getDyeDamage()), new Object[]
-		{
-				TanpopoItems.MATERIAL_PETAL,
-		}));
-//*/
+		/*
+				GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Items.DYE, 4, EnumDyeColor.YELLOW.getDyeDamage()), new Object[]
+				{
+						TanpopoItems.MATERIAL_PETAL,
+				}));
+		//*/
 		GameRegistry.addRecipe(new ShapedOreRecipe(TanpopoBlocks.FLUFF_CUSHION, new Object[]
 		{
 				"XX ",
@@ -127,8 +127,7 @@ public class TanpopoRecipe
 		{
 			GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TanpopoBlocks.FLUFF_CUSHION, 1, color), new Object[]
 			{
-					TanpopoBlocks.FLUFF_CUSHION,
-					new ItemStack(Items.DYE, 1, EnumDyeColor.byMetadata(color).getDyeDamage()),
+					TanpopoBlocks.FLUFF_CUSHION, new ItemStack(Items.DYE, 1, EnumDyeColor.byMetadata(color).getDyeDamage()),
 			}));
 		}
 	}
@@ -141,27 +140,18 @@ public class TanpopoRecipe
 
 			GameRegistry.addRecipe(new ShapelessOreRecipe(universalBucket, new Object[]
 			{
-					Items.BUCKET,
-					TanpopoItems.ESSENCE_GLASS_BOTTLE,
-					TanpopoItems.ESSENCE_GLASS_BOTTLE,
-					TanpopoItems.ESSENCE_GLASS_BOTTLE,
-					TanpopoItems.ESSENCE_GLASS_BOTTLE,
+					Items.BUCKET, TanpopoItems.ESSENCE_GLASS_BOTTLE, TanpopoItems.ESSENCE_GLASS_BOTTLE, TanpopoItems.ESSENCE_GLASS_BOTTLE, TanpopoItems.ESSENCE_GLASS_BOTTLE,
 			}));
 
 			GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL, 4), new Object[]
 			{
-					universalBucket,
-					new ItemStack(Items.COAL, 1, 1),
-					new ItemStack(Items.COAL, 1, 1),
-					new ItemStack(Items.COAL, 1, 1),
-					new ItemStack(Items.COAL, 1, 1),
+					universalBucket, new ItemStack(Items.COAL, 1, 1), new ItemStack(Items.COAL, 1, 1), new ItemStack(Items.COAL, 1, 1), new ItemStack(Items.COAL, 1, 1),
 			}));
 		}
 
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL), new Object[]
 		{
-				TanpopoItems.ESSENCE_GLASS_BOTTLE,
-				new ItemStack(Items.COAL, 1, 1),
+				TanpopoItems.ESSENCE_GLASS_BOTTLE, new ItemStack(Items.COAL, 1, 1),
 		}));
 	}
 

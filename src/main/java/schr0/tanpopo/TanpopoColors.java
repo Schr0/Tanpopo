@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class TanpopoColors
 {
+
 	private static final BlockColors COLORS_BLOCK = Tanpopo.proxy.getMinecraft().getBlockColors();
 	private static final ItemColors COLORS_ITEM = Tanpopo.proxy.getMinecraft().getItemColors();
 

@@ -65,11 +65,17 @@ public class TanpopoItems
 	private static void register()
 	{
 		TanpopoForgeRegistry.registerItem(MATERIAL_ROOTS, NAME_MATERIAL_ROOTS, META_MATERIAL_ROOTS, new String[]
-		{ "string" });
+		{
+				"string"
+		});
 		TanpopoForgeRegistry.registerItem(MATERIAL_LEAF, NAME_MATERIAL_LEAF, META_MATERIAL_LEAF, new String[]
-		{ "feather" });
+		{
+				"feather"
+		});
 		TanpopoForgeRegistry.registerItem(MATERIAL_STALK, NAME_MATERIAL_STALK, META_MATERIAL_STALK, new String[]
-		{ "stickWood" });
+		{
+				"stickWood"
+		});
 		TanpopoForgeRegistry.registerItem(MATERIAL_PETAL, NAME_MATERIAL_PETAL, META_MATERIAL_PETAL);
 		TanpopoForgeRegistry.registerItem(MATERIAL_FLUFF, NAME_MATERIAL_FLUFF, META_MATERIAL_FLUFF);
 		TanpopoForgeRegistry.registerItem(MATERIAL_MASS, NAME_MATERIAL_MASS, META_MATERIAL_MASS);
