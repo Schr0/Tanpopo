@@ -1,7 +1,6 @@
 package schr0.tanpopo;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -13,45 +12,34 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemToolFellingAxe extends ItemTool
+public class ItemToolFellingAxe extends ItemModeAttachedTool
 {
-
-	private static final Set<Block> EFFECTIVE_BLOCKS = Sets.newHashSet(new Block[]
-	{
-			Blocks.LOG, Blocks.LOG2, Blocks.LEAVES, Blocks.LEAVES2
-	});
 
 	private static final Set<Material> EFFECTIVE_MATERIALS = Sets.newHashSet(new Material[]
 	{
-			Material.WOOD, Material.PLANTS, Material.VINE
+			Material.WOOD, Material.LEAVES
 	});
 
-	private static final int COOLDWON_TIME = 10 * 20;
+	private static final int COOLDWON_TIME = (10 * 20);
 
 	private int fellingBlockLimit;
 
 	public ItemToolFellingAxe()
 	{
-		super(8.0F, -3.0F, TanpopoToolMaterials.TIER_0, EFFECTIVE_BLOCKS);
+		super(8.0F, -3.1F, TanpopoToolMaterials.TIER_0);
 
 		this.fellingBlockLimit = TanpopoConfiguration.fellingBlockLimit;
 	}
@@ -63,47 +51,23 @@ public class ItemToolFellingAxe extends ItemTool
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
-	{
-		TextComponentTranslation textMode = new TextComponentTranslation("item.tool_felling_axe.mode_name", new Object[0]);
-		TextComponentTranslation textCondition;
-
-		if (this.isFellingMode(stack))
-		{
-			textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_enabled", new Object[0]);
-			textCondition.getStyle().setColor(TextFormatting.GREEN);
-		}
-		else
-		{
-			textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_disabled", new Object[0]);
-			textCondition.getStyle().setColor(TextFormatting.DARK_RED);
-		}
-
-		textMode.getStyle().setColor(TextFormatting.AQUA);
-		textCondition.getStyle().setBold(true);
-
-		tooltip.add(new TextComponentString(textMode.getFormattedText() + " : " + textCondition.getFormattedText()).getFormattedText());
-	}
-
-	@Override
 	public float getStrVsBlock(ItemStack stack, IBlockState state)
 	{
 		for (Material material : EFFECTIVE_MATERIALS)
 		{
-			if (material == state.getMaterial())
+			if ((material == state.getMaterial()) && this.canHarvestBlock(state))
 			{
 				return this.efficiencyOnProperMaterial;
 			}
 		}
 
-		return 1.0F;
+		return super.getStrVsBlock(stack, state);
 	}
 
 	@Override
 	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
 	{
-		if (!state.getBlock().isWood(worldIn, pos) || !this.isFellingMode(stack) || !(entityLiving instanceof EntityPlayer))
+		if (!this.canFellingAction(stack, worldIn, state, pos, entityLiving))
 		{
 			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 		}
@@ -117,15 +81,15 @@ public class ItemToolFellingAxe extends ItemTool
 		{
 			for (BlockPos posAround : BlockPos.getAllInBox(posFelling.add(-1, -1, -1), posFelling.add(1, 1, 1)))
 			{
+				if (posAround.getY() < pos.getY())
+				{
+					continue;
+				}
+
 				if (this.isFellingBlocks(worldIn, posAround))
 				{
 					IBlockState stateAround = worldIn.getBlockState(posAround);
 					Block blockAround = stateAround.getBlock();
-
-					if (posAround.getY() < pos.getY())
-					{
-						continue;
-					}
 
 					if (blockAround.isLeaves(stateAround, worldIn, posAround))
 					{
@@ -159,7 +123,7 @@ public class ItemToolFellingAxe extends ItemTool
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if (playerIn.isSneaking())
+		if (playerIn.isSneaking() || !playerIn.canPlayerEdit(pos, facing, stack))
 		{
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}
@@ -177,7 +141,7 @@ public class ItemToolFellingAxe extends ItemTool
 
 			worldIn.setBlockToAir(pos);
 
-			stack.damageItem(2, playerIn);
+			stack.damageItem(1, playerIn);
 
 			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
@@ -189,78 +153,23 @@ public class ItemToolFellingAxe extends ItemTool
 		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
-	{
-		if (!playerIn.isSneaking())
-		{
-			return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
-		}
-
-		if (!worldIn.isRemote)
-		{
-			boolean isFellingMode = this.isFellingMode(itemStackIn);
-			TextComponentString textItem = new TextComponentString(itemStackIn.getDisplayName());
-			TextComponentTranslation textMode = new TextComponentTranslation("item.tool_felling_axe.mode_name", new Object[0]);
-			TextComponentTranslation textCondition;
-
-			if (isFellingMode)
-			{
-				textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_disabled", new Object[0]);
-				textCondition.getStyle().setColor(TextFormatting.DARK_RED);
-			}
-			else
-			{
-				textCondition = new TextComponentTranslation("item.tool_felling_axe.mode_enabled", new Object[0]);
-				textCondition.getStyle().setColor(TextFormatting.GREEN);
-			}
-
-			textItem.getStyle().setItalic(true);
-			textMode.getStyle().setColor(TextFormatting.AQUA);
-			textCondition.getStyle().setBold(true);
-
-			playerIn.addChatComponentMessage(new TextComponentString(textItem.getFormattedText() + " -> " + textMode.getFormattedText() + " : " + textCondition.getFormattedText()));
-
-			this.setFellingMode(itemStackIn, !isFellingMode);
-		}
-
-		playerIn.swingArm(hand);
-
-		worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.UI_BUTTON_CLICK, SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-		return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
-	}
-
 	// TODO /* ======================================== MOD START =====================================*/
 
-	public boolean isFellingMode(ItemStack stack)
+	@Override
+	@SideOnly(Side.CLIENT)
+	public TextComponentTranslation getModeName()
 	{
-		NBTTagCompound nbtStack = stack.getTagCompound();
+		return new TextComponentTranslation("item.tool_felling_axe.mode_name", new Object[0]);
+	}
 
-		if (nbtStack != null && nbtStack.hasKey(TanpopoNBTTags.ITEM_TOOL_FELLING_AXE_MODE, 3))
+	private boolean canFellingAction(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
+	{
+		if (this.isMode(stack) && (entityLiving instanceof EntityPlayer))
 		{
-			int value = nbtStack.getInteger(TanpopoNBTTags.ITEM_TOOL_FELLING_AXE_MODE);
-
-			return (value == 1);
+			return state.getBlock().isWood(worldIn, pos);
 		}
 
 		return false;
-	}
-
-	public void setFellingMode(ItemStack stack, boolean isMode)
-	{
-		NBTTagCompound nbtStack = stack.getTagCompound();
-
-		if (nbtStack == null)
-		{
-			nbtStack = new NBTTagCompound();
-		}
-
-		int value = isMode ? (1) : (0);
-
-		nbtStack.setInteger(TanpopoNBTTags.ITEM_TOOL_FELLING_AXE_MODE, value);
-
-		stack.setTagCompound(nbtStack);
 	}
 
 	private boolean isFellingBlocks(World world, BlockPos pos)

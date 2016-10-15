@@ -57,13 +57,13 @@ item.material_mass_1.name=Material Fermented Tanpopo Mass
 item.essence_glass_bottle.name=Tanpopo Essence Glass Bottle
 item.essence_solid_fuel.name=Tanpopo Essence Solid Fuel
 item.tool_mattock.name=Tanpopo Mattock
-item.tool_mattock.mode_name=RangeMode
-item.tool_mattock.mode_enabled=Enabled
-item.tool_mattock.mode_disabled=Disabled
 item.tool_felling_axe.name=Tanpopo Felling Axe
+item.tool_mowing_hoe.name=Tanpopo Mowing Hoe
+item.tool_mattock.mode_name=RangeMode
 item.tool_felling_axe.mode_name=FellingMode
-item.tool_felling_axe.mode_enabled=Enabled
-item.tool_felling_axe.mode_disabled=Disabled
+item.tool_mowing_hoe.mode_name= W I P
+item.tool.mode_enabled=Enabled
+item.tool.mode_disabled=Disabled
 
 // ======================================== FLUID ===================================== //
 fluid.fluid_essence=Tanpopo Essence

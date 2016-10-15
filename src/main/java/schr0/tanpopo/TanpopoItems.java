@@ -17,6 +17,7 @@ public class TanpopoItems
 	public static final Item ESSENCE_SOLID_FUEL;
 	public static final Item TOOL_MATTOCK;
 	public static final Item TOOL_FELLING_AXE;
+	public static final Item TOOL_MOWING_HOE;
 
 	public static final String NAME_MATERIAL_ROOTS = "material_roots";
 	public static final String NAME_MATERIAL_LEAF = "material_leaf";
@@ -28,6 +29,7 @@ public class TanpopoItems
 	public static final String NAME_ESSENCE_SOLID_FUEL = "essence_solid_fuel";
 	public static final String NAME_TOOL_MATTOCK = "tool_mattock";
 	public static final String NAME_TOOL_FELLING_AXE = "tool_felling_axe";
+	public static final String NAME_TOOL_MOWING_HOE = "tool_mowing_hoe";
 
 	public static final int META_MATERIAL_ROOTS = 0;
 	public static final int META_MATERIAL_LEAF = 0;
@@ -39,6 +41,7 @@ public class TanpopoItems
 	public static final int META_ESSENCE_SOLID_FUEL = 0;
 	public static final int META_TOOL_MATTOCK = 0;
 	public static final int META_TOOL_FELLING_AXE = 0;
+	public static final int META_TOOL_MOWING_HOE = 0;
 
 	static
 	{
@@ -52,6 +55,7 @@ public class TanpopoItems
 		ESSENCE_SOLID_FUEL = new ItemEssenceSolidFuel().setUnlocalizedName(NAME_ESSENCE_SOLID_FUEL).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		TOOL_MATTOCK = new ItemToolMattock().setUnlocalizedName(NAME_TOOL_MATTOCK).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		TOOL_FELLING_AXE = new ItemToolFellingAxe().setUnlocalizedName(NAME_TOOL_FELLING_AXE).setCreativeTab(TanpopoCreativeTabs.ITEM);
+		TOOL_MOWING_HOE = new ItemToolMowingHoe().setUnlocalizedName(NAME_TOOL_MOWING_HOE).setCreativeTab(TanpopoCreativeTabs.ITEM);
 	}
 
 	public void init()
@@ -83,6 +87,7 @@ public class TanpopoItems
 		TanpopoForgeRegistry.registerItem(ESSENCE_SOLID_FUEL, NAME_ESSENCE_SOLID_FUEL, META_ESSENCE_SOLID_FUEL);
 		TanpopoForgeRegistry.registerItem(TOOL_MATTOCK, NAME_TOOL_MATTOCK, META_TOOL_MATTOCK);
 		TanpopoForgeRegistry.registerItem(TOOL_FELLING_AXE, NAME_TOOL_FELLING_AXE, META_TOOL_FELLING_AXE);
+		TanpopoForgeRegistry.registerItem(TOOL_MOWING_HOE, NAME_TOOL_MOWING_HOE, META_TOOL_MOWING_HOE);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -104,6 +109,7 @@ public class TanpopoItems
 		TanpopoModelLoader.registerModel(ESSENCE_SOLID_FUEL, META_ESSENCE_SOLID_FUEL);
 		TanpopoModelLoader.registerModel(TOOL_MATTOCK, META_TOOL_MATTOCK);
 		TanpopoModelLoader.registerModel(TOOL_FELLING_AXE, META_TOOL_FELLING_AXE);
+		TanpopoModelLoader.registerModel(TOOL_MOWING_HOE, META_TOOL_MOWING_HOE);
 	}
 
 }
