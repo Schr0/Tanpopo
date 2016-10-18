@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.material.Material;
@@ -21,7 +20,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryDefaulted;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
@@ -31,102 +29,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ItemToolMowingHoe extends ItemModeAttachedTool
 {
 
-	public static class TillBlock
-	{
-
-		public IBlockState getResultBlockState(World world, BlockPos pos, IBlockState state)
-		{
-			return (IBlockState) null;
-		}
-
-	}
-
 	private static final Set<Material> EFFECTIVE_MATERIALS = Sets.newHashSet(new Material[]
 	{
-			Material.GRASS, Material.GOURD, Material.CACTUS, Material.CORAL, Material.GROUND, Material.LEAVES, Material.PLANTS, Material.VINE
+			Material.GROUND, Material.GRASS, Material.SAND, Material.CLAY, Material.SNOW,
 	});
-
-	private static final RegistryDefaulted<Block, TillBlock> TILL_BLOCK_REGISTRY = new RegistryDefaulted((TillBlock) null);
-
-	static
-	{
-		TILL_BLOCK_REGISTRY.putObject(Blocks.DIRT, new TillBlock()
-		{
-
-			@Override
-			public IBlockState getResultBlockState(World world, BlockPos pos, IBlockState state)
-			{
-				switch ((BlockDirt.DirtType) state.getValue(BlockDirt.VARIANT))
-				{
-					case DIRT :
-
-						return Blocks.FARMLAND.getDefaultState();
-
-					case COARSE_DIRT :
-
-						return Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT);
-
-					default :
-						break;
-				}
-
-				return super.getResultBlockState(world, pos, state);
-			}
-
-		});
-
-		TILL_BLOCK_REGISTRY.putObject(Blocks.GRASS, new TillBlock()
-		{
-
-			@Override
-			public IBlockState getResultBlockState(World world, BlockPos pos, IBlockState state)
-			{
-				return Blocks.GRASS_PATH.getDefaultState();
-			}
-
-		});
-
-		TILL_BLOCK_REGISTRY.putObject(Blocks.GRASS_PATH, new TillBlock()
-		{
-
-			@Override
-			public IBlockState getResultBlockState(World world, BlockPos pos, IBlockState state)
-			{
-				return Blocks.FARMLAND.getDefaultState();
-			}
-
-		});
-
-		TILL_BLOCK_REGISTRY.putObject(Blocks.FARMLAND, new TillBlock()
-		{
-
-			@Override
-			public IBlockState getResultBlockState(World world, BlockPos pos, IBlockState state)
-			{
-				if (state.getBlock().getMetaFromState(state) < 7 && this.hasWater(world, pos))
-				{
-					return Blocks.FARMLAND.getDefaultState().withProperty(BlockFarmland.MOISTURE, 7);
-				}
-
-				return super.getResultBlockState(world, pos, state);
-			}
-
-			private boolean hasWater(World worldIn, BlockPos pos)
-			{
-				for (BlockPos.MutableBlockPos blockpos$mutableblockpos : BlockPos.getAllInBoxMutable(pos.add(-4, 0, -4), pos.add(4, 1, 4)))
-				{
-					if (worldIn.getBlockState(blockpos$mutableblockpos).getMaterial() == Material.WATER)
-					{
-						return true;
-					}
-				}
-
-				return false;
-			}
-
-		});
-
-	}
 
 	public ItemToolMowingHoe()
 	{
@@ -137,6 +43,17 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 	public Set<String> getToolClasses(ItemStack stack)
 	{
 		return ImmutableSet.of("shovel");
+	}
+
+	@Override
+	public boolean canHarvestBlock(IBlockState blockIn)
+	{
+		if (blockIn.getBlock() == Blocks.SNOW_LAYER || blockIn.getBlock() == Blocks.SNOW)
+		{
+			return true;
+		}
+
+		return super.canHarvestBlock(blockIn);
 	}
 
 	@Override
@@ -166,16 +83,13 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}
 
-		IBlockState state = worldIn.getBlockState(pos);
-		Block block = state.getBlock();
-
-		if ((facing != EnumFacing.DOWN) && worldIn.isAirBlock(pos.up()) && (this.getTillBlock(block) != null))
+		if ((facing != EnumFacing.DOWN) && worldIn.isAirBlock(pos.up()))
 		{
-			TillBlock tillBlock = this.getTillBlock(block);
+			IBlockState state = worldIn.getBlockState(pos);
 
-			if (tillBlock.getResultBlockState(worldIn, pos, state) != null)
+			if (this.getTillBlockResult(state, worldIn, pos) != null)
 			{
-				worldIn.setBlockState(pos, tillBlock.getResultBlockState(worldIn, pos, state));
+				worldIn.setBlockState(pos, this.getTillBlockResult(state, worldIn, pos));
 
 				stack.damageItem(1, playerIn);
 
@@ -183,11 +97,6 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 
 				return EnumActionResult.SUCCESS;
 			}
-		}
-
-		if (block instanceof IPlantable)
-		{
-
 		}
 
 		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
@@ -203,14 +112,61 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 	}
 
 	@Nullable
-	private TillBlock getTillBlock(Block block)
+	private IBlockState getTillBlockResult(IBlockState state, World world, BlockPos pos)
 	{
-		if (TILL_BLOCK_REGISTRY.getObject(block) == null)
+		IBlockState stateFarmland = this.getMoistureFarmland(world, pos);
+
+		if (state.getBlock() == Blocks.GRASS)
 		{
-			return (TillBlock) null;
+			return Blocks.GRASS_PATH.getDefaultState();
 		}
 
-		return (TillBlock) TILL_BLOCK_REGISTRY.getObject(block);
+		if (state.getBlock() == Blocks.GRASS_PATH)
+		{
+			return stateFarmland;
+		}
+
+		if (state.getBlock() == Blocks.DIRT)
+		{
+			switch ((BlockDirt.DirtType) state.getValue(BlockDirt.VARIANT))
+			{
+				case DIRT :
+
+					return stateFarmland;
+
+				case COARSE_DIRT :
+
+					return Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT);
+
+				default :
+					break;
+			}
+		}
+
+		if (state.getBlock() == Blocks.FARMLAND)
+		{
+			if ((state.getBlock().getMetaFromState(state) < 7) && (stateFarmland.getBlock().getMetaFromState(stateFarmland) == 7))
+			{
+				return stateFarmland;
+			}
+		}
+
+		return (IBlockState) null;
+	}
+
+	private IBlockState getMoistureFarmland(World world, BlockPos pos)
+	{
+		IBlockState state = Blocks.FARMLAND.getDefaultState().withProperty(BlockFarmland.MOISTURE, 6);
+
+		for (BlockPos.MutableBlockPos blockpos$mutableblockpos : BlockPos.getAllInBoxMutable(pos.add(-4, 0, -4), pos.add(4, 1, 4)))
+		{
+			if (world.getBlockState(blockpos$mutableblockpos).getMaterial() == Material.WATER)
+			{
+				return state.withProperty(BlockFarmland.MOISTURE, 7);
+			}
+		}
+
+		return state;
 	}
 
 }

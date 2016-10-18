@@ -30,7 +30,7 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 
 	private static final Set<Material> EFFECTIVE_MATERIALS = Sets.newHashSet(new Material[]
 	{
-			Material.WOOD, Material.LEAVES
+			Material.WOOD, Material.LEAVES, Material.VINE,
 	});
 
 	private static final int COOLDWON_TIME = (10 * 20);
