@@ -123,7 +123,7 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if (playerIn.isSneaking() || !playerIn.canPlayerEdit(pos, facing, stack))
+		if (this.canChageMode(playerIn) || !playerIn.canPlayerEdit(pos, facing, stack))
 		{
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}

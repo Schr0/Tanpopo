@@ -59,9 +59,9 @@ item.essence_solid_fuel.name=Tanpopo Essence Solid Fuel
 item.tool_mattock.name=Tanpopo Mattock
 item.tool_felling_axe.name=Tanpopo Felling Axe
 item.tool_mowing_hoe.name=Tanpopo Mowing Hoe
-item.tool_mattock.mode_name=RangeMode
-item.tool_felling_axe.mode_name=FellingMode
-item.tool_mowing_hoe.mode_name= W I P
+item.tool_mattock.mode_name=Range Mode
+item.tool_felling_axe.mode_name=Felling Mode
+item.tool_mowing_hoe.mode_name=Mowing Mode
 item.tool.mode_enabled=Enabled
 item.tool.mode_disabled=Disabled
 

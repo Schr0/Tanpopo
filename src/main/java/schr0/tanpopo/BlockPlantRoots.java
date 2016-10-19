@@ -73,7 +73,7 @@ public class BlockPlantRoots extends Block implements IPlantable, IGrowable
 
 		if (state.getBlock() != this)
 		{
-			return getDefaultState();
+			return this.getDefaultState();
 		}
 
 		return state;
@@ -101,7 +101,7 @@ public class BlockPlantRoots extends Block implements IPlantable, IGrowable
 				IBlockState stateAround = worldIn.getBlockState(posAround);
 				Block blockAround = stateAround.getBlock();
 
-				if ((posAround == pos) || (blockAround == TanpopoBlocks.PLANT_ROOTS))
+				if (posAround.equals(pos) || (blockAround == TanpopoBlocks.PLANT_ROOTS))
 				{
 					continue;
 				}

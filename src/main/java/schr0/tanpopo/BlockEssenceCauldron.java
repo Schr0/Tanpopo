@@ -28,48 +28,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockEssenceCauldron extends BlockCauldron
 {
 
-	/*
-		public static class ActivatedCraft
-		{
-			public @Nullable ItemStack getResult(ItemStack stack)
-			{
-				return (ItemStack) null;
-			}
-		}
-	
-		public static final BlockEssenceCauldron.ActivatedCraft ACTIVATED_CRAFT_DEFAULTED = new BlockEssenceCauldron.ActivatedCraft();
-		public static final RegistryDefaulted<Item, BlockEssenceCauldron.ActivatedCraft> ACTIVATED_CRAFT_REGISTRY = new RegistryDefaulted(ACTIVATED_CRAFT_DEFAULTED);
-	
-		static
-		{
-			ACTIVATED_CRAFT_REGISTRY.putObject(Items.COAL, new BlockEssenceCauldron.ActivatedCraft()
-			{
-	
-				@Override
-				public ItemStack getResult(ItemStack stack)
-				{
-					if (stack.getItemDamage() != 1)
-					{
-						return super.getResult(stack);
-					}
-	
-					return new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL);
-				}
-	
-			});
-		}
-	
-		private @Nullable ItemStack getActivatedCraftResult(ItemStack stack)
-		{
-			if (ACTIVATED_CRAFT_REGISTRY.getObject(stack.getItem()) == ACTIVATED_CRAFT_DEFAULTED)
-			{
-				return (ItemStack) null;
-			}
-	
-			return (ItemStack) ACTIVATED_CRAFT_REGISTRY.getObject(stack.getItem()).getResult(stack);
-		}
-	//*/
-
 	public BlockEssenceCauldron()
 	{
 		super();
@@ -94,12 +52,11 @@ public class BlockEssenceCauldron extends BlockCauldron
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
 	{
-		int meta = ((Integer) state.getValue(LEVEL)).intValue();
-		float depth = (float) pos.getY() + (6.0F + (float) (4 * meta)) / 16.0F;
+		float depth = (float) pos.getY() + (6.0F + (float) ((Integer) state.getValue(LEVEL)).intValue() * 4) / 16.0F;
 
 		if (!worldIn.isRemote && entityIn.isBurning() && (entityIn.getEntityBoundingBox().minY <= (double) depth))
 		{
-			this.onCatchFire(worldIn, pos, state, meta);
+			this.onCatchFire(worldIn, pos, state);
 		}
 	}
 
@@ -125,7 +82,7 @@ public class BlockEssenceCauldron extends BlockCauldron
 					{
 						this.addResultItemToInventory(playerIn, hand, heldItem, UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE));
 
-						worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState(), 2);
+						worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState());
 
 						playerIn.addStat(StatList.CAULDRON_USED);
 					}
@@ -142,7 +99,7 @@ public class BlockEssenceCauldron extends BlockCauldron
 
 						if (level < 0)
 						{
-							worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState(), 2);
+							worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState());
 						}
 						else
 						{
@@ -157,34 +114,7 @@ public class BlockEssenceCauldron extends BlockCauldron
 
 				return true;
 			}
-			/*
-						else if (this.getActivatedCraftResult(heldItem) != null)
-						{
-							if (!worldIn.isRemote)
-							{
-								this.addResultItemToInventory(playerIn, hand, heldItem, this.getActivatedCraftResult(heldItem));
-			
-								--level;
-			
-								if (level < 0)
-								{
-									worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState(), 2);
-								}
-								else
-								{
-									this.setWaterLevel(worldIn, pos, state, level);
-								}
-			
-								playerIn.addStat(StatList.CAULDRON_USED);
-							}
-			
-							worldIn.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
-			
-							BlockEssence.spawnParticles(worldIn, pos);
-			
-							return true;
-						}
-			//*/
+
 			return false;
 		}
 
@@ -198,14 +128,14 @@ public class BlockEssenceCauldron extends BlockCauldron
 		return 4;
 	}
 
-	private void onCatchFire(World world, BlockPos pos, IBlockState state, int meta)
+	private void onCatchFire(World world, BlockPos pos, IBlockState state)
 	{
 		if (world.isRemote)
 		{
 			return;
 		}
 
-		float strength = (meta == 0) ? (6.0F) : (2.0F);
+		float strength = ((Integer) state.getValue(LEVEL).intValue() == 0) ? (6.0F) : (2.0F);
 
 		world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), strength, true);
 

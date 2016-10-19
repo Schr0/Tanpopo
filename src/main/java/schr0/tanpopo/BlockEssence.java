@@ -132,7 +132,7 @@ public class BlockEssence extends BlockFluidClassic
 
 	private boolean canCatchFire(World world, BlockPos pos)
 	{
-		int checkPosXyz = getCheckPosXyz();
+		int checkPosXyz = this.getCheckPosXyz();
 
 		for (Entity entityAround : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).expandXyz((double) checkPosXyz)))
 		{
@@ -160,8 +160,7 @@ public class BlockEssence extends BlockFluidClassic
 			return;
 		}
 
-		int meta = ((Integer) state.getValue(LEVEL)).intValue();
-		float strength = (meta == 0) ? (6.0F) : (2.0F);
+		float strength = (((Integer) state.getValue(LEVEL)).intValue() == 0) ? (6.0F) : (2.0F);
 
 		world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), strength, true);
 

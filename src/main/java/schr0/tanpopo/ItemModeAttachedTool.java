@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -45,12 +46,11 @@ public abstract class ItemModeAttachedTool extends ItemTool
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
 	{
-		if (playerIn.isSneaking())
+		if (this.canChageMode(playerIn))
 		{
 			if (!worldIn.isRemote)
 			{
 				boolean isMode = this.isMode(itemStackIn);
-
 				TextComponentString textItem = new TextComponentString(itemStackIn.getDisplayName());
 
 				textItem.getStyle().setItalic(true);
@@ -74,6 +74,29 @@ public abstract class ItemModeAttachedTool extends ItemTool
 
 	@SideOnly(Side.CLIENT)
 	public abstract TextComponentTranslation getModeName();
+
+	@SideOnly(Side.CLIENT)
+	public String getModeText(TextComponentTranslation textModeName, ItemStack stack, boolean isMode)
+	{
+		TextComponentTranslation textMode = this.getModeName();
+		TextComponentTranslation textCondition;
+
+		if (isMode)
+		{
+			textCondition = new TextComponentTranslation("item.tool.mode_enabled", new Object[0]);
+			textCondition.getStyle().setColor(TextFormatting.GREEN);
+		}
+		else
+		{
+			textCondition = new TextComponentTranslation("item.tool.mode_disabled", new Object[0]);
+			textCondition.getStyle().setColor(TextFormatting.DARK_RED);
+		}
+
+		textMode.getStyle().setColor(TextFormatting.AQUA);
+		textCondition.getStyle().setBold(true);
+
+		return new TextComponentString(textMode.getFormattedText() + " : " + textCondition.getFormattedText()).getFormattedText();
+	}
 
 	public String getModeKey()
 	{
@@ -112,27 +135,9 @@ public abstract class ItemModeAttachedTool extends ItemTool
 		stack.setTagCompound(nbtStack);
 	}
 
-	@SideOnly(Side.CLIENT)
-	public String getModeText(TextComponentTranslation textModeName, ItemStack stack, boolean isMode)
+	public boolean canChageMode(EntityLivingBase owner)
 	{
-		TextComponentTranslation textMode = this.getModeName();
-		TextComponentTranslation textCondition;
-
-		if (isMode)
-		{
-			textCondition = new TextComponentTranslation("item.tool.mode_enabled", new Object[0]);
-			textCondition.getStyle().setColor(TextFormatting.GREEN);
-		}
-		else
-		{
-			textCondition = new TextComponentTranslation("item.tool.mode_disabled", new Object[0]);
-			textCondition.getStyle().setColor(TextFormatting.DARK_RED);
-		}
-
-		textMode.getStyle().setColor(TextFormatting.AQUA);
-		textCondition.getStyle().setBold(true);
-
-		return new TextComponentString(textMode.getFormattedText() + " : " + textCondition.getFormattedText()).getFormattedText();
+		return owner.isSneaking();
 	}
 
 }

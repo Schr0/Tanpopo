@@ -75,9 +75,12 @@ public class BlockMassPlant extends Block
 			{
 				worldIn.spawnParticle(EnumParticleTypes.SPELL_MOB, posX, posY, posZ, 0.0D, -128.0D, 0.0D, new int[0]);
 			}
-			else if (this.canFerment(worldIn, pos))
+			else
 			{
-				worldIn.spawnParticle(EnumParticleTypes.SPELL_MOB, posX, posY, posZ, -255.0D, -255.0D, -255.0D, new int[0]);
+				if (this.canFerment(worldIn, pos))
+				{
+					worldIn.spawnParticle(EnumParticleTypes.SPELL_MOB, posX, posY, posZ, -255.0D, -255.0D, -255.0D, new int[0]);
+				}
 			}
 		}
 	}
@@ -171,17 +174,20 @@ public class BlockMassPlant extends Block
 				worldIn.setBlockState(posDown, TanpopoBlocks.ESSENCE_CAULDRON.getDefaultState().withProperty(BlockEssenceCauldron.LEVEL, 3), 2);
 			}
 		}
-		else if (this.canFerment(worldIn, pos))
+		else
 		{
-			int chance = this.getFermentChance(worldIn, pos);
-
-			if (rand.nextInt(chance) == 0)
+			if (this.canFerment(worldIn, pos))
 			{
-				int stage = this.getStage(state);
+				int chance = this.getFermentChance(worldIn, pos);
 
-				if (stage < this.getMaxStage())
+				if (rand.nextInt(chance) == 0)
 				{
-					worldIn.setBlockState(pos, this.withStage(stage + 1), 2);
+					int stage = this.getStage(state);
+
+					if (stage < this.getMaxStage())
+					{
+						worldIn.setBlockState(pos, this.withStage(stage + 1), 2);
+					}
 				}
 			}
 		}

@@ -45,16 +45,13 @@ public class ItemMaterialMass extends Item
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if (playerIn.canPlayerEdit(pos.offset(facing), facing, stack) && isWet(stack))
+		if (playerIn.canPlayerEdit(pos.offset(facing), facing, stack) && isWet(stack) && applyBonemealAround(stack, worldIn, pos, playerIn))
 		{
-			if (applyBonemealAround(stack, worldIn, pos, playerIn))
-			{
-				worldIn.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
+			worldIn.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
-				BlockEssence.spawnParticles(worldIn, pos);
+			BlockEssence.spawnParticles(worldIn, pos);
 
-				return EnumActionResult.SUCCESS;
-			}
+			return EnumActionResult.SUCCESS;
 		}
 
 		return EnumActionResult.FAIL;
@@ -93,7 +90,7 @@ public class ItemMaterialMass extends Item
 				{
 					for (BlockPos posAroundUpDown : BlockPos.getAllInBox(posAround.add(0, -1, 0), posAround.add(0, 1, 0)))
 					{
-						if (posAroundUpDown == posAround)
+						if (posAroundUpDown.equals(posAround))
 						{
 							continue;
 						}

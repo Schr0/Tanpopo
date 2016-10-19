@@ -1,5 +1,6 @@
 package schr0.tanpopo;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -7,12 +8,16 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
@@ -31,8 +36,16 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 
 	private static final Set<Material> EFFECTIVE_MATERIALS = Sets.newHashSet(new Material[]
 	{
-			Material.GROUND, Material.GRASS, Material.SAND, Material.CLAY, Material.SNOW,
+			Material.GRASS, Material.GROUND, Material.SAND, Material.SNOW, Material.CRAFTED_SNOW, Material.CLAY,
+			Material.PLANTS, Material.VINE, Material.CORAL, Material.GOURD
 	});
+
+	private static final Set<Material> MOWING_MATERIALS = Sets.newHashSet(new Material[]
+	{
+			Material.PLANTS, Material.VINE, Material.CORAL, Material.GOURD
+	});
+
+	private static final int MOWING_BLOCK_LIMIT = 100;
 
 	public ItemToolMowingHoe()
 	{
@@ -59,26 +72,65 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 	@Override
 	public float getStrVsBlock(ItemStack stack, IBlockState state)
 	{
-		for (Material material : EFFECTIVE_MATERIALS)
-		{
-			if ((material == state.getMaterial()) && this.canHarvestBlock(state))
-			{
-				return this.efficiencyOnProperMaterial;
-			}
-		}
-
 		if (state.getBlock() instanceof IPlantable)
 		{
 			return this.efficiencyOnProperMaterial;
+		}
+
+		for (Material material : EFFECTIVE_MATERIALS)
+		{
+			if ((material == state.getMaterial()) && state.getBlock().getHarvestLevel(state) <= this.getToolMaterial().getHarvestLevel())
+			{
+				return this.efficiencyOnProperMaterial;
+			}
 		}
 
 		return super.getStrVsBlock(stack, state);
 	}
 
 	@Override
+	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
+	{
+		if (!this.canMowingAction(stack, state, entityLiving))
+		{
+			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
+		}
+
+		EntityPlayer player = (EntityPlayer) entityLiving;
+		Set<BlockPos> posSet = new LinkedHashSet<>();
+
+		this.getMowingBlockPos(posSet, worldIn, pos);
+
+		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-3, 0, -3), pos.add(3, 0, 3)))
+		{
+			for (BlockPos posMowing : posSet)
+			{
+				if (posMowing.equals(posAround))
+				{
+					IBlockState stateMowing = worldIn.getBlockState(posMowing);
+					Block blockMowing = stateMowing.getBlock();
+
+					blockMowing.harvestBlock(worldIn, player, posMowing, stateMowing, worldIn.getTileEntity(posMowing), stack);
+
+					if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) <= 0)
+					{
+						blockMowing.dropXpOnBlockBreak(worldIn, posMowing, blockMowing.getExpDrop(stateMowing, worldIn, posMowing, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
+					}
+
+					worldIn.destroyBlock(posMowing, false);
+				}
+			}
+		}
+
+		stack.damageItem(1, player);
+
+		return true;
+	}
+
+	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if (playerIn.isSneaking() || !playerIn.canPlayerEdit(pos, facing, stack))
+		if (this.canChageMode(playerIn) || !playerIn.canPlayerEdit(pos, facing, stack))
 		{
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}
@@ -111,17 +163,66 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 		return new TextComponentTranslation("item.tool_mowing_hoe.mode_name", new Object[0]);
 	}
 
+	private boolean canMowingAction(ItemStack stack, IBlockState state, EntityLivingBase entityLiving)
+	{
+		if (this.isMode(stack) && (entityLiving instanceof EntityPlayer))
+		{
+			return this.isMowingBlocks(state);
+		}
+
+		return false;
+	}
+
+	private boolean isMowingBlocks(IBlockState state)
+	{
+		if (state.getBlock() instanceof IPlantable)
+		{
+			return true;
+		}
+
+		for (Material material : MOWING_MATERIALS)
+		{
+			if ((material == state.getMaterial()) && state.getBlock().getHarvestLevel(state) <= this.getToolMaterial().getHarvestLevel())
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private Set<BlockPos> getMowingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
+	{
+		for (EnumFacing facing : EnumFacing.HORIZONTALS)
+		{
+			if (MOWING_BLOCK_LIMIT < posSet.size())
+			{
+				return posSet;
+			}
+
+			BlockPos posFacing = pos.offset(facing);
+
+			for (BlockPos posAround : BlockPos.getAllInBox(posFacing.add(-1, 0, -1), posFacing.add(1, 0, 1)))
+			{
+				if (this.isMowingBlocks(world.getBlockState(posAround)))
+				{
+					if (posSet.add(posAround))
+					{
+						this.getMowingBlockPos(posSet, world, posAround);
+					}
+				}
+			}
+		}
+
+		return posSet;
+	}
+
 	@Nullable
 	private IBlockState getTillBlockResult(IBlockState state, World world, BlockPos pos)
 	{
 		IBlockState stateFarmland = this.getMoistureFarmland(world, pos);
 
-		if (state.getBlock() == Blocks.GRASS)
-		{
-			return Blocks.GRASS_PATH.getDefaultState();
-		}
-
-		if (state.getBlock() == Blocks.GRASS_PATH)
+		if (state.getBlock() == Blocks.GRASS || state.getBlock() == Blocks.GRASS_PATH)
 		{
 			return stateFarmland;
 		}
