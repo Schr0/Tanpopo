@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -41,6 +42,17 @@ public abstract class ItemModeAttachedTool extends ItemTool
 		super.addInformation(stack, playerIn, tooltip, advanced);
 
 		tooltip.add(this.getModeText(this.getModeName(), stack, this.isMode(stack)));
+	}
+
+	@Override
+	public float getStrVsBlock(ItemStack stack, IBlockState state)
+	{
+		if (this.canHarvestBlock(state))
+		{
+			return this.efficiencyOnProperMaterial;
+		}
+
+		return super.getStrVsBlock(stack, state);
 	}
 
 	@Override

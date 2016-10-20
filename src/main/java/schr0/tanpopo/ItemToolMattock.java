@@ -69,18 +69,7 @@ public class ItemToolMattock extends ItemModeAttachedTool
 			return true;
 		}
 
-		return false;
-	}
-
-	@Override
-	public float getStrVsBlock(ItemStack stack, IBlockState state)
-	{
-		if (this.canHarvestBlock(state))
-		{
-			return this.efficiencyOnProperMaterial;
-		}
-
-		return super.getStrVsBlock(stack, state);
+		return super.canHarvestBlock(blockIn);
 	}
 
 	@Override

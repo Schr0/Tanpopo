@@ -45,7 +45,7 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 			Material.PLANTS, Material.VINE, Material.CORAL, Material.GOURD
 	});
 
-	private static final int MOWING_BLOCK_LIMIT = 100;
+	private static final int MOWING_MODE_BLOCK_LIMIT = TanpopoConfiguration.mowingModeBlockLimit;
 
 	public ItemToolMowingHoe()
 	{
@@ -61,31 +61,20 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 	@Override
 	public boolean canHarvestBlock(IBlockState blockIn)
 	{
-		if (blockIn.getBlock() == Blocks.SNOW_LAYER || blockIn.getBlock() == Blocks.SNOW)
+		if (blockIn.getBlock() instanceof IPlantable)
 		{
 			return true;
 		}
 
-		return super.canHarvestBlock(blockIn);
-	}
-
-	@Override
-	public float getStrVsBlock(ItemStack stack, IBlockState state)
-	{
-		if (state.getBlock() instanceof IPlantable)
-		{
-			return this.efficiencyOnProperMaterial;
-		}
-
 		for (Material material : EFFECTIVE_MATERIALS)
 		{
-			if ((material == state.getMaterial()) && state.getBlock().getHarvestLevel(state) <= this.getToolMaterial().getHarvestLevel())
+			if (material == blockIn.getMaterial())
 			{
-				return this.efficiencyOnProperMaterial;
+				return (blockIn.getBlock().getHarvestLevel(blockIn) <= this.getToolMaterial().getHarvestLevel());
 			}
 		}
 
-		return super.getStrVsBlock(stack, state);
+		return super.canHarvestBlock(blockIn);
 	}
 
 	@Override
@@ -105,7 +94,7 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 		{
 			for (BlockPos posMowing : posSet)
 			{
-				if (posMowing.equals(posAround))
+				if ((posMowing.getX() == posAround.getX()) && (posMowing.getZ() == posAround.getZ()))
 				{
 					IBlockState stateMowing = worldIn.getBlockState(posMowing);
 					Block blockMowing = stateMowing.getBlock();
@@ -130,25 +119,33 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if (this.canChageMode(playerIn) || !playerIn.canPlayerEdit(pos, facing, stack))
+		if (this.canChageMode(playerIn) || !playerIn.canPlayerEdit(pos, facing, stack) || (facing == EnumFacing.DOWN))
 		{
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}
 
-		if ((facing != EnumFacing.DOWN) && worldIn.isAirBlock(pos.up()))
+		if (this.getTillBlock(worldIn, pos) != null)
 		{
-			IBlockState state = worldIn.getBlockState(pos);
+			worldIn.setBlockState(pos, this.getTillBlock(worldIn, pos));
 
-			if (this.getTillBlockResult(state, worldIn, pos) != null)
+			for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1)))
 			{
-				worldIn.setBlockState(pos, this.getTillBlockResult(state, worldIn, pos));
+				if (pos.equals(posAround))
+				{
+					continue;
+				}
 
-				stack.damageItem(1, playerIn);
-
-				worldIn.playSound(playerIn, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-				return EnumActionResult.SUCCESS;
+				if (this.getTillBlock(worldIn, posAround) != null)
+				{
+					worldIn.setBlockState(posAround, this.getTillBlock(worldIn, posAround));
+				}
 			}
+
+			stack.damageItem(1, playerIn);
+
+			worldIn.playSound(playerIn, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+			return EnumActionResult.SUCCESS;
 		}
 
 		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
@@ -182,9 +179,9 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 
 		for (Material material : MOWING_MATERIALS)
 		{
-			if ((material == state.getMaterial()) && state.getBlock().getHarvestLevel(state) <= this.getToolMaterial().getHarvestLevel())
+			if (material == state.getMaterial())
 			{
-				return true;
+				return (state.getBlock().getHarvestLevel(state) <= this.getToolMaterial().getHarvestLevel());
 			}
 		}
 
@@ -193,23 +190,18 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 
 	private Set<BlockPos> getMowingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
-		for (EnumFacing facing : EnumFacing.HORIZONTALS)
+		if (MOWING_MODE_BLOCK_LIMIT < posSet.size())
 		{
-			if (MOWING_BLOCK_LIMIT < posSet.size())
-			{
-				return posSet;
-			}
+			return posSet;
+		}
 
-			BlockPos posFacing = pos.offset(facing);
-
-			for (BlockPos posAround : BlockPos.getAllInBox(posFacing.add(-1, 0, -1), posFacing.add(1, 0, 1)))
+		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-1, -1, -1), pos.add(1, 1, 1)))
+		{
+			if (this.isMowingBlocks(world.getBlockState(posAround)))
 			{
-				if (this.isMowingBlocks(world.getBlockState(posAround)))
+				if (posSet.add(posAround))
 				{
-					if (posSet.add(posAround))
-					{
-						this.getMowingBlockPos(posSet, world, posAround);
-					}
+					this.getMowingBlockPos(posSet, world, posAround);
 				}
 			}
 		}
@@ -218,9 +210,15 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 	}
 
 	@Nullable
-	private IBlockState getTillBlockResult(IBlockState state, World world, BlockPos pos)
+	private IBlockState getTillBlock(World world, BlockPos pos)
 	{
+		IBlockState state = world.getBlockState(pos);
 		IBlockState stateFarmland = this.getMoistureFarmland(world, pos);
+
+		if (!world.isAirBlock(pos.up()))
+		{
+			return (IBlockState) null;
+		}
 
 		if (state.getBlock() == Blocks.GRASS || state.getBlock() == Blocks.GRASS_PATH)
 		{

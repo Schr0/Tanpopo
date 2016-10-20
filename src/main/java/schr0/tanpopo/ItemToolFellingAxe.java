@@ -33,15 +33,13 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 			Material.WOOD, Material.LEAVES, Material.VINE,
 	});
 
-	private static final int COOLDWON_TIME = (10 * 20);
+	private static final int FELLING_MODE_BLOCK_LIMIT = TanpopoConfiguration.fellingModeBlockLimit;
 
-	private int fellingBlockLimit;
+	private static final int COOLDWON_TIME = (10 * 20);
 
 	public ItemToolFellingAxe()
 	{
 		super(8.0F, -3.1F, TanpopoToolMaterials.TIER_0);
-
-		this.fellingBlockLimit = TanpopoConfiguration.fellingBlockLimit;
 	}
 
 	@Override
@@ -51,23 +49,23 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 	}
 
 	@Override
-	public float getStrVsBlock(ItemStack stack, IBlockState state)
+	public boolean canHarvestBlock(IBlockState blockIn)
 	{
 		for (Material material : EFFECTIVE_MATERIALS)
 		{
-			if ((material == state.getMaterial()) && this.canHarvestBlock(state))
+			if (material == blockIn.getMaterial())
 			{
-				return this.efficiencyOnProperMaterial;
+				return (blockIn.getBlock().getHarvestLevel(blockIn) <= this.getToolMaterial().getHarvestLevel());
 			}
 		}
 
-		return super.getStrVsBlock(stack, state);
+		return super.canHarvestBlock(blockIn);
 	}
 
 	@Override
 	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
 	{
-		if (!this.canFellingAction(stack, worldIn, state, pos, entityLiving))
+		if (!this.canFellingAction(stack, worldIn, pos, entityLiving))
 		{
 			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 		}
@@ -86,27 +84,27 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 					continue;
 				}
 
-				if (this.isFellingBlocks(worldIn, posAround))
+				if (this.isFellingBlocks(worldIn, posFelling))
 				{
-					IBlockState stateAround = worldIn.getBlockState(posAround);
+					IBlockState stateAround = worldIn.getBlockState(posFelling);
 					Block blockAround = stateAround.getBlock();
 
-					if (blockAround.isLeaves(stateAround, worldIn, posAround))
+					if (blockAround.isLeaves(stateAround, worldIn, posFelling))
 					{
-						blockAround.dropBlockAsItem(worldIn, posAround, stateAround, 0);
+						blockAround.dropBlockAsItem(worldIn, posFelling, stateAround, 0);
 
-						worldIn.setBlockToAir(posAround);
+						worldIn.setBlockToAir(posFelling);
 					}
 					else
 					{
-						blockAround.harvestBlock(worldIn, player, posAround, stateAround, worldIn.getTileEntity(posAround), stack);
+						blockAround.harvestBlock(worldIn, player, posFelling, stateAround, worldIn.getTileEntity(posFelling), stack);
 
 						if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) <= 0)
 						{
-							blockAround.dropXpOnBlockBreak(worldIn, posAround, blockAround.getExpDrop(stateAround, worldIn, posAround, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
+							blockAround.dropXpOnBlockBreak(worldIn, posFelling, blockAround.getExpDrop(stateAround, worldIn, posFelling, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
 						}
 
-						worldIn.destroyBlock(posAround, false);
+						worldIn.destroyBlock(posFelling, false);
 
 						if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
 						{
@@ -145,7 +143,11 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 
 			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
-			playerIn.getCooldownTracker().setCooldown(this, COOLDWON_TIME);
+			int coolDwonTime = COOLDWON_TIME - (EnchantmentHelper.getEnchantmentLevel(Enchantments.EFFICIENCY, stack) * 20);
+
+			coolDwonTime = Math.max((5 * 20), coolDwonTime);
+
+			playerIn.getCooldownTracker().setCooldown(this, coolDwonTime);
 
 			return EnumActionResult.SUCCESS;
 		}
@@ -162,11 +164,11 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 		return new TextComponentTranslation("item.tool_felling_axe.mode_name", new Object[0]);
 	}
 
-	private boolean canFellingAction(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
+	private boolean canFellingAction(ItemStack stack, World world, BlockPos pos, EntityLivingBase entityLiving)
 	{
 		if (this.isMode(stack) && (entityLiving instanceof EntityPlayer))
 		{
-			return state.getBlock().isWood(worldIn, pos);
+			return world.getBlockState(pos).getBlock().isWood(world, pos);
 		}
 
 		return false;
@@ -191,13 +193,13 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 
 	private Set<BlockPos> getFellingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
+		if (FELLING_MODE_BLOCK_LIMIT < posSet.size())
+		{
+			return posSet;
+		}
+
 		for (EnumFacing facing : EnumFacing.VALUES)
 		{
-			if (this.fellingBlockLimit < posSet.size())
-			{
-				return posSet;
-			}
-
 			BlockPos posFacing = pos.offset(facing);
 
 			if (this.isFellingBlocks(world, posFacing))

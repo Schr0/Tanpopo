@@ -9,7 +9,10 @@ import net.minecraftforge.fml.common.Loader;
 public class TanpopoConfiguration
 {
 
-	public static int fellingBlockLimit;
+	private static final String CATEGORY_TOOL = "tool";
+
+	public static int fellingModeBlockLimit;
+	public static int mowingModeBlockLimit;
 
 	public void init()
 	{
@@ -24,7 +27,8 @@ public class TanpopoConfiguration
 		{
 			cfg.load();
 
-			fellingBlockLimit = cfg.getInt("FELLING_BLOCK_LIMIT", Configuration.CATEGORY_GENERAL, 1000, 2, Integer.MAX_VALUE, "The maximum number that can be destroyed by FellingMode.");
+			fellingModeBlockLimit = cfg.getInt("FELLING MODE BLOCK LIMIT", CATEGORY_TOOL, 1000, 2, Integer.MAX_VALUE, "The maximum number that can be destroyed by Felling Mode.");
+			mowingModeBlockLimit = cfg.getInt("MOWING MODE BLOCK LIMIT", CATEGORY_TOOL, 1000, 2, Integer.MAX_VALUE, "The maximum number that can be destroyed by Mowing Mode.");
 
 			// none
 		}

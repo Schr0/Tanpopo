@@ -77,7 +77,7 @@ public class ItemMaterialMass extends Item
 		{
 			for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1)))
 			{
-				if (posAround == pos)
+				if (posAround.equals(pos))
 				{
 					continue;
 				}
