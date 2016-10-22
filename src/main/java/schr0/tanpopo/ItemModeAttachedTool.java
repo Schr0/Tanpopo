@@ -87,6 +87,9 @@ public abstract class ItemModeAttachedTool extends ItemTool
 	@SideOnly(Side.CLIENT)
 	public abstract TextComponentTranslation getModeName();
 
+	// TODO
+	// public abstract Item getItemAttachmentPart();
+
 	@SideOnly(Side.CLIENT)
 	public String getModeText(TextComponentTranslation textModeName, ItemStack stack, boolean isMode)
 	{

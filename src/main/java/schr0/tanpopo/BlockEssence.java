@@ -13,7 +13,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -111,19 +110,6 @@ public class BlockEssence extends BlockFluidClassic
 	}
 
 	// TODO /* ======================================== MOD START =====================================*/
-
-	public static void spawnParticles(World world, BlockPos pos)
-	{
-		for (int count = 0; count < 20; ++count)
-		{
-			Random random = world.rand;
-			double posX = (double) pos.getX() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
-			double posY = (double) pos.getY() + random.nextFloat();
-			double posZ = (double) pos.getZ() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
-
-			world.spawnParticle(EnumParticleTypes.SPELL_MOB, posX, posY, posZ, -255.0D, -217.0D, 00D, new int[0]);
-		}
-	}
 
 	private int getCheckPosXyz()
 	{

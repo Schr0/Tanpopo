@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -73,45 +74,42 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 		EntityPlayer player = (EntityPlayer) entityLiving;
 		Set<BlockPos> posSet = new LinkedHashSet<>();
 
-		this.getFellingBlockPos(posSet, worldIn, pos);
+		this.getChainBlockPos(posSet, worldIn, pos);
 
-		for (BlockPos posFelling : posSet)
+		for (BlockPos posFelling : this.getFellingBlockPos(posSet, worldIn, pos))
 		{
-			for (BlockPos posAround : BlockPos.getAllInBox(posFelling.add(-1, -1, -1), posFelling.add(1, 1, 1)))
+			IBlockState stateFelling = worldIn.getBlockState(posFelling);
+			Block blockFelling = stateFelling.getBlock();
+			int damegeCount = 0;
+
+			if (blockFelling.isLeaves(stateFelling, worldIn, posFelling))
 			{
-				if (posAround.getY() < pos.getY())
+				blockFelling.dropBlockAsItem(worldIn, posFelling, stateFelling, 0);
+
+				worldIn.setBlockToAir(posFelling);
+			}
+			else
+			{
+				blockFelling.harvestBlock(worldIn, player, posFelling, stateFelling, worldIn.getTileEntity(posFelling), stack);
+
+				if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) <= 0)
 				{
-					continue;
+					blockFelling.dropXpOnBlockBreak(worldIn, posFelling, blockFelling.getExpDrop(stateFelling, worldIn, posFelling, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
 				}
 
-				if (this.isFellingBlocks(worldIn, posFelling))
+				worldIn.destroyBlock(posFelling, false);
+
+				if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
 				{
-					IBlockState stateAround = worldIn.getBlockState(posFelling);
-					Block blockAround = stateAround.getBlock();
-
-					if (blockAround.isLeaves(stateAround, worldIn, posFelling))
-					{
-						blockAround.dropBlockAsItem(worldIn, posFelling, stateAround, 0);
-
-						worldIn.setBlockToAir(posFelling);
-					}
-					else
-					{
-						blockAround.harvestBlock(worldIn, player, posFelling, stateAround, worldIn.getTileEntity(posFelling), stack);
-
-						if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) <= 0)
-						{
-							blockAround.dropXpOnBlockBreak(worldIn, posFelling, blockAround.getExpDrop(stateAround, worldIn, posFelling, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
-						}
-
-						worldIn.destroyBlock(posFelling, false);
-
-						if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
-						{
-							stack.damageItem(1, player);
-						}
-					}
+					++damegeCount;
 				}
+			}
+
+			damegeCount = Math.min((damegeCount / 8), 1);
+
+			for (int count = 0; count <= damegeCount; ++count)
+			{
+				stack.damageItem(1, player);
 			}
 		}
 
@@ -129,7 +127,7 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 		IBlockState state = worldIn.getBlockState(pos);
 		Block block = state.getBlock();
 
-		if (block.canHarvestBlock(worldIn, pos, playerIn) && block.canSilkHarvest(worldIn, pos, state, playerIn))
+		if (block.canSilkHarvest(worldIn, pos, state, playerIn) && block.canHarvestBlock(worldIn, pos, playerIn))
 		{
 			ItemStack stackCopy = stack.copy();
 
@@ -148,6 +146,8 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 			coolDwonTime = Math.max((5 * 20), coolDwonTime);
 
 			playerIn.getCooldownTracker().setCooldown(this, coolDwonTime);
+
+			worldIn.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, pos.getX(), pos.getY(), pos.getZ(), 0.0D, 0.0D, 0.0D, new int[0]);
 
 			return EnumActionResult.SUCCESS;
 		}
@@ -191,7 +191,7 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 		return false;
 	}
 
-	private Set<BlockPos> getFellingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
+	private Set<BlockPos> getChainBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
 		if (FELLING_MODE_BLOCK_LIMIT < posSet.size())
 		{
@@ -206,8 +206,31 @@ public class ItemToolFellingAxe extends ItemModeAttachedTool
 			{
 				if (posSet.add(posFacing))
 				{
-					this.getFellingBlockPos(posSet, world, posFacing);
+					this.getChainBlockPos(posSet, world, posFacing);
 				}
+			}
+		}
+
+		return posSet;
+	}
+
+	private Set<BlockPos> getFellingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
+	{
+		if (FELLING_MODE_BLOCK_LIMIT < posSet.size())
+		{
+			return posSet;
+		}
+
+		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-1, -1, -1), pos.add(1, 1, 1)))
+		{
+			if (posAround.getY() < pos.getY())
+			{
+				continue;
+			}
+
+			if (this.isFellingBlocks(world, posAround))
+			{
+				posSet.add(posAround);
 			}
 		}
 

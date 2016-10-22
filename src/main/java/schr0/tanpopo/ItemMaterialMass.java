@@ -1,6 +1,7 @@
 package schr0.tanpopo;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -45,12 +47,8 @@ public class ItemMaterialMass extends Item
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if (playerIn.canPlayerEdit(pos.offset(facing), facing, stack) && isWet(stack) && applyBonemealAround(stack, worldIn, pos, playerIn))
+		if (playerIn.canPlayerEdit(pos.offset(facing), facing, stack) && this.applyEssenceAround(stack, worldIn, pos, playerIn))
 		{
-			worldIn.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-			BlockEssence.spawnParticles(worldIn, pos);
-
 			return EnumActionResult.SUCCESS;
 		}
 
@@ -69,8 +67,13 @@ public class ItemMaterialMass extends Item
 		return (stack != null) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 1);
 	}
 
-	public static boolean applyBonemealAround(ItemStack stack, World world, BlockPos pos, EntityPlayer player)
+	private boolean applyEssenceAround(ItemStack stack, World world, BlockPos pos, EntityPlayer player)
 	{
+		if (isDry(stack))
+		{
+			return false;
+		}
+
 		int stackSizeSrc = stack.stackSize;
 
 		if (ItemDye.applyBonemeal(stack, world, pos, player))
@@ -79,12 +82,14 @@ public class ItemMaterialMass extends Item
 			{
 				if (posAround.equals(pos))
 				{
+					this.spawnEssenceParticles(world, pos);
+
 					continue;
 				}
 
 				if (ItemDye.applyBonemeal(stack, world, posAround, player))
 				{
-					BlockEssence.spawnParticles(world, posAround);
+					this.spawnEssenceParticles(world, posAround);
 				}
 				else
 				{
@@ -97,7 +102,7 @@ public class ItemMaterialMass extends Item
 
 						if (ItemDye.applyBonemeal(stack, world, posAroundUpDown, player))
 						{
-							BlockEssence.spawnParticles(world, posAroundUpDown);
+							this.spawnEssenceParticles(world, posAroundUpDown);
 						}
 					}
 				}
@@ -105,10 +110,26 @@ public class ItemMaterialMass extends Item
 
 			stack.stackSize = (stackSizeSrc - 1);
 
+			world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
 			return true;
 		}
 
 		return false;
+	}
+
+	@SideOnly(Side.CLIENT)
+	private void spawnEssenceParticles(World world, BlockPos pos)
+	{
+		for (int count = 0; count < 20; ++count)
+		{
+			Random random = world.rand;
+			double posX = (double) pos.getX() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
+			double posY = (double) pos.getY() + random.nextFloat();
+			double posZ = (double) pos.getZ() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
+
+			world.spawnParticle(EnumParticleTypes.SPELL_MOB, posX, posY, posZ, -255.0D, -217.0D, 00D, new int[0]);
+		}
 	}
 
 }

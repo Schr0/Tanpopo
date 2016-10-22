@@ -19,8 +19,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -39,18 +39,18 @@ public class ItemToolMattock extends ItemModeAttachedTool
 	{
 		super.addInformation(stack, playerIn, tooltip, advanced);
 
-		int priority = 0;
-
 		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
 		{
 			if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
 			{
 				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
 				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
+				String title = TextFormatting.GOLD + "SetBlock";
+				String text = TextFormatting.WHITE + " : " + itemBlockInv.getItemStackDisplayName(stackInv) + " x " + stackInv.stackSize;
 
-				++priority;
+				tooltip.add(title + text);
 
-				tooltip.add(new TextComponentString(priority + " : " + itemBlockInv.getItemStackDisplayName(stackInv) + " x " + stackInv.stackSize).getFormattedText());
+				break;
 			}
 		}
 	}
@@ -81,9 +81,15 @@ public class ItemToolMattock extends ItemModeAttachedTool
 		}
 
 		EntityPlayer player = (EntityPlayer) entityLiving;
+		int damegeCount = 0;
 
 		for (BlockPos posRange : this.getRangeBlockPos(pos, player))
 		{
+			if (posRange.equals(pos))
+			{
+				continue;
+			}
+
 			if (worldIn.getBlockState(posRange) == state)
 			{
 				IBlockState stateRange = worldIn.getBlockState(posRange);
@@ -100,9 +106,14 @@ public class ItemToolMattock extends ItemModeAttachedTool
 
 				if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
 				{
-					stack.damageItem(1, player);
+					++damegeCount;
 				}
 			}
+		}
+
+		for (int count = 0; count <= damegeCount; ++count)
+		{
+			stack.damageItem(1, player);
 		}
 
 		return true;
@@ -132,6 +143,8 @@ public class ItemToolMattock extends ItemModeAttachedTool
 
 					return EnumActionResult.SUCCESS;
 				}
+
+				break;
 			}
 		}
 

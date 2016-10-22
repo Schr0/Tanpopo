@@ -88,27 +88,21 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 		EntityPlayer player = (EntityPlayer) entityLiving;
 		Set<BlockPos> posSet = new LinkedHashSet<>();
 
-		this.getMowingBlockPos(posSet, worldIn, pos);
+		this.getAroundBlockPos(posSet, worldIn, pos);
 
-		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-3, 0, -3), pos.add(3, 0, 3)))
+		for (BlockPos posMowing : this.getMowingBlockPos(posSet, worldIn, pos))
 		{
-			for (BlockPos posMowing : posSet)
+			IBlockState stateMowing = worldIn.getBlockState(posMowing);
+			Block blockMowing = stateMowing.getBlock();
+
+			blockMowing.harvestBlock(worldIn, player, posMowing, stateMowing, worldIn.getTileEntity(posMowing), stack);
+
+			if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) <= 0)
 			{
-				if ((posMowing.getX() == posAround.getX()) && (posMowing.getZ() == posAround.getZ()))
-				{
-					IBlockState stateMowing = worldIn.getBlockState(posMowing);
-					Block blockMowing = stateMowing.getBlock();
-
-					blockMowing.harvestBlock(worldIn, player, posMowing, stateMowing, worldIn.getTileEntity(posMowing), stack);
-
-					if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) <= 0)
-					{
-						blockMowing.dropXpOnBlockBreak(worldIn, posMowing, blockMowing.getExpDrop(stateMowing, worldIn, posMowing, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
-					}
-
-					worldIn.destroyBlock(posMowing, false);
-				}
+				blockMowing.dropXpOnBlockBreak(worldIn, posMowing, blockMowing.getExpDrop(stateMowing, worldIn, posMowing, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, stack)));
 			}
+
+			worldIn.destroyBlock(posMowing, false);
 		}
 
 		stack.damageItem(1, player);
@@ -188,7 +182,7 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 		return false;
 	}
 
-	private Set<BlockPos> getMowingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
+	private Set<BlockPos> getAroundBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
 		if (MOWING_MODE_BLOCK_LIMIT < posSet.size())
 		{
@@ -201,12 +195,30 @@ public class ItemToolMowingHoe extends ItemModeAttachedTool
 			{
 				if (posSet.add(posAround))
 				{
-					this.getMowingBlockPos(posSet, world, posAround);
+					this.getAroundBlockPos(posSet, world, posAround);
 				}
 			}
 		}
 
 		return posSet;
+	}
+
+	private Set<BlockPos> getMowingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
+	{
+		Set<BlockPos> posSetMowing = Sets.newHashSet();
+
+		for (BlockPos posAround : posSet)
+		{
+			for (BlockPos posLimit : BlockPos.getAllInBox(pos.add(-4, 0, -4), pos.add(4, 0, 4)))
+			{
+				if ((posLimit.getX() == posAround.getX()) && (posLimit.getZ() == posAround.getZ()))
+				{
+					posSetMowing.add(posAround);
+				}
+			}
+		}
+
+		return posSetMowing;
 	}
 
 	@Nullable
