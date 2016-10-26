@@ -8,10 +8,10 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import schr0.tanpopo.TanpopoBlocks;
-import schr0.tanpopo.TanpopoColors;
-import schr0.tanpopo.TanpopoEventClient;
-import schr0.tanpopo.TanpopoItems;
+import schr0.tanpopo.init.TanpopoBlocks;
+import schr0.tanpopo.init.TanpopoColors;
+import schr0.tanpopo.init.TanpopoEventClient;
+import schr0.tanpopo.init.TanpopoItems;
 
 @SideOnly(Side.CLIENT)
 public class ProxyClient extends ProxyServer

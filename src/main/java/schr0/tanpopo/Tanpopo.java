@@ -7,6 +7,14 @@ import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import schr0.tanpopo.init.TanpopoBlocks;
+import schr0.tanpopo.init.TanpopoConfiguration;
+import schr0.tanpopo.init.TanpopoDispenserBehaviors;
+import schr0.tanpopo.init.TanpopoEvent;
+import schr0.tanpopo.init.TanpopoFluids;
+import schr0.tanpopo.init.TanpopoFuelHandler;
+import schr0.tanpopo.init.TanpopoItems;
+import schr0.tanpopo.init.TanpopoRecipe;
 import schr0.tanpopo.proxy.ProxyServer;
 
 @Mod(modid = Tanpopo.MOD_ID, name = Tanpopo.MOD_NAME, version = Tanpopo.MOD_VERSION, dependencies = Tanpopo.MOD_DEPENDENCIES, acceptedMinecraftVersions = Tanpopo.MOD_ACCEPTED_MC_VERSIONS, useMetadata = true)
