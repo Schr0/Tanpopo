@@ -131,7 +131,7 @@ public class ItemMaterialMass extends Item
 			double posY = (double) pos.getY() + random.nextFloat();
 			double posZ = (double) pos.getZ() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
 
-			world.spawnParticle(EnumParticleTypes.SPELL_MOB, posX, posY, posZ, -255.0D, -217.0D, 00D, new int[0]);
+			world.spawnParticle(EnumParticleTypes.SPELL_MOB, posX, posY, posZ, -255.0D, -217.0D, 0.0D, new int[0]);
 		}
 	}
 

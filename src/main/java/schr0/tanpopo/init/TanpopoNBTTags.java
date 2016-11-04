@@ -11,4 +11,6 @@ public class TanpopoNBTTags
 
 	public static final String ITEM_ATTACHMENT = TAG + "itemModeToolAttachment";
 
+	public static final String TILEENTITY_ESSENCE_CAULDRON = TAG + "tileEntityEssenceCauldron";
+
 }

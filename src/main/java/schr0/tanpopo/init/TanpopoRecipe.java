@@ -97,9 +97,9 @@ public class TanpopoRecipe
 
 	private static void craftingMaterial()
 	{
-		for (int itemMeta = 0; itemMeta <= 1; itemMeta++)
+		for (int meta = 0; meta <= 1; meta++)
 		{
-			int blockMeta = (itemMeta == 0) ? (0) : (4);
+			int blockMeta = (meta == 0) ? (0) : (4);
 
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.MASS_PLANT, 1, blockMeta), new Object[]
 			{
@@ -107,7 +107,7 @@ public class TanpopoRecipe
 					"X X",
 					"XXX",
 
-					'X', new ItemStack(TanpopoItems.MATERIAL_MASS, 1, itemMeta),
+					'X', new ItemStack(TanpopoItems.MATERIAL_MASS, 1, meta),
 			}));
 		}
 		/*
@@ -144,17 +144,7 @@ public class TanpopoRecipe
 			{
 					Items.BUCKET, TanpopoItems.ESSENCE_GLASS_BOTTLE, TanpopoItems.ESSENCE_GLASS_BOTTLE, TanpopoItems.ESSENCE_GLASS_BOTTLE, TanpopoItems.ESSENCE_GLASS_BOTTLE,
 			}));
-
-			GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL, 4), new Object[]
-			{
-					universalBucket, new ItemStack(Items.COAL, 1, 1), new ItemStack(Items.COAL, 1, 1), new ItemStack(Items.COAL, 1, 1), new ItemStack(Items.COAL, 1, 1),
-			}));
 		}
-
-		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL), new Object[]
-		{
-				TanpopoItems.ESSENCE_GLASS_BOTTLE, new ItemStack(Items.COAL, 1, 1),
-		}));
 	}
 
 	private static void smeltingPlantFlower()

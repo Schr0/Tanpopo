@@ -16,6 +16,7 @@ import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -109,7 +110,7 @@ public class TanpopoEvent
 			ItemStack stackModeAttachment = new ItemStack(((ItemModeTool) itemOriginal).getModeAttachment(), 1, 1);
 			ItemModeToolAttachment itemModeToolAttachment = (ItemModeToolAttachment) stackModeAttachment.getItem();
 
-			itemModeToolAttachment.setModeToolItemstack(stackModeAttachment, stackOriginal);
+			itemModeToolAttachment.setContainerModeTool(stackModeAttachment, stackOriginal);
 
 			if (!player.worldObj.isRemote && !player.capabilities.isCreativeMode)
 			{
@@ -125,6 +126,27 @@ public class TanpopoEvent
 					}
 				}
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onAnvilUpdateEvent(AnvilUpdateEvent event)
+	{
+		ItemStack stackLeft = event.getLeft();
+		ItemStack stackRight = event.getRight();
+
+		if ((stackLeft.getItem() instanceof ItemModeToolAttachment) && (stackRight.getItem() == TanpopoItems.MATERIAL_STALK))
+		{
+			ItemModeToolAttachment itemModeToolAttachment = (ItemModeToolAttachment) stackLeft.getItem();
+
+			if (itemModeToolAttachment.isBroken(stackLeft))
+			{
+				return;
+			}
+
+			event.setCost(5);
+			event.setMaterialCost(1);
+			event.setOutput(itemModeToolAttachment.getContainerModeTool(stackLeft));
 		}
 	}
 

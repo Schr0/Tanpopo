@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockCauldron;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -12,9 +13,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
@@ -28,8 +32,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import schr0.tanpopo.init.TanpopoBlocks;
 import schr0.tanpopo.init.TanpopoFluids;
 import schr0.tanpopo.init.TanpopoItems;
+import schr0.tanpopo.tileentity.TileEntityEssenceCauldron;
 
-public class BlockEssenceCauldron extends BlockCauldron
+public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityProvider
 {
 
 	private static final int META_MAX = TanpopoBlocks.META_ESSENCE_CAULDRON;
@@ -37,6 +42,7 @@ public class BlockEssenceCauldron extends BlockCauldron
 	public BlockEssenceCauldron()
 	{
 		super();
+		this.isBlockContainer = true;
 	}
 
 	@Override
@@ -47,6 +53,36 @@ public class BlockEssenceCauldron extends BlockCauldron
 		{
 			list.add(new ItemStack(itemIn, 1, meta));
 		}
+	}
+
+	@Override
+	public TileEntity createNewTileEntity(World worldIn, int meta)
+	{
+		return new TileEntityEssenceCauldron();
+	}
+
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
+	{
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+
+		if (tileentity instanceof IInventory)
+		{
+			InventoryHelper.dropInventoryItems(worldIn, pos, (IInventory) tileentity);
+		}
+
+		super.breakBlock(worldIn, pos, state);
+
+		worldIn.removeTileEntity(pos);
+	}
+
+	@Override
+	public boolean eventReceived(IBlockState state, World worldIn, BlockPos pos, int id, int param)
+	{
+		super.eventReceived(state, worldIn, pos, id, param);
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+
+		return tileentity == null ? false : tileentity.receiveClientEvent(id, param);
 	}
 
 	@Override
@@ -126,16 +162,14 @@ public class BlockEssenceCauldron extends BlockCauldron
 
 				return true;
 			}
-
-			return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	// TODO /* ======================================== MOD START =====================================*/
 
-	private void setEssenceLevel(World worldIn, BlockPos pos, IBlockState state, int level)
+	public void setEssenceLevel(World worldIn, BlockPos pos, IBlockState state, int level)
 	{
 		worldIn.setBlockState(pos, state.withProperty(BlockCauldron.LEVEL, Integer.valueOf(MathHelper.clamp_int(level, 0, 3))), 2);
 		worldIn.updateComparatorOutputLevel(pos, this);

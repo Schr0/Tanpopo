@@ -2,8 +2,6 @@ package schr0.tanpopo.item;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -37,7 +35,7 @@ public abstract class ItemModeToolAttachment extends Item
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced)
 	{
-		ItemStack stackFinished = this.getModeToolItemstack(stack);
+		ItemStack stackFinished = this.getContainerModeTool(stack);
 
 		if (stackFinished == null)
 		{
@@ -57,18 +55,9 @@ public abstract class ItemModeToolAttachment extends Item
 
 	// TODO /* ======================================== MOD START =====================================*/
 
-	public boolean isNew(ItemStack stack)
-	{
-		return (stack.getItemDamage() == 0);
-	}
+	public abstract Item getDefaultModeTool();
 
-	public boolean isOld(ItemStack stack)
-	{
-		return (stack.getItemDamage() == 1);
-	}
-
-	@Nullable
-	public ItemStack getModeToolItemstack(ItemStack stack)
+	public ItemStack getContainerModeTool(ItemStack stack)
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
@@ -77,10 +66,10 @@ public abstract class ItemModeToolAttachment extends Item
 			return ItemStack.loadItemStackFromNBT(nbtStack.getCompoundTag(TAG_KEY));
 		}
 
-		return (ItemStack) null;
+		return new ItemStack(this.getDefaultModeTool());
 	}
 
-	public void setModeToolItemstack(ItemStack stack, ItemStack stackFinished)
+	public void setContainerModeTool(ItemStack stack, ItemStack stackFinished)
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
@@ -91,10 +80,18 @@ public abstract class ItemModeToolAttachment extends Item
 
 		NBTTagCompound nbtFnished = new NBTTagCompound();
 
+		stackFinished.stackSize = 1;
+		stackFinished.setItemDamage(0);
 		stackFinished.writeToNBT(nbtFnished);
 
 		nbtStack.setTag(TAG_KEY, nbtFnished);
 
 		stack.setTagCompound(nbtStack);
 	}
+
+	public boolean isBroken(ItemStack stack)
+	{
+		return (stack.getItemDamage() == 1);
+	}
+
 }

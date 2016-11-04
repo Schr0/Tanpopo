@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import schr0.tanpopo.init.TanpopoTileEntitys;
 
 public class ProxyServer
 {
@@ -21,7 +22,7 @@ public class ProxyServer
 	 */
 	public void initEventClient(FMLInitializationEvent event)
 	{
-		// none
+		(new TanpopoTileEntitys()).init();
 	}
 
 	/**
