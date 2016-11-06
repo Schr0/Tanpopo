@@ -33,6 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import schr0.tanpopo.block.BlockEssenceCauldron;
 import schr0.tanpopo.init.TanpopoItems;
 import schr0.tanpopo.init.TanpopoNBTTags;
+import schr0.tanpopo.item.ItemModeToolAttachment;
 
 public class TileEntityEssenceCauldron extends TileEntity implements ITickable, IInventory
 {
@@ -40,17 +41,12 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	public static class ImmerseCraft
 	{
 
-		public boolean isCrafting(ItemStack stack)
+		public int getStackCost(ItemStack stack)
 		{
-			return false;
+			return 1;
 		}
 
-		public int getTime(ItemStack stack)
-		{
-			return 5 * 20;
-		}
-
-		public int getCost(ItemStack stack)
+		public int getEssenceCost(ItemStack stack)
 		{
 			return 1;
 		}
@@ -61,11 +57,16 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			return (ItemStack) null;
 		}
 
+		public int getTime(ItemStack stack)
+		{
+			return 5 * 20;
+		}
+
 	}
 
 	public static final RegistryDefaulted<Item, ImmerseCraft> IMMERSE_CRAFT_REGISTRY = new RegistryDefaulted(null);
 	private static final int SIZE_INVENTORY = 1;
-	private static final int SIZE_STACKSIZE = 1;
+	private static final int SIZE_STACKSIZE = 64;
 	private static final String TAG_KEY = TanpopoNBTTags.TILEENTITY_ESSENCE_CAULDRON;
 	private ItemStack[] inventoryContents;
 	private int craftTime;
@@ -77,59 +78,117 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		{
 
 			@Override
-			public boolean isCrafting(ItemStack stack)
+			public ItemStack getResult(ItemStack stack)
 			{
 				if (stack.getItemDamage() == 1)
 				{
-					return true;
+					return new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL);
 				}
 
-				return false;
+				return super.getResult(stack);
+			}
+
+		});
+
+		IMMERSE_CRAFT_REGISTRY.putObject(TanpopoItems.ATTACHMENT_FELLING_AXE, new ImmerseCraft()
+		{
+
+			@Override
+			public int getEssenceCost(ItemStack stack)
+			{
+				return 4;
 			}
 
 			@Override
 			public ItemStack getResult(ItemStack stack)
 			{
-				return new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL);
+				if (stack.getItem() instanceof ItemModeToolAttachment)
+				{
+					if (((ItemModeToolAttachment) stack.getItem()).isBroken(stack))
+					{
+						stack.setItemDamage(0);
+
+						return stack;
+					}
+				}
+
+				return super.getResult(stack);
+			}
+
+			@Override
+			public int getTime(ItemStack stack)
+			{
+				return 60 * 20;
 			}
 
 		});
-		/*
-				IMMERSE_CRAFT_REGISTRY.putObject(TanpopoItems.ATTACHMENT_FELLING_AXE, new ImmerseCraft()
+
+		IMMERSE_CRAFT_REGISTRY.putObject(TanpopoItems.ATTACHMENT_MATTOCK, new ImmerseCraft()
+		{
+
+			@Override
+			public int getEssenceCost(ItemStack stack)
+			{
+				return 4;
+			}
+
+			@Override
+			public ItemStack getResult(ItemStack stack)
+			{
+				if (stack.getItem() instanceof ItemModeToolAttachment)
 				{
-		
-					@Override
-					public boolean isCrafting(ItemStack stack)
-					{
-						if (stack.getItem() instanceof ItemModeToolAttachment)
-						{
-							return ((ItemModeToolAttachment) stack.getItem()).isBroken(stack);
-						}
-		
-						return false;
-					}
-		
-					@Override
-					public int getTime(ItemStack stack)
-					{
-						return 30 * 20;
-					}
-		
-					public int getCost(ItemStack stack)
-					{
-						return 4;
-					}
-		
-					@Override
-					public ItemStack getResult(ItemStack stack)
+					if (((ItemModeToolAttachment) stack.getItem()).isBroken(stack))
 					{
 						stack.setItemDamage(0);
-		
+
 						return stack;
 					}
-		
-				});
-		//*/
+				}
+
+				return super.getResult(stack);
+			}
+
+			@Override
+			public int getTime(ItemStack stack)
+			{
+				return 60 * 20;
+			}
+
+		});
+
+		IMMERSE_CRAFT_REGISTRY.putObject(TanpopoItems.ATTACHMENT_MOWING_HOE, new ImmerseCraft()
+		{
+
+			@Override
+			public int getEssenceCost(ItemStack stack)
+			{
+				return 4;
+			}
+
+			@Override
+			public ItemStack getResult(ItemStack stack)
+			{
+				if (stack.getItem() instanceof ItemModeToolAttachment)
+				{
+					if (((ItemModeToolAttachment) stack.getItem()).isBroken(stack))
+					{
+						stack.setItemDamage(0);
+
+						return stack;
+					}
+				}
+
+				return super.getResult(stack);
+			}
+
+			@Override
+			public int getTime(ItemStack stack)
+			{
+				return 60 * 20;
+			}
+
+		});
+
 	}
 
 	public TileEntityEssenceCauldron()
@@ -312,9 +371,9 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			return;
 		}
 
-		for (EntityItem entityItem : this.getCaptureItems(world))
+		for (EntityItem entityItem : this.getPosUpEntityItem(world))
 		{
-			if (this.isImmerseCraft(entityItem.getEntityItem()))
+			if (this.isImmerseCraft(entityItem.getEntityItem(), world, posTile))
 			{
 				if (TileEntityHopper.putDropInInventoryAllSlots(this, entityItem))
 				{
@@ -323,41 +382,53 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			}
 		}
 
-		if (this.getInventoryStack() != null)
+		if (this.getStackInInventory() != null)
 		{
-			ItemStack stackInventory = this.getInventoryStack();
+			ItemStack stackInv = this.getStackInInventory();
 
-			if (this.isImmerseCraft(stackInventory))
+			if (!this.isImmerseCraft(stackInv, world, posTile))
+			{
+				this.craftTime = 0;
+
+				this.clear();
+
+				if (stackInv != null)
+				{
+					Block.spawnAsEntity(world, posTile, stackInv);
+				}
+
+				return;
+			}
+
+			if (!world.isRemote)
 			{
 				++this.craftTime;
 
-				if (this.getImmerseCraftTime(stackInventory) <= this.craftTime)
+				if (this.getImmerseCraftTime(stackInv) < this.craftTime)
 				{
-					Block.spawnAsEntity(world, posTile.up(), this.getImmerseCraftResult(stackInventory));
+					this.craftTime = 0;
 
-					if (!world.isRemote)
-					{
-						this.clear();
+					this.clear();
 
-						IBlockState state = world.getBlockState(posTile);
-						int level = ((Integer) state.getValue(BlockCauldron.LEVEL)).intValue();
+					Block.spawnAsEntity(world, posTile.up(), this.getImmerseCraftResult(stackInv));
 
-						level -= this.getImmerseCraftCost(stackInventory);
-
-						if (level < 0)
-						{
-							world.setBlockState(pos, Blocks.CAULDRON.getDefaultState());
-						}
-						else
-						{
-							((BlockEssenceCauldron) state.getBlock()).setEssenceLevel(world, posTile, state, level);
-						}
-					}
+					this.afterImmerseCraft(stackInv, world, posTile);
 
 					world.playSound(null, posTile, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
-				}
 
-				this.spawnParticles(world);
+					// TODO packet実装-1
+					// this.spawnCraftingParticles(world, posTile);
+				}
+				else
+				{
+					if (this.craftTime % 20 == 0)
+					{
+						world.playSound(null, posTile, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 0.5F, 1.0F);
+					}
+
+					// TODO packet実装-2
+					// this.spawnCraftingParticles(world, posTile);
+				}
 			}
 		}
 		else
@@ -369,7 +440,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	// TODO /* ======================================== MOD START =====================================*/
 
 	@Nullable
-	private List<EntityItem> getCaptureItems(World world)
+	private List<EntityItem> getPosUpEntityItem(World world)
 	{
 		double posX = (double) this.pos.getX() + 0.5D;
 		double posY = (double) this.pos.getY() + 0.5D;
@@ -380,7 +451,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	}
 
 	@Nullable
-	private ItemStack getInventoryStack()
+	private ItemStack getStackInInventory()
 	{
 		return this.getStackInSlot(0);
 	}
@@ -396,37 +467,47 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		return (ImmerseCraft) IMMERSE_CRAFT_REGISTRY.getObject(stack.getItem());
 	}
 
-	private boolean isImmerseCraft(ItemStack stack)
+	private boolean isImmerseCraft(ItemStack stack, World world, BlockPos pos)
 	{
+		if (stack == null)
+		{
+			return false;
+		}
+
 		ItemStack stackCopy = stack.copy();
+		int stackSize = stackCopy.stackSize;
+		int level = 1 + ((Integer) world.getBlockState(pos).getValue(BlockCauldron.LEVEL)).intValue();
 
 		if (this.getImmerseCraft(stackCopy) != null)
 		{
-			return this.getImmerseCraft(stackCopy).isCrafting(stackCopy);
+			if (this.getImmerseCraftStackCost(stackCopy) <= stackSize && this.getImmerseCraftEssenceCost(stackCopy) <= level)
+			{
+				return this.getImmerseCraft(stackCopy).getResult(stackCopy) != null;
+			}
 		}
 
 		return false;
 	}
 
-	private int getImmerseCraftTime(ItemStack stack)
+	private int getImmerseCraftStackCost(ItemStack stack)
 	{
 		ItemStack stackCopy = stack.copy();
 
 		if (this.getImmerseCraft(stackCopy) != null)
 		{
-			return this.getImmerseCraft(stackCopy).getTime(stackCopy);
+			return this.getImmerseCraft(stackCopy).getStackCost(stackCopy);
 		}
 
 		return 0;
 	}
 
-	private int getImmerseCraftCost(ItemStack stack)
+	private int getImmerseCraftEssenceCost(ItemStack stack)
 	{
 		ItemStack stackCopy = stack.copy();
 
 		if (this.getImmerseCraft(stackCopy) != null)
 		{
-			return this.getImmerseCraft(stackCopy).getCost(stackCopy);
+			return this.getImmerseCraft(stackCopy).getEssenceCost(stackCopy);
 		}
 
 		return 0;
@@ -445,13 +526,69 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		return null;
 	}
 
+	private int getImmerseCraftTime(ItemStack stack)
+	{
+		ItemStack stackCopy = stack.copy();
+
+		if (this.getImmerseCraft(stackCopy) != null)
+		{
+			return this.getImmerseCraft(stackCopy).getTime(stackCopy);
+		}
+
+		return 0;
+	}
+
+	private void afterImmerseCraft(ItemStack stack, World world, BlockPos pos)
+	{
+		ItemStack stackCopy = stack.copy();
+		int level = ((Integer) world.getBlockState(pos).getValue(BlockCauldron.LEVEL)).intValue();
+
+		stack.stackSize -= this.getImmerseCraftStackCost(stackCopy);
+
+		if (stack.stackSize <= 0)
+		{
+			stack = null;
+		}
+
+		level -= this.getImmerseCraftEssenceCost(stackCopy);
+
+		if (level < 0)
+		{
+			if (stack != null)
+			{
+				Block.spawnAsEntity(world, pos.up(), stack);
+			}
+
+			world.setBlockState(pos, Blocks.CAULDRON.getDefaultState());
+		}
+		else
+		{
+			IBlockState state = world.getBlockState(pos);
+
+			if (state.getBlock() instanceof BlockEssenceCauldron)
+			{
+				((BlockEssenceCauldron) state.getBlock()).setEssenceLevel(world, pos, state, level);
+			}
+		}
+
+		TileEntity tileEntity = world.getTileEntity(pos);
+
+		if ((stack != null) && (tileEntity instanceof TileEntityEssenceCauldron))
+		{
+			if (this.isImmerseCraft(stack, world, pos))
+			{
+				TileEntityHopper.putStackInInventoryAllSlots((TileEntityEssenceCauldron) tileEntity, stack, null);
+			}
+		}
+	}
+
 	@SideOnly(Side.CLIENT)
-	private void spawnParticles(World world)
+	private void spawnCraftingParticles(World world, BlockPos pos)
 	{
 		Random random = world.rand;
-		double posX = (double) this.pos.getX() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
-		double posY = (double) this.pos.getY() + random.nextFloat();
-		double posZ = (double) this.pos.getZ() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
+		double posX = (double) pos.getX() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
+		double posY = (double) pos.getY() + random.nextFloat();
+		double posZ = (double) pos.getZ() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
 		world.spawnParticle(EnumParticleTypes.SPELL_MOB, posX, posY, posZ, -255.0D, -217.0D, 0.0D, new int[0]);
 	}
 

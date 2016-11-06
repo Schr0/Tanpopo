@@ -81,7 +81,9 @@ public abstract class ItemModeToolAttachment extends Item
 		NBTTagCompound nbtFnished = new NBTTagCompound();
 
 		stackFinished.stackSize = 1;
+
 		stackFinished.setItemDamage(0);
+
 		stackFinished.writeToNBT(nbtFnished);
 
 		nbtStack.setTag(TAG_KEY, nbtFnished);

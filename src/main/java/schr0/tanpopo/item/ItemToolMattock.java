@@ -33,7 +33,7 @@ public class ItemToolMattock extends ItemModeTool
 
 	public ItemToolMattock()
 	{
-		super(1.0F, -2.8F, TanpopoToolMaterials.TIER_0);
+		super(1.0F, -2.8F, TanpopoToolMaterials.TIER_IRON);
 	}
 
 	@Override
