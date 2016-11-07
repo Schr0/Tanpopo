@@ -1,7 +1,6 @@
 package schr0.tanpopo.item;
 
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,13 +11,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import schr0.tanpopo.init.TanpopoItems;
+import schr0.tanpopo.init.TanpopoPacket;
+import schr0.tanpopo.packet.MessageParticleBlock;
 
 public class ItemMaterialMass extends Item
 {
@@ -85,14 +85,14 @@ public class ItemMaterialMass extends Item
 			{
 				if (posAround.equals(pos))
 				{
-					this.spawnEssenceParticles(world, pos);
+					this.spawnApplyEssenceParticles(world, pos);
 
 					continue;
 				}
 
 				if (ItemDye.applyBonemeal(stack, world, posAround, player))
 				{
-					this.spawnEssenceParticles(world, posAround);
+					this.spawnApplyEssenceParticles(world, posAround);
 				}
 				else
 				{
@@ -105,7 +105,7 @@ public class ItemMaterialMass extends Item
 
 						if (ItemDye.applyBonemeal(stack, world, posAroundUpDown, player))
 						{
-							this.spawnEssenceParticles(world, posAroundUpDown);
+							this.spawnApplyEssenceParticles(world, posAroundUpDown);
 						}
 					}
 				}
@@ -121,17 +121,11 @@ public class ItemMaterialMass extends Item
 		return false;
 	}
 
-	@SideOnly(Side.CLIENT)
-	private void spawnEssenceParticles(World world, BlockPos pos)
+	private void spawnApplyEssenceParticles(World world, BlockPos pos)
 	{
-		for (int count = 0; count < 20; ++count)
+		for (int count = 0; count < 10; ++count)
 		{
-			Random random = world.rand;
-			double posX = (double) pos.getX() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
-			double posY = (double) pos.getY() + random.nextFloat();
-			double posZ = (double) pos.getZ() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
-
-			world.spawnParticle(EnumParticleTypes.SPELL_MOB, posX, posY, posZ, -255.0D, -217.0D, 0.0D, new int[0]);
+			TanpopoPacket.DISPATCHER.sendToAll(new MessageParticleBlock(0, pos.getX(), pos.getY(), pos.getZ()));
 		}
 	}
 

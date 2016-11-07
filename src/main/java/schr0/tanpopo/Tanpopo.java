@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import schr0.tanpopo.init.TanpopoBlocks;
 import schr0.tanpopo.init.TanpopoConfiguration;
 import schr0.tanpopo.init.TanpopoDispenserBehaviors;
+import schr0.tanpopo.init.TanpopoEssenceCauldronBehaviors;
 import schr0.tanpopo.init.TanpopoEvent;
 import schr0.tanpopo.init.TanpopoFluids;
 import schr0.tanpopo.init.TanpopoFuelHandler;
@@ -90,6 +91,8 @@ public class Tanpopo
 	public void initEvent(FMLInitializationEvent event)
 	{
 		(new TanpopoDispenserBehaviors()).init();
+
+		(new TanpopoEssenceCauldronBehaviors()).init();
 
 		(new TanpopoFuelHandler()).init();
 

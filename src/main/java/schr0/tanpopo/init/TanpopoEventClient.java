@@ -18,7 +18,7 @@ import schr0.tanpopo.Tanpopo;
 public class TanpopoEventClient
 {
 
-	public void init()
+	public void initClient()
 	{
 		MinecraftForge.EVENT_BUS.register(this);
 	}

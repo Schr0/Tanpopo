@@ -92,7 +92,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 		EntityPlayer player = (EntityPlayer) entityLiving;
 		Set<BlockPos> posSet = new LinkedHashSet<>();
 
-		this.getAroundBlockPos(posSet, worldIn, pos);
+		this.getChainBlockPos(posSet, worldIn, pos);
 
 		for (BlockPos posMowing : this.getMowingBlockPos(posSet, worldIn, pos))
 		{
@@ -192,20 +192,22 @@ public class ItemToolMowingHoe extends ItemModeTool
 		return false;
 	}
 
-	private Set<BlockPos> getAroundBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
+	private Set<BlockPos> getChainBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
 		if (MOWING_MODE_BLOCK_LIMIT < posSet.size())
 		{
 			return posSet;
 		}
 
-		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-1, -1, -1), pos.add(1, 1, 1)))
+		for (EnumFacing facing : EnumFacing.VALUES)
 		{
-			if (this.isMowingBlocks(world.getBlockState(posAround)))
+			BlockPos posFacing = pos.offset(facing);
+
+			if (this.isMowingBlocks(world.getBlockState(posFacing)))
 			{
-				if (posSet.add(posAround))
+				if (posSet.add(posFacing))
 				{
-					this.getAroundBlockPos(posSet, world, posAround);
+					this.getChainBlockPos(posSet, world, posFacing);
 				}
 			}
 		}
@@ -217,13 +219,13 @@ public class ItemToolMowingHoe extends ItemModeTool
 	{
 		Set<BlockPos> posSetMowing = Sets.newHashSet();
 
-		for (BlockPos posAround : posSet)
+		for (BlockPos posChain : posSet)
 		{
 			for (BlockPos posLimit : BlockPos.getAllInBox(pos.add(-4, 0, -4), pos.add(4, 0, 4)))
 			{
-				if ((posLimit.getX() == posAround.getX()) && (posLimit.getZ() == posAround.getZ()))
+				if ((posLimit.getX() == posChain.getX()) && (posLimit.getZ() == posChain.getZ()))
 				{
-					posSetMowing.add(posAround);
+					posSetMowing.add(posChain);
 				}
 			}
 		}

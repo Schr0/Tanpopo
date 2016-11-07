@@ -12,6 +12,7 @@ import schr0.tanpopo.init.TanpopoBlocks;
 import schr0.tanpopo.init.TanpopoColors;
 import schr0.tanpopo.init.TanpopoEventClient;
 import schr0.tanpopo.init.TanpopoItems;
+import schr0.tanpopo.init.TanpopoPacket;
 import schr0.tanpopo.init.TanpopoTileEntitys;
 
 @SideOnly(Side.CLIENT)
@@ -30,13 +31,15 @@ public class ProxyClient extends ProxyServer
 	{
 		(new TanpopoTileEntitys()).initClient();
 
-		(new TanpopoEventClient()).init();
+		(new TanpopoEventClient()).initClient();
 	}
 
 	@Override
 	public void postInitEventClient(FMLPostInitializationEvent event)
 	{
-		(new TanpopoColors()).init();
+		(new TanpopoColors()).initClient();
+
+		(new TanpopoPacket()).initClient();
 	}
 
 	@Override
