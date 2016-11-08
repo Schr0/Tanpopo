@@ -84,7 +84,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 	@Override
 	public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving)
 	{
-		if (!this.canMowingAction(stack, state, entityLiving))
+		if (!this.canMowingAction(stack, worldIn, pos, entityLiving))
 		{
 			return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
 		}
@@ -164,18 +164,20 @@ public class ItemToolMowingHoe extends ItemModeTool
 		return TanpopoItems.ATTACHMENT_MOWING_HOE;
 	}
 
-	private boolean canMowingAction(ItemStack stack, IBlockState state, EntityLivingBase entityLiving)
+	private boolean canMowingAction(ItemStack stack, World world, BlockPos pos, EntityLivingBase owner)
 	{
-		if (this.isMode(stack) && (entityLiving instanceof EntityPlayer))
+		if (this.isMode(stack) && (owner instanceof EntityPlayer))
 		{
-			return this.isMowingBlocks(state);
+			return this.isMowingBlocks(world, pos);
 		}
 
 		return false;
 	}
 
-	private boolean isMowingBlocks(IBlockState state)
+	private boolean isMowingBlocks(World world, BlockPos pos)
 	{
+		IBlockState state = world.getBlockState(pos);
+
 		if (state.getBlock() instanceof IPlantable)
 		{
 			return true;
@@ -203,7 +205,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 		{
 			BlockPos posFacing = pos.offset(facing);
 
-			if (this.isMowingBlocks(world.getBlockState(posFacing)))
+			if (this.isMowingBlocks(world, posFacing))
 			{
 				if (posSet.add(posFacing))
 				{

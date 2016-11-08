@@ -17,12 +17,12 @@ public class MessageParticleBlock implements IMessage
 		// none
 	}
 
-	public MessageParticleBlock(int particleType, int posX, int posY, int posZ)
+	public MessageParticleBlock(int particleType, BlockPos pos)
 	{
 		this.particleType = particleType;
-		this.posX = posX;
-		this.posY = posY;
-		this.posZ = posZ;
+		this.posX = pos.getX();
+		this.posY = pos.getY();
+		this.posZ = pos.getZ();
 	}
 
 	@Override

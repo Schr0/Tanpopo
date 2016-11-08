@@ -114,6 +114,8 @@ public class ItemToolMattock extends ItemModeTool
 			}
 		}
 
+		damegeCount = Math.min((damegeCount / 2), 1);
+
 		for (int count = 0; count <= damegeCount; ++count)
 		{
 			stack.damageItem(1, player);

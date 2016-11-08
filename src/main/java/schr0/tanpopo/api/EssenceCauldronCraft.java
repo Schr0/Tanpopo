@@ -2,10 +2,13 @@ package schr0.tanpopo.api;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class EssenceCauldronCraft
+public abstract class EssenceCauldronCraft
 {
+
+	public abstract Item getKeyItem();
 
 	public int getEssenceCost(ItemStack stack)
 	{
@@ -17,9 +20,9 @@ public class EssenceCauldronCraft
 		return 1;
 	}
 
-	public int getTime(ItemStack stack)
+	public int getTickTime(ItemStack stack)
 	{
-		return 5 * 20;
+		return 1 * 20;
 	}
 
 	@Nullable

@@ -1,5 +1,6 @@
 package schr0.tanpopo.tileentity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -12,8 +13,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -23,7 +24,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryDefaulted;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import schr0.tanpopo.api.EssenceCauldronCraft;
@@ -33,20 +33,21 @@ import schr0.tanpopo.init.TanpopoNBTTags;
 import schr0.tanpopo.init.TanpopoPacket;
 import schr0.tanpopo.packet.MessageParticleBlock;
 
-public class TileEntityEssenceCauldron extends TileEntity implements ITickable, IInventory
+public class TileEntityEssenceCauldron extends TileEntity implements ITickable, ISidedInventory
 {
 
-	private static final RegistryDefaulted<Item, EssenceCauldronCraft> REGISTRY_ESSENCE_CAULDRON_CRAFT = TanpopoRegistry.getRegistryEssenceCauldronCraft();
+	private static final ArrayList<EssenceCauldronCraft> LIST_ESSENCE_CAULDRON_CRAFT = TanpopoRegistry.getListEssenceCauldronCraft();
 	private static final String TAG_KEY = TanpopoNBTTags.TILEENTITY_ESSENCE_CAULDRON;
 	private static final int SIZE_INVENTORY = 1;
 	private static final int SIZE_STACKSIZE = 64;
+	private static final EnumFacing FACING_CAN_INSERT = EnumFacing.UP;
 	private ItemStack[] inventoryContents;
-	private int craftTime;
+	private int craftTickTime;
 
 	public TileEntityEssenceCauldron()
 	{
 		this.inventoryContents = new ItemStack[SIZE_INVENTORY];
-		this.craftTime = 0;
+		this.craftTickTime = 0;
 	}
 
 	public void readFromNBT(NBTTagCompound compound)
@@ -68,7 +69,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			}
 		}
 
-		this.craftTime = compound.getInteger(TAG_KEY);
+		this.craftTickTime = compound.getInteger(TAG_KEY);
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
@@ -91,7 +92,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		compound.setTag("Items", nbttagList);
 
-		compound.setInteger(TAG_KEY, this.craftTime);
+		compound.setInteger(TAG_KEY, this.craftTickTime);
 
 		return compound;
 	}
@@ -125,14 +126,14 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	@Nullable
 	public ItemStack decrStackSize(int index, int count)
 	{
-		ItemStack itemstack = ItemStackHelper.getAndSplit(this.inventoryContents, index, count);
+		ItemStack stack = ItemStackHelper.getAndSplit(this.inventoryContents, index, count);
 
-		if (itemstack != null)
+		if (stack != null)
 		{
 			this.markDirty();
 		}
 
-		return itemstack;
+		return stack;
 	}
 
 	@Override
@@ -182,7 +183,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	@Override
 	public boolean isItemValidForSlot(int index, ItemStack stack)
 	{
-		return this.isEssenceCauldronCraft(stack, this.getWorld(), this.getPos());
+		return this.canCraft(stack);
 	}
 
 	@Override
@@ -213,23 +214,93 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	}
 
 	@Override
+	public int[] getSlotsForFace(EnumFacing side)
+	{
+		return new int[]
+		{
+				0
+		};
+	}
+
+	@Override
+	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction)
+	{
+		if (direction == FACING_CAN_INSERT)
+		{
+			return this.isItemValidForSlot(index, itemStackIn);
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction)
+	{
+		return false;
+	}
+
+	@Override
 	public void update()
 	{
 		World world = this.getWorld();
 		BlockPos posTile = this.getPos();
 
-		if (world == null)
+		for (EntityItem entityItem : this.getPosUpEntityItems())
 		{
-			return;
+			ItemStack stackEntityItem = entityItem.getEntityItem();
+
+			if (this.canCraft(stackEntityItem))
+			{
+				ItemStack putStack = TileEntityHopper.putStackInInventoryAllSlots(this, stackEntityItem, FACING_CAN_INSERT);
+
+				if (putStack != null && putStack.stackSize != 0)
+				{
+					entityItem.setEntityItemStack(putStack);
+				}
+				else
+				{
+					if (!world.isRemote)
+					{
+						entityItem.setDead();
+					}
+				}
+			}
 		}
 
-		if (this.getStackInInventory() != null)
+		if (this.getStackInEssenceCauldron() != null)
 		{
-			ItemStack stackInv = this.getStackInInventory();
+			ItemStack stackInv = this.getStackInEssenceCauldron();
 
-			if (!this.isEssenceCauldronCraft(stackInv, world, posTile))
+			if (this.canCraft(stackInv))
 			{
-				this.craftTime = 0;
+				if (!world.isRemote)
+				{
+					++this.craftTickTime;
+
+					if (this.getCraftTickTime(stackInv) < this.craftTickTime)
+					{
+						this.craftTickTime = 0;
+
+						this.clear();
+
+						this.onCrafting(stackInv);
+
+						world.playSound(null, posTile, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
+					}
+					else
+					{
+						if (this.craftTickTime % 20 == 0)
+						{
+							world.playSound(null, posTile, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 0.25F, 1.0F);
+						}
+
+						this.spawnCraftingParticles();
+					}
+				}
+			}
+			else
+			{
+				this.craftTickTime = 0;
 
 				this.clear();
 
@@ -237,163 +308,139 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 				{
 					Block.spawnAsEntity(world, posTile, stackInv);
 				}
-
-				return;
-			}
-
-			if (!world.isRemote)
-			{
-				++this.craftTime;
-
-				if (this.getEssenceCauldronCraftTime(stackInv) < this.craftTime)
-				{
-					this.craftTime = 0;
-
-					this.clear();
-
-					this.onEssenceCauldronCraft(stackInv, world, posTile);
-
-					world.playSound(null, posTile, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
-				}
-				else
-				{
-					if (this.craftTime % 30 == 0)
-					{
-						world.playSound(null, posTile, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 0.25F, 1.0F);
-					}
-
-					this.spawnCraftingParticles(world, posTile);
-				}
 			}
 		}
 		else
 		{
-			this.craftTime = 0;
-		}
+			this.craftTickTime = 0;
 
-		for (EntityItem entityItem : this.getUpEntityItems(world))
-		{
-			if (this.isEssenceCauldronCraft(entityItem.getEntityItem(), world, posTile))
-			{
-				TileEntity tileEntity = world.getTileEntity(pos);
-
-				if (tileEntity instanceof TileEntityEssenceCauldron)
-				{
-					TileEntityHopper.putDropInInventoryAllSlots((TileEntityEssenceCauldron) tileEntity, entityItem);
-				}
-			}
+			this.clear();
 		}
 	}
 
 	// TODO /* ======================================== MOD START =====================================*/
 
-	private void spawnCraftingParticles(World world, BlockPos pos)
+	private void spawnCraftingParticles()
 	{
-		TanpopoPacket.DISPATCHER.sendToAll(new MessageParticleBlock(0, pos.getX(), pos.getY(), pos.getZ()));
+		TanpopoPacket.DISPATCHER.sendToAll(new MessageParticleBlock(0, this.getPos()));
 	}
 
 	@Nullable
-	private ItemStack getStackInInventory()
+	private List<EntityItem> getPosUpEntityItems()
+	{
+		World world = this.getWorld();
+		BlockPos posTile = this.getPos();
+		double posX = (double) posTile.getX() + 0.5D;
+		double posY = (double) posTile.getY() + 0.5D;
+		double posZ = (double) posTile.getZ() + 0.5D;
+		List<EntityItem> listEntityItem = TileEntityHopper.getCaptureItems(world, posX, posY, posZ);
+
+		return listEntityItem;
+	}
+
+	@Nullable
+	private ItemStack getStackInEssenceCauldron()
 	{
 		return this.getStackInSlot(0);
 	}
 
 	@Nullable
-	private EssenceCauldronCraft getEssenceCauldronCraft(ItemStack stack)
+	private EssenceCauldronCraft getCraft(ItemStack stack)
 	{
-		if (REGISTRY_ESSENCE_CAULDRON_CRAFT.getObject(stack.getItem()) == null)
+		for (EssenceCauldronCraft essenceCauldronCraft : LIST_ESSENCE_CAULDRON_CRAFT)
 		{
-			return (EssenceCauldronCraft) null;
+			if (essenceCauldronCraft.getKeyItem().equals(stack.getItem()))
+			{
+				return essenceCauldronCraft;
+			}
 		}
 
-		return (EssenceCauldronCraft) REGISTRY_ESSENCE_CAULDRON_CRAFT.getObject(stack.getItem());
+		return (EssenceCauldronCraft) null;
 	}
 
-	private boolean isEssenceCauldronCraft(ItemStack stack, World world, BlockPos pos)
+	private boolean canCraft(ItemStack stack)
 	{
-		if (stack == null)
-		{
-			return false;
-		}
-
 		ItemStack stackCopy = stack.copy();
 		int stackSize = stackCopy.stackSize;
-		int level = 1 + ((Integer) world.getBlockState(pos).getValue(BlockCauldron.LEVEL)).intValue();
+		int level = 1 + ((Integer) this.getWorld().getBlockState(this.getPos()).getValue(BlockCauldron.LEVEL)).intValue();
 
-		if (this.getEssenceCauldronCraft(stackCopy) != null)
+		if (this.getCraft(stackCopy) != null)
 		{
-			if (this.getEssenceCauldronCraftStackCost(stackCopy) <= stackSize && this.getEssenceCauldronCraftEssenceCost(stackCopy) <= level)
+			if (this.getCraftStackCost(stackCopy) <= stackSize && this.getCraftEssenceCost(stackCopy) <= level)
 			{
-				return this.getEssenceCauldronCraft(stackCopy).getResult(stackCopy) != null;
+				return this.getCraft(stackCopy).getResult(stackCopy) != null;
 			}
 		}
 
 		return false;
 	}
 
-	private int getEssenceCauldronCraftEssenceCost(ItemStack stack)
+	private int getCraftEssenceCost(ItemStack stack)
 	{
 		ItemStack stackCopy = stack.copy();
 
-		if (this.getEssenceCauldronCraft(stackCopy) != null)
+		if (this.getCraft(stackCopy) != null)
 		{
-			return this.getEssenceCauldronCraft(stackCopy).getEssenceCost(stackCopy);
+			return this.getCraft(stackCopy).getEssenceCost(stackCopy);
 		}
 
 		return 0;
 	}
 
-	private int getEssenceCauldronCraftStackCost(ItemStack stack)
+	private int getCraftStackCost(ItemStack stack)
 	{
 		ItemStack stackCopy = stack.copy();
 
-		if (this.getEssenceCauldronCraft(stackCopy) != null)
+		if (this.getCraft(stackCopy) != null)
 		{
-			return this.getEssenceCauldronCraft(stackCopy).getStackCost(stackCopy);
+			return this.getCraft(stackCopy).getStackCost(stackCopy);
 		}
 
 		return 0;
 	}
 
-	private int getEssenceCauldronCraftTime(ItemStack stack)
+	private int getCraftTickTime(ItemStack stack)
 	{
 		ItemStack stackCopy = stack.copy();
 
-		if (this.getEssenceCauldronCraft(stackCopy) != null)
+		if (this.getCraft(stackCopy) != null)
 		{
-			return this.getEssenceCauldronCraft(stackCopy).getTime(stackCopy);
+			return this.getCraft(stackCopy).getTickTime(stackCopy);
 		}
 
 		return 0;
 	}
 
 	@Nullable
-	private ItemStack getEssenceCauldronCraftResult(ItemStack stack)
+	private ItemStack getCraftResult(ItemStack stack)
 	{
 		ItemStack stackCopy = stack.copy();
 
-		if (this.getEssenceCauldronCraft(stackCopy) != null)
+		if (this.getCraft(stackCopy) != null)
 		{
-			return this.getEssenceCauldronCraft(stackCopy).getResult(stackCopy);
+			return this.getCraft(stackCopy).getResult(stackCopy);
 		}
 
 		return null;
 	}
 
-	private void onEssenceCauldronCraft(ItemStack stack, World world, BlockPos pos)
+	private void onCrafting(ItemStack stack)
 	{
-		ItemStack result = this.getEssenceCauldronCraftResult(stack);
+		World world = this.getWorld();
+		BlockPos posTile = this.getPos();
 
-		if (!this.putStackInFacingInventory(result, world, pos))
-		{
-			Block.spawnAsEntity(world, pos, result);
-		}
-
+		ItemStack result = this.getCraftResult(stack);
 		int stackSize = stack.stackSize;
-		int level = ((Integer) world.getBlockState(pos).getValue(BlockCauldron.LEVEL)).intValue();
+		int level = ((Integer) world.getBlockState(posTile).getValue(BlockCauldron.LEVEL)).intValue();
 
-		stackSize -= this.getEssenceCauldronCraftStackCost(stack);
-		level -= this.getEssenceCauldronCraftEssenceCost(stack);
+		result = this.putStackInFacingInventory(result);
+		stackSize -= this.getCraftStackCost(stack);
+		level -= this.getCraftEssenceCost(stack);
+
+		if (result != null)
+		{
+			Block.spawnAsEntity(world, posTile, result);
+		}
 
 		if (stackSize <= 0)
 		{
@@ -406,11 +453,11 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		if (0 <= level)
 		{
-			IBlockState state = world.getBlockState(pos);
+			IBlockState state = world.getBlockState(posTile);
 
 			if (state.getBlock() instanceof BlockEssenceCauldron)
 			{
-				((BlockEssenceCauldron) state.getBlock()).setEssenceLevel(world, pos, state, level);
+				((BlockEssenceCauldron) state.getBlock()).setEssenceLevel(world, posTile, state, level);
 			}
 		}
 		else
@@ -420,55 +467,55 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		if (stack != null)
 		{
-			TileEntity tileEntity = world.getTileEntity(pos);
-
-			if (tileEntity instanceof TileEntityEssenceCauldron)
+			if (world.getTileEntity(posTile) instanceof TileEntityEssenceCauldron)
 			{
-				if (this.isEssenceCauldronCraft(stack, world, pos))
+				TileEntity tileEntity = world.getTileEntity(posTile);
+
+				if (this.canCraft(stack))
 				{
-					TileEntityHopper.putStackInInventoryAllSlots((TileEntityEssenceCauldron) tileEntity, stack, null);
+					ItemStack putStack = TileEntityHopper.putStackInInventoryAllSlots((IInventory) tileEntity, stack, FACING_CAN_INSERT);
+
+					if (putStack != null && putStack.stackSize != 0)
+					{
+						Block.spawnAsEntity(world, posTile, putStack);
+					}
 				}
 			}
 			else
 			{
-				Block.spawnAsEntity(world, pos, stack);
+				Block.spawnAsEntity(world, posTile, stack);
 			}
 		}
-
 	}
 
-	private boolean putStackInFacingInventory(ItemStack stack, World world, BlockPos pos)
+	@Nullable
+	private ItemStack putStackInFacingInventory(ItemStack stack)
 	{
+		World world = this.getWorld();
+		BlockPos posTile = this.getPos();
+
 		for (EnumFacing facing : EnumFacing.VALUES)
 		{
-			if (facing == EnumFacing.UP)
+			if (facing == FACING_CAN_INSERT)
 			{
 				continue;
 			}
 
-			BlockPos posFacing = pos.offset(facing);
+			BlockPos posFacing = posTile.offset(facing);
 			TileEntity tileEntity = world.getTileEntity(posFacing);
 
 			if (tileEntity instanceof IInventory)
 			{
-				TileEntityHopper.putStackInInventoryAllSlots((IInventory) tileEntity, stack, facing.getOpposite());
+				ItemStack putStack = TileEntityHopper.putStackInInventoryAllSlots((IInventory) tileEntity, stack, facing.getOpposite());
 
-				return true;
+				if (putStack != null && putStack.stackSize != 0)
+				{
+					return putStack;
+				}
 			}
 		}
 
-		return false;
-	}
-
-	@Nullable
-	private List<EntityItem> getUpEntityItems(World world)
-	{
-		double posX = (double) this.pos.getX() + 0.5D;
-		double posY = (double) this.pos.getY() + 0.5D;
-		double posZ = (double) this.pos.getZ() + 0.5D;
-		List<EntityItem> listEntityItem = TileEntityHopper.getCaptureItems(world, posX, posY, posZ);
-
-		return listEntityItem;
+		return (ItemStack) null;
 	}
 
 }

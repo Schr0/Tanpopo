@@ -125,7 +125,7 @@ public class ItemMaterialMass extends Item
 	{
 		for (int count = 0; count < 10; ++count)
 		{
-			TanpopoPacket.DISPATCHER.sendToAll(new MessageParticleBlock(0, pos.getX(), pos.getY(), pos.getZ()));
+			TanpopoPacket.DISPATCHER.sendToAll(new MessageParticleBlock(0, pos));
 		}
 	}
 

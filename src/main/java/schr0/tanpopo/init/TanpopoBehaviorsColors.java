@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import schr0.tanpopo.Tanpopo;
 
 @SideOnly(Side.CLIENT)
-public class TanpopoColors
+public class TanpopoBehaviorsColors
 {
 
 	private static final BlockColors COLORS_BLOCK = Tanpopo.proxy.getMinecraft().getBlockColors();
@@ -25,10 +25,10 @@ public class TanpopoColors
 
 	public void initClient()
 	{
-		registerBlockFluffCushion();
+		register();
 	}
 
-	private static void registerBlockFluffCushion()
+	private static void register()
 	{
 		COLORS_BLOCK.registerBlockColorHandler(new IBlockColor()
 		{

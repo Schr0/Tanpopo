@@ -1,21 +1,20 @@
 package schr0.tanpopo.api;
 
-import net.minecraft.item.Item;
-import net.minecraft.util.registry.RegistryDefaulted;
+import java.util.ArrayList;
 
 public class TanpopoRegistry
 {
 
-	private static final RegistryDefaulted<Item, EssenceCauldronCraft> REGISTRY_ESSENCE_CAULDRON_CRAFT = new RegistryDefaulted(null);
+	private static final ArrayList<EssenceCauldronCraft> LIST_ESSENCE_CAULDRON_CRAFT = new ArrayList<EssenceCauldronCraft>();
 
-	public static void registerRegistryEssenceCauldronCraft(Item key, EssenceCauldronCraft value)
+	public static void registerEssenceCauldronCraft(EssenceCauldronCraft value)
 	{
-		REGISTRY_ESSENCE_CAULDRON_CRAFT.putObject(key, value);
+		LIST_ESSENCE_CAULDRON_CRAFT.add(value);
 	}
 
-	public static RegistryDefaulted<Item, EssenceCauldronCraft> getRegistryEssenceCauldronCraft()
+	public static ArrayList<EssenceCauldronCraft> getListEssenceCauldronCraft()
 	{
-		return REGISTRY_ESSENCE_CAULDRON_CRAFT;
+		return (ArrayList<EssenceCauldronCraft>) LIST_ESSENCE_CAULDRON_CRAFT.clone();
 	}
 
 }

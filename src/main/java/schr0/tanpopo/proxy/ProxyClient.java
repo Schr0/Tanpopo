@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import schr0.tanpopo.init.TanpopoBlocks;
-import schr0.tanpopo.init.TanpopoColors;
+import schr0.tanpopo.init.TanpopoBehaviorsColors;
 import schr0.tanpopo.init.TanpopoEventClient;
 import schr0.tanpopo.init.TanpopoItems;
 import schr0.tanpopo.init.TanpopoPacket;
@@ -37,7 +37,7 @@ public class ProxyClient extends ProxyServer
 	@Override
 	public void postInitEventClient(FMLPostInitializationEvent event)
 	{
-		(new TanpopoColors()).initClient();
+		(new TanpopoBehaviorsColors()).initClient();
 
 		(new TanpopoPacket()).initClient();
 	}
