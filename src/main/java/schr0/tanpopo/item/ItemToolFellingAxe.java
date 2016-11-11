@@ -143,8 +143,6 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 			stack.damageItem(1, playerIn);
 
-			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
-
 			int coolDwonTime = COOLDWON_TIME - (EnchantmentHelper.getEnchantmentLevel(Enchantments.EFFICIENCY, stack) * 20);
 
 			coolDwonTime = Math.max((5 * 20), coolDwonTime);
@@ -152,6 +150,8 @@ public class ItemToolFellingAxe extends ItemModeTool
 			playerIn.getCooldownTracker().setCooldown(this, coolDwonTime);
 
 			worldIn.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, pos.getX(), pos.getY(), pos.getZ(), 0.0D, 0.0D, 0.0D, new int[0]);
+
+			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
 			return EnumActionResult.SUCCESS;
 		}

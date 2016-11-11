@@ -100,7 +100,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	@Override
 	public String getName()
 	{
-		return new TextComponentTranslation("tile.essence_cauldron_3.name", new Object[0]).getFormattedText();
+		return new TextComponentTranslation("tile.essence_cauldron_" + this.getBlockMetadata() + ".name", new Object[0]).getFormattedText();
 	}
 
 	@Override
@@ -262,6 +262,10 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 					if (!world.isRemote)
 					{
 						entityItem.setDead();
+
+						this.spawnInsertParticles();
+
+						world.playSound(null, posTile, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.5F, 1.0F);
 					}
 				}
 			}
@@ -283,18 +287,18 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 						this.clear();
 
-						this.onCrafting(stackInv);
+						this.onEssenceCraft(stackInv);
 
 						world.playSound(null, posTile, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
 					}
 					else
 					{
+						this.spawnCraftingParticles();
+
 						if (this.craftTickTime % 20 == 0)
 						{
 							world.playSound(null, posTile, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 0.25F, 1.0F);
 						}
-
-						this.spawnCraftingParticles();
 					}
 				}
 			}
@@ -320,9 +324,14 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 	// TODO /* ======================================== MOD START =====================================*/
 
-	private void spawnCraftingParticles()
+	private void spawnInsertParticles()
 	{
 		TanpopoPacket.DISPATCHER.sendToAll(new MessageParticleBlock(0, this.getPos()));
+	}
+
+	private void spawnCraftingParticles()
+	{
+		TanpopoPacket.DISPATCHER.sendToAll(new MessageParticleBlock(1, this.getPos()));
 	}
 
 	@Nullable
@@ -424,7 +433,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		return null;
 	}
 
-	private void onCrafting(ItemStack stack)
+	private void onEssenceCraft(ItemStack stack)
 	{
 		World world = this.getWorld();
 		BlockPos posTile = this.getPos();
@@ -437,7 +446,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		stackSize -= this.getCraftStackCost(stack);
 		level -= this.getCraftEssenceCost(stack);
 
-		if (result != null)
+		if (result != null && result.stackSize != 0)
 		{
 			Block.spawnAsEntity(world, posTile, result);
 		}
@@ -467,10 +476,10 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		if (stack != null)
 		{
-			if (world.getTileEntity(posTile) instanceof TileEntityEssenceCauldron)
-			{
-				TileEntity tileEntity = world.getTileEntity(posTile);
+			TileEntity tileEntity = world.getTileEntity(posTile);
 
+			if (tileEntity instanceof TileEntityEssenceCauldron)
+			{
 				if (this.canCraft(stack))
 				{
 					ItemStack putStack = TileEntityHopper.putStackInInventoryAllSlots((IInventory) tileEntity, stack, FACING_CAN_INSERT);
@@ -479,6 +488,10 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 					{
 						Block.spawnAsEntity(world, posTile, putStack);
 					}
+				}
+				else
+				{
+					Block.spawnAsEntity(world, posTile, stack);
 				}
 			}
 			else
@@ -506,16 +519,11 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 			if (tileEntity instanceof IInventory)
 			{
-				ItemStack putStack = TileEntityHopper.putStackInInventoryAllSlots((IInventory) tileEntity, stack, facing.getOpposite());
-
-				if (putStack != null && putStack.stackSize != 0)
-				{
-					return putStack;
-				}
+				return TileEntityHopper.putStackInInventoryAllSlots((IInventory) tileEntity, stack, facing.getOpposite());
 			}
 		}
 
-		return (ItemStack) null;
+		return stack;
 	}
 
 }

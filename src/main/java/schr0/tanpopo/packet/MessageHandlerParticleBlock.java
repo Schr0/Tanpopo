@@ -26,7 +26,13 @@ public class MessageHandlerParticleBlock implements IMessageHandler<MessageParti
 		{
 			case 0 :
 
-				spawnEssenceParticles(world, pos, random);
+				essenceCauldronInsertParticles(world, pos, random);
+
+				break;
+
+			case 1 :
+
+				essenceCauldronCraftingParticles(world, pos, random);
 
 				break;
 		}
@@ -36,7 +42,15 @@ public class MessageHandlerParticleBlock implements IMessageHandler<MessageParti
 
 	// TODO /* ======================================== MOD START =====================================*/
 
-	private static void spawnEssenceParticles(World world, BlockPos pos, Random random)
+	private static void essenceCauldronInsertParticles(World world, BlockPos pos, Random random)
+	{
+		double posX = (double) pos.getX() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
+		double posY = (double) pos.getY() + 1.0D;
+		double posZ = (double) pos.getZ() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
+		world.spawnParticle(EnumParticleTypes.NOTE, posX, posY, posZ, ((double) 7 / 24.0D), 0.0D, 0.0D, new int[0]);
+	}
+
+	private static void essenceCauldronCraftingParticles(World world, BlockPos pos, Random random)
 	{
 		double posX = (double) pos.getX() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
 		double posY = (double) pos.getY() + random.nextFloat();
