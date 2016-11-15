@@ -47,7 +47,8 @@ public class MessageHandlerParticleBlock implements IMessageHandler<MessageParti
 		double posX = (double) pos.getX() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
 		double posY = (double) pos.getY() + 1.0D;
 		double posZ = (double) pos.getZ() + (0.5D + ((double) random.nextFloat() - 0.5D) * 0.85D);
-		world.spawnParticle(EnumParticleTypes.NOTE, posX, posY, posZ, ((double) 7 / 24.0D), 0.0D, 0.0D, new int[0]);
+		double musicalScaleA = ((double) 7 / 24.0D);
+		world.spawnParticle(EnumParticleTypes.NOTE, posX, posY, posZ, musicalScaleA, 0.0D, 0.0D, new int[0]);
 	}
 
 	private static void essenceCauldronCraftingParticles(World world, BlockPos pos, Random random)

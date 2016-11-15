@@ -10,7 +10,7 @@ import schr0.tanpopo.item.ItemModeToolAttachment;
 public class TanpopoBehaviorsEssenceCauldron
 {
 
-	private static final EssenceCauldronCraft RECIPE_COAL = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft RECIPE_ITEM_COAL = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -20,25 +20,48 @@ public class TanpopoBehaviorsEssenceCauldron
 		}
 
 		@Override
-		public int getTickTime(ItemStack stack)
+		public ItemStack getResultStack(ItemStack stackKeyItem)
 		{
-			return 5 * 20;
-		}
-
-		@Override
-		public ItemStack getResult(ItemStack stack)
-		{
-			if (stack.getItemDamage() == 1)
+			if (stackKeyItem.getItemDamage() == 1)
 			{
 				return new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL);
 			}
 
-			return super.getResult(stack);
+			return (ItemStack) null;
+		}
+
+		@Override
+		public int getTickTime(ItemStack stackKeyItem)
+		{
+			return (5 * 20);
 		}
 
 	};
 
-	private static final EssenceCauldronCraft RECIPE_ATTACHMENT_MATTOCK = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft RECIPE_ITEM_IRON_INGOT = new EssenceCauldronCraft()
+	{
+
+		@Override
+		public Item getKeyItem()
+		{
+			return Items.IRON_INGOT;
+		}
+
+		@Override
+		public ItemStack getResultStack(ItemStack stackKeyItem)
+		{
+			return new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT);
+		}
+
+		@Override
+		public int getTickTime(ItemStack stackKeyItem)
+		{
+			return (25 * 20);
+		}
+
+	};
+
+	private static final EssenceCauldronCraft RECIPE_ITEM_ATTACHMENT_MATTOCK = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -48,36 +71,33 @@ public class TanpopoBehaviorsEssenceCauldron
 		}
 
 		@Override
-		public int getEssenceCost(ItemStack stack)
+		public ItemStack getResultStack(ItemStack stackKeyItem)
+		{
+			if ((stackKeyItem.getItem() instanceof ItemModeToolAttachment) && ((ItemModeToolAttachment) stackKeyItem.getItem()).isBroken(stackKeyItem))
+			{
+				stackKeyItem.setItemDamage(0);
+
+				return stackKeyItem;
+			}
+
+			return (ItemStack) null;
+		}
+
+		@Override
+		public int getEssenceCost(ItemStack stackKeyItem)
 		{
 			return 4;
 		}
 
 		@Override
-		public int getTickTime(ItemStack stack)
+		public int getTickTime(ItemStack stackKeyItem)
 		{
-			return 60 * 20;
-		}
-
-		@Override
-		public ItemStack getResult(ItemStack stack)
-		{
-			if (stack.getItem() instanceof ItemModeToolAttachment)
-			{
-				if (((ItemModeToolAttachment) stack.getItem()).isBroken(stack))
-				{
-					stack.setItemDamage(0);
-
-					return stack;
-				}
-			}
-
-			return super.getResult(stack);
+			return (50 * 20);
 		}
 
 	};
 
-	private static final EssenceCauldronCraft RECIPE_ATTACHMENT_FELLING_AXE = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft RECIPE_ITEM_ATTACHMENT_FELLING_AXE = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -87,36 +107,33 @@ public class TanpopoBehaviorsEssenceCauldron
 		}
 
 		@Override
-		public int getEssenceCost(ItemStack stack)
+		public ItemStack getResultStack(ItemStack stackKeyItem)
+		{
+			if ((stackKeyItem.getItem() instanceof ItemModeToolAttachment) && ((ItemModeToolAttachment) stackKeyItem.getItem()).isBroken(stackKeyItem))
+			{
+				stackKeyItem.setItemDamage(0);
+
+				return stackKeyItem;
+			}
+
+			return (ItemStack) null;
+		}
+
+		@Override
+		public int getEssenceCost(ItemStack stackKeyItem)
 		{
 			return 4;
 		}
 
 		@Override
-		public int getTickTime(ItemStack stack)
+		public int getTickTime(ItemStack stackKeyItem)
 		{
-			return 60 * 20;
-		}
-
-		@Override
-		public ItemStack getResult(ItemStack stack)
-		{
-			if (stack.getItem() instanceof ItemModeToolAttachment)
-			{
-				if (((ItemModeToolAttachment) stack.getItem()).isBroken(stack))
-				{
-					stack.setItemDamage(0);
-
-					return stack;
-				}
-			}
-
-			return super.getResult(stack);
+			return (50 * 20);
 		}
 
 	};
 
-	private static final EssenceCauldronCraft RECIPE_ATTACHMENT_MOWING_HOE = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft RECIPE_ITEM_ATTACHMENT_MOWING_HOE = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -126,169 +143,28 @@ public class TanpopoBehaviorsEssenceCauldron
 		}
 
 		@Override
-		public int getEssenceCost(ItemStack stack)
+		public ItemStack getResultStack(ItemStack stackKeyItem)
+		{
+			if ((stackKeyItem.getItem() instanceof ItemModeToolAttachment) && ((ItemModeToolAttachment) stackKeyItem.getItem()).isBroken(stackKeyItem))
+			{
+				stackKeyItem.setItemDamage(0);
+
+				return stackKeyItem;
+			}
+
+			return (ItemStack) null;
+		}
+
+		@Override
+		public int getEssenceCost(ItemStack stackKeyItem)
 		{
 			return 4;
 		}
 
 		@Override
-		public int getTickTime(ItemStack stack)
+		public int getTickTime(ItemStack stackKeyItem)
 		{
-			return 60 * 20;
-		}
-
-		@Override
-		public ItemStack getResult(ItemStack stack)
-		{
-			if (stack.getItem() instanceof ItemModeToolAttachment)
-			{
-				if (((ItemModeToolAttachment) stack.getItem()).isBroken(stack))
-				{
-					stack.setItemDamage(0);
-
-					return stack;
-				}
-			}
-
-			return super.getResult(stack);
-		}
-
-	};
-
-	private static final EssenceCauldronCraft RECIPE_TOOL_MATTOCK = new EssenceCauldronCraft()
-	{
-
-		@Override
-		public Item getKeyItem()
-		{
-			return TanpopoItems.TOOL_MATTOCK;
-		}
-
-		@Override
-		public int getEssenceCost(ItemStack stack)
-		{
-			int cost = stack.getItemDamage() / 100;
-
-			cost = Math.max(1, cost);
-			cost = Math.min(4, cost);
-
-			return cost;
-		}
-
-		@Override
-		public int getTickTime(ItemStack stack)
-		{
-			int sec = stack.getItemDamage() / 10;
-
-			sec = Math.max(10, sec);
-			sec = Math.min(50, sec);
-
-			return (sec * 20);
-		}
-
-		@Override
-		public ItemStack getResult(ItemStack stack)
-		{
-			if (stack.isItemDamaged())
-			{
-				stack.setItemDamage(0);
-
-				return stack;
-			}
-
-			return super.getResult(stack);
-		}
-
-	};
-
-	private static final EssenceCauldronCraft RECIPE_TOOL_FELLING_AXE = new EssenceCauldronCraft()
-	{
-
-		@Override
-		public Item getKeyItem()
-		{
-			return TanpopoItems.TOOL_FELLING_AXE;
-		}
-
-		@Override
-		public int getEssenceCost(ItemStack stack)
-		{
-			int cost = stack.getItemDamage() / 100;
-
-			cost = Math.max(1, cost);
-			cost = Math.min(4, cost);
-
-			return cost;
-		}
-
-		@Override
-		public int getTickTime(ItemStack stack)
-		{
-			int sec = stack.getItemDamage() / 10;
-
-			sec = Math.max(10, sec);
-			sec = Math.min(50, sec);
-
-			return (sec * 20);
-		}
-
-		@Override
-		public ItemStack getResult(ItemStack stack)
-		{
-			if (stack.isItemDamaged())
-			{
-				stack.setItemDamage(0);
-
-				return stack;
-			}
-
-			return super.getResult(stack);
-		}
-
-	};
-
-	private static final EssenceCauldronCraft RECIPE_TOOL_MOWING_HOE = new EssenceCauldronCraft()
-	{
-
-		@Override
-		public Item getKeyItem()
-		{
-			return TanpopoItems.TOOL_MOWING_HOE;
-		}
-
-		@Override
-		public int getEssenceCost(ItemStack stack)
-		{
-			int cost = stack.getItemDamage() / 100;
-
-			cost = Math.max(1, cost);
-			cost = Math.min(4, cost);
-
-			return cost;
-		}
-
-		@Override
-		public int getTickTime(ItemStack stack)
-		{
-			int sec = stack.getItemDamage() / 10;
-
-			sec = Math.max(10, sec);
-			sec = Math.min(50, sec);
-
-			return (sec * 20);
-		}
-
-		@Override
-		public ItemStack getResult(ItemStack stack)
-		{
-			if (stack.isItemDamaged())
-			{
-				stack.setItemDamage(0);
-
-				return stack;
-			}
-
-			return super.getResult(stack);
+			return (50 * 20);
 		}
 
 	};
@@ -300,15 +176,11 @@ public class TanpopoBehaviorsEssenceCauldron
 
 	private static void register()
 	{
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_COAL);
-
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ATTACHMENT_MATTOCK);
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ATTACHMENT_FELLING_AXE);
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ATTACHMENT_MOWING_HOE);
-
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_TOOL_MATTOCK);
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_TOOL_FELLING_AXE);
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_TOOL_MOWING_HOE);
+		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_COAL);
+		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_IRON_INGOT);
+		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_ATTACHMENT_MATTOCK);
+		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_ATTACHMENT_FELLING_AXE);
+		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_ATTACHMENT_MOWING_HOE);
 	}
 
 }

@@ -10,25 +10,22 @@ public abstract class EssenceCauldronCraft
 
 	public abstract Item getKeyItem();
 
-	public int getEssenceCost(ItemStack stack)
+	@Nullable
+	public abstract ItemStack getResultStack(ItemStack stackKeyItem);
+
+	public int getEssenceCost(ItemStack stackKeyItem)
 	{
 		return 1;
 	}
 
-	public int getStackCost(ItemStack stack)
+	public int getStackCost(ItemStack stackKeyItem)
 	{
 		return 1;
 	}
 
-	public int getTickTime(ItemStack stack)
+	public int getTickTime(ItemStack stackKeyItem)
 	{
 		return 1 * 20;
-	}
-
-	@Nullable
-	public ItemStack getResult(ItemStack stack)
-	{
-		return (ItemStack) null;
 	}
 
 }

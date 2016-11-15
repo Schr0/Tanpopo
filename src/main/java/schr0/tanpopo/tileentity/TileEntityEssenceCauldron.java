@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -283,9 +282,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 					if (this.getCraftTickTime(stackInv) < this.craftTickTime)
 					{
-						this.craftTickTime = 0;
-
-						this.clear();
+						this.clearStackInEssenceCauldron();
 
 						this.onEssenceCraft(stackInv);
 
@@ -293,20 +290,18 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 					}
 					else
 					{
-						this.spawnCraftingParticles();
-
 						if (this.craftTickTime % 20 == 0)
 						{
 							world.playSound(null, posTile, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 0.25F, 1.0F);
 						}
 					}
+
+					this.spawnCraftingParticles();
 				}
 			}
 			else
 			{
-				this.craftTickTime = 0;
-
-				this.clear();
+				this.clearStackInEssenceCauldron();
 
 				if (stackInv != null)
 				{
@@ -316,9 +311,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		}
 		else
 		{
-			this.craftTickTime = 0;
-
-			this.clear();
+			this.clearStackInEssenceCauldron();
 		}
 	}
 
@@ -353,6 +346,18 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		return this.getStackInSlot(0);
 	}
 
+	private void clearStackInEssenceCauldron()
+	{
+		this.clear();
+
+		this.craftTickTime = 0;
+	}
+
+	private BlockEssenceCauldron getBlockEssenceCauldron()
+	{
+		return (BlockEssenceCauldron) this.getBlockType();
+	}
+
 	@Nullable
 	private EssenceCauldronCraft getCraft(ItemStack stack)
 	{
@@ -377,11 +382,24 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		{
 			if (this.getCraftStackCost(stackCopy) <= stackSize && this.getCraftEssenceCost(stackCopy) <= level)
 			{
-				return this.getCraft(stackCopy).getResult(stackCopy) != null;
+				return this.getCraft(stackCopy).getResultStack(stackCopy) != null;
 			}
 		}
 
 		return false;
+	}
+
+	@Nullable
+	private ItemStack getCraftResultStack(ItemStack stack)
+	{
+		ItemStack stackCopy = stack.copy();
+
+		if (this.getCraft(stackCopy) != null)
+		{
+			return this.getCraft(stackCopy).getResultStack(stackCopy);
+		}
+
+		return (ItemStack) null;
 	}
 
 	private int getCraftEssenceCost(ItemStack stack)
@@ -420,35 +438,22 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		return 0;
 	}
 
-	@Nullable
-	private ItemStack getCraftResult(ItemStack stack)
-	{
-		ItemStack stackCopy = stack.copy();
-
-		if (this.getCraft(stackCopy) != null)
-		{
-			return this.getCraft(stackCopy).getResult(stackCopy);
-		}
-
-		return null;
-	}
-
 	private void onEssenceCraft(ItemStack stack)
 	{
 		World world = this.getWorld();
 		BlockPos posTile = this.getPos();
 
-		ItemStack result = this.getCraftResult(stack);
+		ItemStack resultStack = this.getCraftResultStack(stack);
 		int stackSize = stack.stackSize;
 		int level = ((Integer) world.getBlockState(posTile).getValue(BlockCauldron.LEVEL)).intValue();
 
-		result = this.putStackInFacingInventory(result);
+		resultStack = this.putStackInFacingInventory(resultStack);
 		stackSize -= this.getCraftStackCost(stack);
 		level -= this.getCraftEssenceCost(stack);
 
-		if (result != null && result.stackSize != 0)
+		if (resultStack != null && resultStack.stackSize != 0)
 		{
-			Block.spawnAsEntity(world, posTile, result);
+			Block.spawnAsEntity(world, posTile, resultStack);
 		}
 
 		if (stackSize <= 0)
@@ -462,12 +467,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		if (0 <= level)
 		{
-			IBlockState state = world.getBlockState(posTile);
-
-			if (state.getBlock() instanceof BlockEssenceCauldron)
-			{
-				((BlockEssenceCauldron) state.getBlock()).setEssenceLevel(world, posTile, state, level);
-			}
+			this.getBlockEssenceCauldron().setEssenceLevel(world, posTile, world.getBlockState(posTile), level);
 		}
 		else
 		{

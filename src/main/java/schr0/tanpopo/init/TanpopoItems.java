@@ -7,6 +7,7 @@ import schr0.tanpopo.item.ItemAttachmentFellingAxe;
 import schr0.tanpopo.item.ItemAttachmentMattock;
 import schr0.tanpopo.item.ItemAttachmentMowingHoe;
 import schr0.tanpopo.item.ItemEssenceGlassBottle;
+import schr0.tanpopo.item.ItemEssenceIronIngot;
 import schr0.tanpopo.item.ItemEssenceSolidFuel;
 import schr0.tanpopo.item.ItemMaterialFluff;
 import schr0.tanpopo.item.ItemMaterialLeaf;
@@ -35,6 +36,7 @@ public class TanpopoItems
 	public static final Item ATTACHMENT_MATTOCK;
 	public static final Item ATTACHMENT_FELLING_AXE;
 	public static final Item ATTACHMENT_MOWING_HOE;
+	public static final Item ESSENCE_IRON_INGOT;
 
 	public static final String NAME_MATERIAL_ROOTS = "material_roots";
 	public static final String NAME_MATERIAL_LEAF = "material_leaf";
@@ -50,6 +52,7 @@ public class TanpopoItems
 	public static final String NAME_ATTACHMENT_MATTOCK = "attachment_mattock";
 	public static final String NAME_ATTACHMENT_FELLING_AXE = "attachment_felling_axe";
 	public static final String NAME_ATTACHMENT_MOWING_HOE = "attachment_mowing_hoe";
+	public static final String NAME_ESSENCE_IRON_INGOT = "essence_iron_ingot";
 
 	public static final int META_MATERIAL_ROOTS = 0;
 	public static final int META_MATERIAL_LEAF = 0;
@@ -65,6 +68,7 @@ public class TanpopoItems
 	public static final int META_ATTACHMENT_MATTOCK = 1;
 	public static final int META_ATTACHMENT_FELLING_AXE = 1;
 	public static final int META_ATTACHMENT_MOWING_HOE = 1;
+	public static final int META_ESSENCE_IRON_INGOT = 0;
 
 	static
 	{
@@ -82,6 +86,7 @@ public class TanpopoItems
 		ATTACHMENT_MATTOCK = new ItemAttachmentMattock().setUnlocalizedName(NAME_ATTACHMENT_MATTOCK).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		ATTACHMENT_FELLING_AXE = new ItemAttachmentFellingAxe().setUnlocalizedName(NAME_ATTACHMENT_FELLING_AXE).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		ATTACHMENT_MOWING_HOE = new ItemAttachmentMowingHoe().setUnlocalizedName(NAME_ATTACHMENT_MOWING_HOE).setCreativeTab(TanpopoCreativeTabs.ITEM);
+		ESSENCE_IRON_INGOT = new ItemEssenceIronIngot().setUnlocalizedName(NAME_ESSENCE_IRON_INGOT).setCreativeTab(TanpopoCreativeTabs.ITEM);
 	}
 
 	public void init()
@@ -117,6 +122,7 @@ public class TanpopoItems
 		TanpopoForgeRegistry.registerItem(ATTACHMENT_MATTOCK, NAME_ATTACHMENT_MATTOCK, META_ATTACHMENT_MATTOCK);
 		TanpopoForgeRegistry.registerItem(ATTACHMENT_FELLING_AXE, NAME_ATTACHMENT_FELLING_AXE, META_ATTACHMENT_FELLING_AXE);
 		TanpopoForgeRegistry.registerItem(ATTACHMENT_MOWING_HOE, NAME_ATTACHMENT_MOWING_HOE, META_ATTACHMENT_MOWING_HOE);
+		TanpopoForgeRegistry.registerItem(ESSENCE_IRON_INGOT, NAME_ESSENCE_IRON_INGOT, META_ESSENCE_IRON_INGOT);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -142,6 +148,7 @@ public class TanpopoItems
 		TanpopoModelLoader.registerModel(ATTACHMENT_MATTOCK, META_ATTACHMENT_MATTOCK);
 		TanpopoModelLoader.registerModel(ATTACHMENT_FELLING_AXE, META_ATTACHMENT_FELLING_AXE);
 		TanpopoModelLoader.registerModel(ATTACHMENT_MOWING_HOE, META_ATTACHMENT_MOWING_HOE);
+		TanpopoModelLoader.registerModel(ESSENCE_IRON_INGOT, META_ESSENCE_IRON_INGOT);
 	}
 
 }
