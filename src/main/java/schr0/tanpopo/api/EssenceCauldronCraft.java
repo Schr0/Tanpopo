@@ -25,7 +25,7 @@ public abstract class EssenceCauldronCraft
 
 	public int getTickTime(ItemStack stackKeyItem)
 	{
-		return 1 * 20;
+		return (1 * 20);
 	}
 
 }

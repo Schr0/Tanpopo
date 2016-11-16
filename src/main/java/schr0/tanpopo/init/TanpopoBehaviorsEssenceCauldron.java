@@ -4,64 +4,14 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import schr0.tanpopo.api.EssenceCauldronCraft;
+import schr0.tanpopo.api.EssenceCauldronCraftSimple;
 import schr0.tanpopo.api.TanpopoRegistry;
 import schr0.tanpopo.item.ItemModeToolAttachment;
 
 public class TanpopoBehaviorsEssenceCauldron
 {
 
-	private static final EssenceCauldronCraft RECIPE_ITEM_COAL = new EssenceCauldronCraft()
-	{
-
-		@Override
-		public Item getKeyItem()
-		{
-			return Items.COAL;
-		}
-
-		@Override
-		public ItemStack getResultStack(ItemStack stackKeyItem)
-		{
-			if (stackKeyItem.getItemDamage() == 1)
-			{
-				return new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL);
-			}
-
-			return (ItemStack) null;
-		}
-
-		@Override
-		public int getTickTime(ItemStack stackKeyItem)
-		{
-			return (5 * 20);
-		}
-
-	};
-
-	private static final EssenceCauldronCraft RECIPE_ITEM_IRON_INGOT = new EssenceCauldronCraft()
-	{
-
-		@Override
-		public Item getKeyItem()
-		{
-			return Items.IRON_INGOT;
-		}
-
-		@Override
-		public ItemStack getResultStack(ItemStack stackKeyItem)
-		{
-			return new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT);
-		}
-
-		@Override
-		public int getTickTime(ItemStack stackKeyItem)
-		{
-			return (25 * 20);
-		}
-
-	};
-
-	private static final EssenceCauldronCraft RECIPE_ITEM_ATTACHMENT_MATTOCK = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft CRAFT_ITEM_ATTACHMENT_MATTOCK = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -97,7 +47,7 @@ public class TanpopoBehaviorsEssenceCauldron
 
 	};
 
-	private static final EssenceCauldronCraft RECIPE_ITEM_ATTACHMENT_FELLING_AXE = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft CRAFT_ITEM_ATTACHMENT_FELLING_AXE = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -133,7 +83,7 @@ public class TanpopoBehaviorsEssenceCauldron
 
 	};
 
-	private static final EssenceCauldronCraft RECIPE_ITEM_ATTACHMENT_MOWING_HOE = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft CRAFT_ITEM_ATTACHMENT_MOWING_HOE = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -176,11 +126,11 @@ public class TanpopoBehaviorsEssenceCauldron
 
 	private static void register()
 	{
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_COAL);
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_IRON_INGOT);
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_ATTACHMENT_MATTOCK);
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_ATTACHMENT_FELLING_AXE);
-		TanpopoRegistry.registerEssenceCauldronCraft(RECIPE_ITEM_ATTACHMENT_MOWING_HOE);
+		TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraftSimple(Items.COAL, 1, new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL), 1, 1, (5 * 20)));
+		TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraftSimple(Items.IRON_INGOT, new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT), 1, 1, (10 * 20)));
+		TanpopoRegistry.registerEssenceCauldronCraft(CRAFT_ITEM_ATTACHMENT_MATTOCK);
+		TanpopoRegistry.registerEssenceCauldronCraft(CRAFT_ITEM_ATTACHMENT_FELLING_AXE);
+		TanpopoRegistry.registerEssenceCauldronCraft(CRAFT_ITEM_ATTACHMENT_MOWING_HOE);
 	}
 
 }

@@ -170,13 +170,13 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	@Override
 	public void openInventory(EntityPlayer player)
 	{
-		this.markDirty();
+		// none
 	}
 
 	@Override
 	public void closeInventory(EntityPlayer player)
 	{
-		this.markDirty();
+		// none
 	}
 
 	@Override
@@ -372,23 +372,6 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		return (EssenceCauldronCraft) null;
 	}
 
-	private boolean canCraft(ItemStack stack)
-	{
-		ItemStack stackCopy = stack.copy();
-		int stackSize = stackCopy.stackSize;
-		int level = 1 + ((Integer) this.getWorld().getBlockState(this.getPos()).getValue(BlockCauldron.LEVEL)).intValue();
-
-		if (this.getCraft(stackCopy) != null)
-		{
-			if (this.getCraftStackCost(stackCopy) <= stackSize && this.getCraftEssenceCost(stackCopy) <= level)
-			{
-				return this.getCraft(stackCopy).getResultStack(stackCopy) != null;
-			}
-		}
-
-		return false;
-	}
-
 	@Nullable
 	private ItemStack getCraftResultStack(ItemStack stack)
 	{
@@ -405,37 +388,66 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	private int getCraftEssenceCost(ItemStack stack)
 	{
 		ItemStack stackCopy = stack.copy();
+		int cost = 1;
 
 		if (this.getCraft(stackCopy) != null)
 		{
-			return this.getCraft(stackCopy).getEssenceCost(stackCopy);
+			cost = this.getCraft(stackCopy).getEssenceCost(stackCopy);
 		}
 
-		return 0;
+		cost = Math.max(1, cost);
+		cost = Math.min(4, cost);
+
+		return cost;
 	}
 
 	private int getCraftStackCost(ItemStack stack)
 	{
 		ItemStack stackCopy = stack.copy();
+		int cost = 1;
 
 		if (this.getCraft(stackCopy) != null)
 		{
-			return this.getCraft(stackCopy).getStackCost(stackCopy);
+			cost = this.getCraft(stackCopy).getStackCost(stackCopy);
 		}
 
-		return 0;
+		cost = Math.max(1, cost);
+		cost = Math.min(64, cost);
+
+		return cost;
 	}
 
 	private int getCraftTickTime(ItemStack stack)
 	{
 		ItemStack stackCopy = stack.copy();
+		int tick = (1 * 20);
 
 		if (this.getCraft(stackCopy) != null)
 		{
-			return this.getCraft(stackCopy).getTickTime(stackCopy);
+			tick = this.getCraft(stackCopy).getTickTime(stackCopy);
 		}
 
-		return 0;
+		tick = Math.max((1 * 20), tick);
+		tick = Math.min(Short.MAX_VALUE, tick);
+
+		return tick;
+	}
+
+	private boolean canCraft(ItemStack stack)
+	{
+		ItemStack stackCopy = stack.copy();
+		int stackSize = stackCopy.stackSize;
+		int level = 1 + ((Integer) this.getWorld().getBlockState(this.getPos()).getValue(BlockCauldron.LEVEL)).intValue();
+
+		if (this.getCraft(stackCopy) != null)
+		{
+			if (this.getCraftStackCost(stackCopy) <= stackSize && this.getCraftEssenceCost(stackCopy) <= level)
+			{
+				return this.getCraft(stackCopy).getResultStack(stackCopy) != null;
+			}
+		}
+
+		return false;
 	}
 
 	private void onEssenceCraft(ItemStack stack)
