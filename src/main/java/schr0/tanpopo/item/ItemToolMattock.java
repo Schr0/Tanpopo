@@ -23,6 +23,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import schr0.tanpopo.init.TanpopoItems;
@@ -184,7 +185,7 @@ public class ItemToolMattock extends ItemModeTool
 	private Set<BlockPos> getRangeBlockPos(BlockPos pos, EntityPlayer player)
 	{
 		Set<BlockPos> posSet = Sets.newHashSet();
-		RayTraceResult rayTraceResult = this.rayTrace(player.worldObj, player, false); // ForgeHooks.rayTraceEyes(player, 5.0D)
+		RayTraceResult rayTraceResult = ForgeHooks.rayTraceEyes(player, 5.0D);
 
 		if (rayTraceResult == null)
 		{

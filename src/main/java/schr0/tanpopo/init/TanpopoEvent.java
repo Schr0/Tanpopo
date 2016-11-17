@@ -1,28 +1,40 @@
 package schr0.tanpopo.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockCauldron;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootEntryItem;
 import net.minecraft.world.storage.loot.LootPool;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import schr0.tanpopo.Tanpopo;
+import schr0.tanpopo.block.BlockEssenceCauldron;
 import schr0.tanpopo.block.BlockFluffCushion;
 import schr0.tanpopo.capabilities.FluidHandlerItemEssenceGlassBottle;
 import schr0.tanpopo.item.ItemModeTool;
@@ -148,6 +160,110 @@ public class TanpopoEvent
 			event.setMaterialCost(1);
 			event.setOutput(itemModeToolAttachment.getContainerModeTool(stackLeft));
 		}
+	}
+
+	@SubscribeEvent
+	public void onRightClickBlockEvent(PlayerInteractEvent.RightClickBlock event)
+	{
+		if (event.getItemStack() == null)
+		{
+			return;
+		}
+
+		World world = event.getWorld();
+		ItemStack stack = event.getItemStack();
+		BlockPos pos = event.getPos();
+		IBlockState state = world.getBlockState(pos);
+		boolean isCauldronBlock = (state.getBlock() == Blocks.CAULDRON || state.getBlock() == TanpopoBlocks.ESSENCE_CAULDRON);
+
+		if (isCauldronBlock && (stack.getItem() == TanpopoItems.ESSENCE_GLASS_BOTTLE))
+		{
+			boolean isSuccess = false;
+
+			if (state.getBlock() == TanpopoBlocks.ESSENCE_CAULDRON)
+			{
+				int level = ((Integer) state.getValue(BlockCauldron.LEVEL)).intValue();
+
+				if (level < 3)
+				{
+					isSuccess = true;
+
+					((BlockEssenceCauldron) state.getBlock()).setEssenceLevel(world, pos, state, (level + 1));
+				}
+			}
+			else
+			{
+				isSuccess = true;
+
+				world.setBlockState(pos, TanpopoBlocks.ESSENCE_CAULDRON.getDefaultState());
+			}
+
+			if (isSuccess)
+			{
+				this.fillCauldronBlock(world, pos, event.getEntityPlayer(), event.getHand(), stack);
+
+				world.playSound(null, pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1.0F, 1.0F);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onRightClickItemEvent(PlayerInteractEvent.RightClickItem event)
+	{
+		if (event.getItemStack() == null)
+		{
+			return;
+		}
+
+		World world = event.getWorld();
+		ItemStack stack = event.getItemStack();
+
+		if (ItemStack.areItemStackTagsEqual(stack, UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE)))
+		{
+			EntityPlayer player = event.getEntityPlayer();
+			RayTraceResult mop = ForgeHooks.rayTraceEyes(player, 5.0D);
+
+			if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK)
+			{
+				BlockPos posMop = mop.getBlockPos();
+
+				if (world.getBlockState(posMop).getBlock() == Blocks.CAULDRON)
+				{
+					event.setCanceled(true);
+
+					world.setBlockState(posMop, TanpopoBlocks.ESSENCE_CAULDRON.getDefaultState().withProperty(BlockCauldron.LEVEL, 3));
+
+					this.fillCauldronBlock(world, posMop, player, event.getHand(), stack);
+
+					world.playSound(null, posMop, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1.0F, 1.0F);
+				}
+			}
+		}
+	}
+
+	// TODO /* ======================================== MOD START =====================================*/
+
+	private void fillCauldronBlock(World world, BlockPos pos, EntityPlayer player, EnumHand hand, ItemStack stack)
+	{
+		player.swingArm(hand);
+
+		if (!player.capabilities.isCreativeMode)
+		{
+			ItemStack newHeldItem = stack.getItem().getContainerItem(stack);
+
+			--stack.stackSize;
+
+			if (stack.stackSize <= 0)
+			{
+				player.setHeldItem(hand, newHeldItem);
+			}
+			else if (!player.inventory.addItemStackToInventory(newHeldItem))
+			{
+				player.dropItem(newHeldItem, false);
+			}
+		}
+
+		player.addStat(StatList.CAULDRON_USED);
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -94,6 +95,17 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		compound.setInteger(TAG_KEY, this.craftTickTime);
 
 		return compound;
+	}
+
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+	{
+		if (this.getStackInEssenceCauldron() != null)
+		{
+			Block.spawnAsEntity(world, pos, this.getStackInEssenceCauldron());
+		}
+
+		return super.shouldRefresh(world, pos, oldState, newSate);
 	}
 
 	@Override
@@ -379,7 +391,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		if (this.getCraft(stackCopy) != null)
 		{
-			return this.getCraft(stackCopy).getResultStack(stackCopy);
+			return this.getCraft(stackCopy).getResultStack(stackCopy).copy();
 		}
 
 		return (ItemStack) null;
@@ -439,12 +451,9 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		int stackSize = stackCopy.stackSize;
 		int level = 1 + ((Integer) this.getWorld().getBlockState(this.getPos()).getValue(BlockCauldron.LEVEL)).intValue();
 
-		if (this.getCraft(stackCopy) != null)
+		if ((this.getCraft(stackCopy) != null) && (this.getCraftStackCost(stackCopy) <= stackSize) && (this.getCraftEssenceCost(stackCopy) <= level))
 		{
-			if (this.getCraftStackCost(stackCopy) <= stackSize && this.getCraftEssenceCost(stackCopy) <= level)
-			{
-				return this.getCraft(stackCopy).getResultStack(stackCopy) != null;
-			}
+			return this.getCraft(stackCopy).getResultStack(stackCopy) != null;
 		}
 
 		return false;

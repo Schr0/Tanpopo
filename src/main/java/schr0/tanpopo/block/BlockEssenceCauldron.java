@@ -128,7 +128,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 
 					if (!worldIn.isRemote)
 					{
-						this.addResultItemToInventory(playerIn, hand, heldItem, UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE));
+						this.addNewHeldItemToInventory(playerIn, hand, heldItem, UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE));
 
 						worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState());
 
@@ -141,7 +141,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 				{
 					if (!worldIn.isRemote)
 					{
-						this.addResultItemToInventory(playerIn, hand, heldItem, new ItemStack(TanpopoItems.ESSENCE_GLASS_BOTTLE));
+						this.addNewHeldItemToInventory(playerIn, hand, heldItem, new ItemStack(TanpopoItems.ESSENCE_GLASS_BOTTLE));
 
 						--level;
 
@@ -204,7 +204,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 		}
 	}
 
-	private void addResultItemToInventory(EntityPlayer player, EnumHand hand, ItemStack heldItem, ItemStack newHeldItem)
+	private void addNewHeldItemToInventory(EntityPlayer player, EnumHand hand, ItemStack heldItem, ItemStack newHeldItem)
 	{
 		if (!player.capabilities.isCreativeMode)
 		{
