@@ -14,8 +14,6 @@ import schr0.tanpopo.init.TanpopoNBTTags;
 public abstract class ItemModeToolAttachment extends Item
 {
 
-	private static final String TAG_KEY = TanpopoNBTTags.ITEM_ATTACHMENT;
-
 	public ItemModeToolAttachment()
 	{
 		this.setMaxDamage(0);
@@ -61,9 +59,9 @@ public abstract class ItemModeToolAttachment extends Item
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
-		if (nbtStack != null && nbtStack.hasKey(TAG_KEY, 10))
+		if (nbtStack != null && nbtStack.hasKey(TanpopoNBTTags.MODE_TOOL_CONTAINER, 10))
 		{
-			return ItemStack.loadItemStackFromNBT(nbtStack.getCompoundTag(TAG_KEY));
+			return ItemStack.loadItemStackFromNBT(nbtStack.getCompoundTag(TanpopoNBTTags.MODE_TOOL_CONTAINER));
 		}
 
 		return new ItemStack(this.getDefaultModeTool());
@@ -86,7 +84,7 @@ public abstract class ItemModeToolAttachment extends Item
 
 		stackFinished.writeToNBT(nbtFnished);
 
-		nbtStack.setTag(TAG_KEY, nbtFnished);
+		nbtStack.setTag(TanpopoNBTTags.MODE_TOOL_CONTAINER, nbtFnished);
 
 		stack.setTagCompound(nbtStack);
 	}

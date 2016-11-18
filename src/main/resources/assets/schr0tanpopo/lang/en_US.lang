@@ -1,9 +1,6 @@
-// ======================================== CREATIVETABS ===================================== //
-itemGroup.schr0tanpopo.block=Tanpopo : Block
-itemGroup.schr0tanpopo.item=Tanpopo : Item
-
 // ======================================== BLOCK ===================================== //
 tile.plant_roots.name=Tanpopo Roots
+
 tile.plant_flower_0.name=Tanpopo Flower age.0
 tile.plant_flower_1.name=Tanpopo Flower age.1
 tile.plant_flower_2.name=Tanpopo Flower age.2
@@ -20,51 +17,69 @@ tile.plant_flower_12.name=Tanpopo Flower age.12
 tile.plant_flower_13.name=Tanpopo Flower age.13
 tile.plant_flower_14.name=Tanpopo Flower age.14
 tile.plant_flower_15.name=Tanpopo Flower age.MAX
+
 tile.mass_plant_0.name=Tanpopo Mass stage.0
 tile.mass_plant_1.name=Tanpopo Mass stage.1
 tile.mass_plant_2.name=Tanpopo Mass stage.2
 tile.mass_plant_3.name=Tanpopo Mass stage.3
 tile.mass_plant_4.name=Tanpopo Mass stage.MAX
+
 tile.essence_cauldron_0.name=Tanpopo Essence Cauldron 1/4
 tile.essence_cauldron_1.name=Tanpopo Essence Cauldron 2/4
 tile.essence_cauldron_2.name=Tanpopo Essence Cauldron 3/4
 tile.essence_cauldron_3.name=Tanpopo Essence Cauldron 4/4
-tile.fluff_cushion_0.name=Fluff Cushion
-tile.fluff_cushion_1.name=Orange Fluff Cushion
-tile.fluff_cushion_2.name=Magenta Fluff Cushion
-tile.fluff_cushion_3.name=Light Blue Fluff Cushion
-tile.fluff_cushion_4.name=Yellow Fluff Cushion
-tile.fluff_cushion_5.name=Lime Fluff Cushion
-tile.fluff_cushion_6.name=Pink Fluff Cushion
-tile.fluff_cushion_7.name=Gray Fluff Cushion
-tile.fluff_cushion_8.name=Light Gray Fluff Cushion
-tile.fluff_cushion_9.name=Cyan Fluff Cushion
-tile.fluff_cushion_10.name=Purple Fluff Cushion
-tile.fluff_cushion_11.name=Blue Fluff Cushion
-tile.fluff_cushion_12.name=Brown Fluff Cushion
-tile.fluff_cushion_13.name=Green Fluff Cushion
-tile.fluff_cushion_14.name=Red Fluff Cushion
-tile.fluff_cushion_15.name=Black Fluff Cushion
+
+tile.fluff_cushion_0.name=Tanpopo Fluff Cushion
+tile.fluff_cushion_1.name=Orange Tanpopo Fluff Cushion
+tile.fluff_cushion_2.name=Magenta Tanpopo Fluff Cushion
+tile.fluff_cushion_3.name=Light Blue Tanpopo Fluff Cushion
+tile.fluff_cushion_4.name=Yellow Tanpopo Fluff Cushion
+tile.fluff_cushion_5.name=Lime Tanpopo Fluff Cushion
+tile.fluff_cushion_6.name=Pink Tanpopo Fluff Cushion
+tile.fluff_cushion_7.name=Gray Tanpopo Fluff Cushion
+tile.fluff_cushion_8.name=Light Gray Tanpopo Fluff Cushion
+tile.fluff_cushion_9.name=Cyan Tanpopo Fluff Cushion
+tile.fluff_cushion_10.name=Purple Tanpopo Fluff Cushion
+tile.fluff_cushion_11.name=Blue Tanpopo Fluff Cushion
+tile.fluff_cushion_12.name=Brown Tanpopo Fluff Cushion
+tile.fluff_cushion_13.name=Green Tanpopo Fluff Cushion
+tile.fluff_cushion_14.name=Red Tanpopo Fluff Cushion
+tile.fluff_cushion_15.name=Black Tanpopo Fluff Cushion
 
 // ======================================== ITEM ===================================== //
-item.material_roots.name=Material Tanpopo Roots
-item.material_leaf.name=Material Tanpopo Leaf
-item.material_stalk.name=Material Tanpopo Stalk
-item.material_petal.name=Material Tanpopo Petal
-item.material_fluff.name=Material Tanpopo Fluff
-item.material_mass_0.name=Material Tanpopo Mass
-item.material_mass_1.name=Material Fermented Tanpopo Mass
+item.material_roots.name=Tanpopo Material Roots
+item.material_leaf.name=Tanpopo Material Leaf
+item.material_stalk.name=Tanpopo Material Stalk
+item.material_petal.name=Tanpopo Material Petal
+item.material_fluff.name=Tanpopo Material Fluff
+item.material_mass_0.name=Tanpopo Material Mass
+item.material_mass_1.name=Fermented Tanpopo Material Mass
+
 item.essence_glass_bottle.name=Tanpopo Essence Glass Bottle
 item.essence_solid_fuel.name=Tanpopo Essence Solid Fuel
+item.essence_iron_ingot.name=Tanpopo Essence Iron Ingot
+
+item.tool_mattock.name=Tanpopo Mattock
+item.tool_felling_axe.name=Tanpopo Felling Axe
+item.tool_mowing_hoe.name=Tanpopo Mowing Hoe
+
+item.tool_mattock.mode_name=Range Mode
+item.tool_felling_axe.mode_name=Felling Mode
+item.tool_mowing_hoe.mode_name=Mowing Mode
 item.tool.mode_enabled=Enabled
 item.tool.mode_disabled=Disabled
-item.tool_mattock.name=Tanpopo Mattock
-item.tool_mattock.mode_name=Range Mode
-item.tool_felling_axe.name=Tanpopo Felling Axe
-item.tool_felling_axe.mode_name=Felling Mode
-item.tool_mowing_hoe.name=Tanpopo Mowing Hoe
-item.tool_mowing_hoe.mode_name=Mowing Mode
+
+item.attachment_mattock_0.name=Tanpopo Mattock Attachment
+item.attachment_mattock_1.name=Broken Tanpopo Mattock Attachment
+item.attachment_felling_axe_0.name=Tanpopo Felling Axe Attachment
+item.attachment_felling_axe_1.name=Broken Tanpopo Felling Axe Attachment
+item.attachment_mowing_hoe_0.name=Tanpopo Mowing Hoe Attachment
+item.attachment_mowing_hoe_1.name=Broken Tanpopo Mowing Hoe Attachment
+
+// ======================================== CREATIVETABS ===================================== //
+itemGroup.schr0tanpopo.block=Tanpopo : Blocks
+itemGroup.schr0tanpopo.item=Tanpopo : Items
 
 // ======================================== FLUID ===================================== //
 fluid.fluid_essence=Tanpopo Essence
-tile.fluid_essence.name=Tanpopo Essence
+tile.fluid_essence.name=Tanpopo Essence Block

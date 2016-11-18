@@ -195,7 +195,7 @@ public class TanpopoEvent
 			{
 				isSuccess = true;
 
-				world.setBlockState(pos, TanpopoBlocks.ESSENCE_CAULDRON.getDefaultState());
+				world.setBlockState(pos, TanpopoBlocks.ESSENCE_CAULDRON.getDefaultState(), 2);
 			}
 
 			if (isSuccess)
@@ -231,7 +231,7 @@ public class TanpopoEvent
 				{
 					event.setCanceled(true);
 
-					world.setBlockState(posMop, TanpopoBlocks.ESSENCE_CAULDRON.getDefaultState().withProperty(BlockCauldron.LEVEL, 3));
+					world.setBlockState(posMop, TanpopoBlocks.ESSENCE_CAULDRON.getDefaultState().withProperty(BlockCauldron.LEVEL, TanpopoBlocks.META_ESSENCE_CAULDRON), 2);
 
 					this.fillCauldronBlock(world, posMop, player, event.getHand(), stack);
 

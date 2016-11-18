@@ -35,6 +35,8 @@ public class TanpopoBehaviorsColors
 		registerBlockArrayColor(TanpopoBlocks.FLUFF_CUSHION);
 	}
 
+	// TODO /* ======================================== MOD START =====================================*/
+
 	private static void registerBlockArrayColor(Block block)
 	{
 		COLORS_BLOCK.registerBlockColorHandler(new IBlockColor()

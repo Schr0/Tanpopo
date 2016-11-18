@@ -23,8 +23,6 @@ import schr0.tanpopo.packet.MessageParticleBlock;
 public class ItemMaterialMass extends Item
 {
 
-	private static final int META_MAX = TanpopoItems.META_MATERIAL_MASS;
-
 	public ItemMaterialMass()
 	{
 		this.setMaxDamage(0);
@@ -35,7 +33,7 @@ public class ItemMaterialMass extends Item
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
 	{
-		for (int meta = 0; meta <= META_MAX; meta++)
+		for (int meta = 0; meta <= TanpopoItems.META_MATERIAL_MASS; meta++)
 		{
 			subItems.add(new ItemStack(itemIn, 1, meta));
 		}

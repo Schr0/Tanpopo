@@ -33,9 +33,7 @@ import schr0.tanpopo.init.TanpopoItems;
 public class BlockMassPlant extends Block
 {
 
-	private static final int META_MAX = TanpopoBlocks.META_MASS_PLANT;
-
-	public static final PropertyInteger PROPERTY_STAGE = PropertyInteger.create("stage", 0, META_MAX);
+	public static final PropertyInteger PROPERTY_STAGE = PropertyInteger.create("stage", 0, TanpopoBlocks.META_MASS_PLANT);
 
 	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.05D, 0.05D, 0.05D, 0.95D, 0.95D, 0.95D);
 
@@ -52,7 +50,7 @@ public class BlockMassPlant extends Block
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
 	{
-		for (int meta = 0; meta <= META_MAX; meta++)
+		for (int meta = 0; meta <= TanpopoBlocks.META_MASS_PLANT; meta++)
 		{
 			list.add(new ItemStack(itemIn, 1, meta));
 		}
@@ -206,7 +204,7 @@ public class BlockMassPlant extends Block
 
 	public int getMaxStage()
 	{
-		return META_MAX;
+		return TanpopoBlocks.META_MASS_PLANT;
 	}
 
 	public int getStage(IBlockState state)

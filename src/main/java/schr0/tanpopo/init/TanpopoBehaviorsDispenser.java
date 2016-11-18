@@ -49,7 +49,7 @@ public class TanpopoBehaviorsDispenser
 
 			if (blockPlantMass.isReplaceable(world, posFacing))
 			{
-				world.setBlockState(posFacing, blockPlantMass.getStateFromMeta(stack.getItemDamage()));
+				world.setBlockState(posFacing, blockPlantMass.getStateFromMeta(stack.getItemDamage()), 2);
 
 				--stack.stackSize;
 			}

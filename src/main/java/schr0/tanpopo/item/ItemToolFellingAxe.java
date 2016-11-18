@@ -110,11 +110,21 @@ public class ItemToolFellingAxe extends ItemModeTool
 			}
 		}
 
-		damegeCount = Math.min((damegeCount / 8), 1);
-
-		for (int count = 0; count <= damegeCount; ++count)
+		if (0 < damegeCount)
 		{
-			stack.damageItem(1, player);
+			damegeCount = Math.min((damegeCount / 8), 1);
+
+			for (int count = 0; count <= damegeCount; ++count)
+			{
+				stack.damageItem(1, player);
+			}
+		}
+		else
+		{
+			if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
+			{
+				stack.damageItem(1, player);
+			}
 		}
 
 		return true;
@@ -141,7 +151,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 			worldIn.setBlockToAir(pos);
 
-			stack.damageItem(1, playerIn);
+			stack.damageItem(2, playerIn);
 
 			int coolDwonTime = COOLDWON_TIME - (EnchantmentHelper.getEnchantmentLevel(Enchantments.EFFICIENCY, stack) * 20);
 

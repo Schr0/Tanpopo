@@ -5,8 +5,14 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
+import schr0.tanpopo.Tanpopo;
 import schr0.tanpopo.block.BlockEssence;
 import schr0.tanpopo.block.BlockEssenceCauldron;
 import schr0.tanpopo.block.BlockFluffCushion;
@@ -37,14 +43,14 @@ public class TanpopoBlocks
 	public static final String NAME_ESSENCE_CAULDRON = "essence_cauldron";
 	public static final String NAME_FLUFF_CUSHION = "fluff_cushion";
 
+	public static final Material MATERIAL_LIQUID_ESSENCE = new MaterialLiquid(MapColor.TNT);
+
 	public static final int META_PLANT_ROOTS = 0;
 	public static final int META_PLANT_FLOWER = 15;
 	public static final int META_MASS_PLANT = 4;
 	public static final int META_ESSENCE = 0;
 	public static final int META_ESSENCE_CAULDRON = 3;
 	public static final int META_FLUFF_CUSHION = 15;
-
-	public static final Material MATERIAL_LIQUID_ESSENCE = new MaterialLiquid(MapColor.TNT);
 
 	static
 	{
@@ -63,35 +69,62 @@ public class TanpopoBlocks
 
 	private static void register()
 	{
-		TanpopoForgeRegistry.registerBlock(PLANT_ROOTS, new ItemBlockPlantRoots(PLANT_ROOTS), NAME_PLANT_ROOTS, META_PLANT_ROOTS);
-		TanpopoForgeRegistry.registerBlock(PLANT_FLOWER, new ItemBlockPlantFlower(PLANT_FLOWER), NAME_PLANT_FLOWER, META_PLANT_FLOWER);
-		TanpopoForgeRegistry.registerBlock(MASS_PLANT, new ItemBlockMassPlant(MASS_PLANT), NAME_MASS_PLANT, META_MASS_PLANT);
-		TanpopoForgeRegistry.registerBlock(ESSENCE, new ItemBlockEssence(ESSENCE), NAME_ESSENCE, META_ESSENCE);
-		TanpopoForgeRegistry.registerBlock(ESSENCE_CAULDRON, new ItemBlockEssenceCauldron(ESSENCE_CAULDRON), NAME_ESSENCE_CAULDRON, META_ESSENCE_CAULDRON);
-		TanpopoForgeRegistry.registerBlock(FLUFF_CUSHION, new ItemBlockFluffCushion(FLUFF_CUSHION), NAME_FLUFF_CUSHION, META_FLUFF_CUSHION);
+		registerBlock(PLANT_ROOTS, new ItemBlockPlantRoots(PLANT_ROOTS), NAME_PLANT_ROOTS, META_PLANT_ROOTS);
+		registerBlock(PLANT_FLOWER, new ItemBlockPlantFlower(PLANT_FLOWER), NAME_PLANT_FLOWER, META_PLANT_FLOWER);
+		registerBlock(MASS_PLANT, new ItemBlockMassPlant(MASS_PLANT), NAME_MASS_PLANT, META_MASS_PLANT);
+		registerBlock(ESSENCE, new ItemBlockEssence(ESSENCE), NAME_ESSENCE, META_ESSENCE);
+		registerBlock(ESSENCE_CAULDRON, new ItemBlockEssenceCauldron(ESSENCE_CAULDRON), NAME_ESSENCE_CAULDRON, META_ESSENCE_CAULDRON);
+		registerBlock(FLUFF_CUSHION, new ItemBlockFluffCushion(FLUFF_CUSHION), NAME_FLUFF_CUSHION, META_FLUFF_CUSHION);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void initClient()
 	{
-		registerModel();
-		registerModelFluid();
+		registerClient();
 	}
 
 	@SideOnly(Side.CLIENT)
-	private static void registerModel()
+	private static void registerClient()
 	{
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(PLANT_ROOTS), META_PLANT_ROOTS);
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(PLANT_FLOWER), META_PLANT_FLOWER);
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(MASS_PLANT), META_MASS_PLANT);
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(ESSENCE_CAULDRON), META_ESSENCE_CAULDRON);
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(FLUFF_CUSHION), META_FLUFF_CUSHION);
+		TanpopoModelLoader.registerModelFluid(ESSENCE, NAME_ESSENCE);
 	}
 
-	@SideOnly(Side.CLIENT)
-	private static void registerModelFluid()
+	// TODO /* ======================================== MOD START =====================================*/
+
+	private static void registerBlock(Block block, ItemBlock itemBlock, String name, int meta)
 	{
-		TanpopoModelLoader.registerModelFluid(ESSENCE, NAME_ESSENCE);
+		GameRegistry.register(block, new ResourceLocation(Tanpopo.MOD_ID, name));
+		GameRegistry.register(itemBlock, new ResourceLocation(Tanpopo.MOD_ID, name));
+
+		if (meta == 0)
+		{
+			OreDictionary.registerOre(name, block);
+			OreDictionary.registerOre(name, itemBlock);
+		}
+		else
+		{
+			for (int i = 0; i <= meta; i++)
+			{
+				OreDictionary.registerOre(name + "_" + i, new ItemStack(block, 1, i));
+				OreDictionary.registerOre(name + "_" + i, new ItemStack(itemBlock, 1, i));
+			}
+		}
+	}
+
+	private static void registerBlock(Block block, ItemBlock itemBlock, String name, int meta, String[] oreNames)
+	{
+		registerBlock(block, itemBlock, name, meta);
+
+		for (String ore : oreNames)
+		{
+			OreDictionary.registerOre(ore, block);
+			OreDictionary.registerOre(ore, itemBlock);
+		}
 	}
 
 }

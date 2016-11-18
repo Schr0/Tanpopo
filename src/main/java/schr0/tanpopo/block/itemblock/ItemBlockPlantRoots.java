@@ -31,7 +31,7 @@ public class ItemBlockPlantRoots extends ItemBlock
 		{
 			worldIn.destroyBlock(pos, true);
 
-			worldIn.setBlockState(pos, TanpopoBlocks.PLANT_ROOTS.getDefaultState());
+			worldIn.setBlockState(pos, TanpopoBlocks.PLANT_ROOTS.getDefaultState(), 2);
 
 			--stack.stackSize;
 

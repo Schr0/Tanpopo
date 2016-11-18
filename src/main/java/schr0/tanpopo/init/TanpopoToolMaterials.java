@@ -8,7 +8,7 @@ public class TanpopoToolMaterials
 
 	public static final Item.ToolMaterial TIER_IRON;
 
-	public static final String NAME_IRON = "iron";
+	public static final String NAME_IRON = "tanpopo_iron";
 
 	static
 	{

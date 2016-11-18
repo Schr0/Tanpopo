@@ -52,6 +52,8 @@ public class TanpopoModelLoader
 		ModelLoader.setCustomStateMapper(fluid, new TanpopoModelLoader.FluidStateMapper(fluidModel));
 	}
 
+	// TODO /* ======================================== MOD START =====================================*/
+
 	private static class FluidItemMeshDefinition implements ItemMeshDefinition
 	{
 		private ModelResourceLocation model;

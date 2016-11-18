@@ -26,9 +26,7 @@ import schr0.tanpopo.init.TanpopoBlocks;
 public class BlockPlantFlower extends BlockBush implements IGrowable
 {
 
-	private static final int META_MAX = TanpopoBlocks.META_PLANT_FLOWER;
-
-	public static final PropertyInteger PROPERTY_AGE = PropertyInteger.create("age", 0, META_MAX);
+	public static final PropertyInteger PROPERTY_AGE = PropertyInteger.create("age", 0, TanpopoBlocks.META_PLANT_FLOWER);
 
 	public static final AxisAlignedBB[] AABB = new AxisAlignedBB[]
 	{
@@ -63,7 +61,7 @@ public class BlockPlantFlower extends BlockBush implements IGrowable
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
 	{
-		for (int meta = 0; meta <= META_MAX; meta++)
+		for (int meta = 0; meta <= TanpopoBlocks.META_PLANT_FLOWER; meta++)
 		{
 			list.add(new ItemStack(itemIn, 1, meta));
 		}
@@ -180,7 +178,7 @@ public class BlockPlantFlower extends BlockBush implements IGrowable
 
 	public int getMaxAge()
 	{
-		return META_MAX;
+		return TanpopoBlocks.META_PLANT_FLOWER;
 	}
 
 	public int getAge(IBlockState state)

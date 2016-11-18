@@ -14,13 +14,19 @@ public class TanpopoRecipe
 
 	public void init()
 	{
-		craftingPlantFlower();
-		craftingMaterial();
-		craftingEssence();
-		smeltingPlantFlower();
+		add();
 	}
 
-	private static void craftingPlantFlower()
+	private static void add()
+	{
+		addRecipePlantFlower();
+		addRecipeMaterial();
+		addRecipeEssence();
+		addRecipeModeTool();
+		addSmeltingRecipe();
+	}
+
+	private static void addRecipePlantFlower()
 	{
 		int maxAge = TanpopoBlocks.META_PLANT_FLOWER;
 
@@ -95,7 +101,7 @@ public class TanpopoRecipe
 		}
 	}
 
-	private static void craftingMaterial()
+	private static void addRecipeMaterial()
 	{
 		for (int meta = 0; meta <= 1; meta++)
 		{
@@ -110,13 +116,15 @@ public class TanpopoRecipe
 					'X', new ItemStack(TanpopoItems.MATERIAL_MASS, 1, meta),
 			}));
 		}
+
 		/*
 				GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Items.DYE, 4, EnumDyeColor.YELLOW.getDyeDamage()), new Object[]
 				{
 						TanpopoItems.MATERIAL_PETAL,
 				}));
 		//*/
-		GameRegistry.addRecipe(new ShapedOreRecipe(TanpopoBlocks.FLUFF_CUSHION, new Object[]
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.FLUFF_CUSHION), new Object[]
 		{
 				"XX ",
 				"XX ",
@@ -134,7 +142,7 @@ public class TanpopoRecipe
 		}
 	}
 
-	private static void craftingEssence()
+	private static void addRecipeEssence()
 	{
 		if (UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE) != null)
 		{
@@ -147,7 +155,67 @@ public class TanpopoRecipe
 		}
 	}
 
-	private static void smeltingPlantFlower()
+	private static void addRecipeModeTool()
+	{
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.ATTACHMENT_MATTOCK), new Object[]
+		{
+				"XX ",
+				"XXX",
+				"  X",
+
+				'X', new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT),
+		}));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.ATTACHMENT_FELLING_AXE), new Object[]
+		{
+				"XXX",
+				"XXX",
+				"   ",
+
+				'X', new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT),
+		}));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.ATTACHMENT_MOWING_HOE), new Object[]
+		{
+				"XXX",
+				"X  ",
+				"   ",
+
+				'X', new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT),
+		}));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.TOOL_MATTOCK), new Object[]
+		{
+				" X ",
+				"Y  ",
+				"   ",
+
+				'X', new ItemStack(TanpopoItems.ATTACHMENT_MATTOCK),
+				'Y', new ItemStack(TanpopoItems.MATERIAL_STALK),
+		}));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.TOOL_FELLING_AXE), new Object[]
+		{
+				" X ",
+				"Y  ",
+				"   ",
+
+				'X', new ItemStack(TanpopoItems.ATTACHMENT_FELLING_AXE),
+				'Y', new ItemStack(TanpopoItems.MATERIAL_STALK),
+		}));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.TOOL_MOWING_HOE), new Object[]
+		{
+				" X ",
+				"Y  ",
+				"   ",
+
+				'X', new ItemStack(TanpopoItems.ATTACHMENT_MOWING_HOE),
+				'Y', new ItemStack(TanpopoItems.MATERIAL_STALK),
+		}));
+	}
+
+	private static void addSmeltingRecipe()
 	{
 		int maxAge = TanpopoBlocks.META_PLANT_FLOWER;
 

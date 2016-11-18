@@ -12,7 +12,6 @@ public class TanpopoPacket
 {
 
 	public static final String CHANNEL_NAME = Tanpopo.MOD_ID;
-
 	public static final SimpleNetworkWrapper DISPATCHER = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL_NAME);
 
 	public static final int ID_PARTICLE_BLOCK = 0;

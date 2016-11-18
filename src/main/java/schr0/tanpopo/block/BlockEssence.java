@@ -154,7 +154,7 @@ public class BlockEssence extends BlockFluidClassic
 
 		world.setBlockToAir(pos);
 
-		int checkPosXyz = getCheckPosXyz();
+		int checkPosXyz = this.getCheckPosXyz();
 
 		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-checkPosXyz, -checkPosXyz, -checkPosXyz), pos.add(checkPosXyz, checkPosXyz, checkPosXyz)))
 		{

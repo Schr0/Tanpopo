@@ -91,6 +91,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 		EntityPlayer player = (EntityPlayer) entityLiving;
 		Set<BlockPos> posSet = new LinkedHashSet<>();
+		int damegeCount = 0;
 
 		this.getChainBlockPos(posSet, worldIn, pos);
 
@@ -107,9 +108,29 @@ public class ItemToolMowingHoe extends ItemModeTool
 			}
 
 			worldIn.destroyBlock(posMowing, false);
+
+			if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
+			{
+				++damegeCount;
+			}
 		}
 
-		stack.damageItem(1, player);
+		if (0 < damegeCount)
+		{
+			damegeCount = Math.min((damegeCount / 8), 1);
+
+			for (int count = 0; count <= damegeCount; ++count)
+			{
+				stack.damageItem(1, player);
+			}
+		}
+		else
+		{
+			if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
+			{
+				stack.damageItem(1, player);
+			}
+		}
 
 		return true;
 	}
@@ -122,9 +143,9 @@ public class ItemToolMowingHoe extends ItemModeTool
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}
 
-		if (this.getTillBlock(worldIn, pos) != null)
+		if (this.getTillBlockState(worldIn, pos) != null)
 		{
-			worldIn.setBlockState(pos, this.getTillBlock(worldIn, pos));
+			worldIn.setBlockState(pos, this.getTillBlockState(worldIn, pos), 2);
 
 			for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1)))
 			{
@@ -133,13 +154,13 @@ public class ItemToolMowingHoe extends ItemModeTool
 					continue;
 				}
 
-				if (this.getTillBlock(worldIn, posAround) != null)
+				if (this.getTillBlockState(worldIn, posAround) != null)
 				{
-					worldIn.setBlockState(posAround, this.getTillBlock(worldIn, posAround));
+					worldIn.setBlockState(posAround, this.getTillBlockState(worldIn, posAround), 2);
 				}
 			}
 
-			stack.damageItem(1, playerIn);
+			stack.damageItem(2, playerIn);
 
 			worldIn.playSound(playerIn, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
@@ -236,7 +257,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 	}
 
 	@Nullable
-	private IBlockState getTillBlock(World world, BlockPos pos)
+	private IBlockState getTillBlockState(World world, BlockPos pos)
 	{
 		IBlockState state = world.getBlockState(pos);
 		IBlockState stateFarmland = this.getMoistureFarmland(world, pos);

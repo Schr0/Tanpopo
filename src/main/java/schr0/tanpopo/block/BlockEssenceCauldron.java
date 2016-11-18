@@ -37,8 +37,6 @@ import schr0.tanpopo.tileentity.TileEntityEssenceCauldron;
 public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityProvider
 {
 
-	private static final int META_MAX = TanpopoBlocks.META_ESSENCE_CAULDRON;
-
 	public BlockEssenceCauldron()
 	{
 		super();
@@ -49,7 +47,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list)
 	{
-		for (int meta = 0; meta <= META_MAX; meta++)
+		for (int meta = 0; meta <= TanpopoBlocks.META_ESSENCE_CAULDRON; meta++)
 		{
 			list.add(new ItemStack(itemIn, 1, meta));
 		}
@@ -121,7 +119,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 
 				if (isBucket)
 				{
-					if (level < META_MAX)
+					if (level < TanpopoBlocks.META_ESSENCE_CAULDRON)
 					{
 						return false;
 					}
@@ -130,7 +128,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 					{
 						this.addNewHeldItemToInventory(playerIn, hand, heldItem, UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE));
 
-						worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState());
+						worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState(), 2);
 
 						playerIn.addStat(StatList.CAULDRON_USED);
 					}
@@ -147,7 +145,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 
 						if (level < 0)
 						{
-							worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState());
+							worldIn.setBlockState(pos, Blocks.CAULDRON.getDefaultState(), 2);
 						}
 						else
 						{
@@ -193,7 +191,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 
 		world.setBlockToAir(pos);
 
-		int checkPosXyz = getCheckPosXyz();
+		int checkPosXyz = this.getCheckPosXyz();
 
 		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-checkPosXyz, -checkPosXyz, -checkPosXyz), pos.add(checkPosXyz, checkPosXyz, checkPosXyz)))
 		{

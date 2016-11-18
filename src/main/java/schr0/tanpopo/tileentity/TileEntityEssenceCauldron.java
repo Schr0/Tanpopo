@@ -37,10 +37,9 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 {
 
 	private static final ArrayList<EssenceCauldronCraft> LIST_ESSENCE_CAULDRON_CRAFT = TanpopoRegistry.getListEssenceCauldronCraft();
-	private static final String TAG_KEY = TanpopoNBTTags.TILEENTITY_ESSENCE_CAULDRON;
+	private static final EnumFacing FACING_CAN_INSERT = EnumFacing.UP;
 	private static final int SIZE_INVENTORY = 1;
 	private static final int SIZE_STACKSIZE = 64;
-	private static final EnumFacing FACING_CAN_INSERT = EnumFacing.UP;
 	private ItemStack[] inventoryContents;
 	private int craftTickTime;
 
@@ -56,12 +55,12 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		this.inventoryContents = new ItemStack[this.getSizeInventory()];
 
-		NBTTagList nbttagList = compound.getTagList("Items", 10);
+		NBTTagList nbttagList = compound.getTagList(TanpopoNBTTags.ESSENCE_CAULDRON_ITEMS, 10);
 
 		for (int tagCount = 0; tagCount < nbttagList.tagCount(); ++tagCount)
 		{
 			NBTTagCompound nbttagCompound = nbttagList.getCompoundTagAt(tagCount);
-			int index = nbttagCompound.getByte("Slot") & 255;
+			int index = nbttagCompound.getByte(TanpopoNBTTags.ESSENCE_CAULDRON_SLOT) & 255;
 
 			if (0 <= index && index < this.inventoryContents.length)
 			{
@@ -69,7 +68,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			}
 		}
 
-		this.craftTickTime = compound.getInteger(TAG_KEY);
+		this.craftTickTime = compound.getInteger(TanpopoNBTTags.ESSENCE_CAULDRON_TICK);
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
@@ -84,15 +83,15 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			{
 				NBTTagCompound nbttagCompound = new NBTTagCompound();
 
-				nbttagCompound.setByte("Slot", (byte) index);
+				nbttagCompound.setByte(TanpopoNBTTags.ESSENCE_CAULDRON_SLOT, (byte) index);
 				this.inventoryContents[index].writeToNBT(nbttagCompound);
 				nbttagList.appendTag(nbttagCompound);
 			}
 		}
 
-		compound.setTag("Items", nbttagList);
+		compound.setTag(TanpopoNBTTags.ESSENCE_CAULDRON_ITEMS, nbttagList);
 
-		compound.setInteger(TAG_KEY, this.craftTickTime);
+		compound.setInteger(TanpopoNBTTags.ESSENCE_CAULDRON_TICK, this.craftTickTime);
 
 		return compound;
 	}
@@ -492,7 +491,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		}
 		else
 		{
-			world.setBlockState(pos, Blocks.CAULDRON.getDefaultState());
+			world.setBlockState(posTile, Blocks.CAULDRON.getDefaultState(), 2);
 		}
 
 		if (stack != null)

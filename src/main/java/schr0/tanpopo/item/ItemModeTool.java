@@ -30,8 +30,6 @@ import schr0.tanpopo.init.TanpopoNBTTags;
 public abstract class ItemModeTool extends ItemTool
 {
 
-	private static final String TAG_KEY = TanpopoNBTTags.ITEM_MODE_TOOL;
-
 	private static final Set<Block> EFFECTIVE_BLOCKS = Sets.newHashSet();
 
 	protected ItemModeTool(float attackDamageIn, float attackSpeedIn, ToolMaterial materialIn)
@@ -121,9 +119,9 @@ public abstract class ItemModeTool extends ItemTool
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
-		if (nbtStack != null && nbtStack.hasKey(TAG_KEY, 3))
+		if (nbtStack != null && nbtStack.hasKey(TanpopoNBTTags.MODE_TOOL_FLAG, 3))
 		{
-			int value = nbtStack.getInteger(TAG_KEY);
+			int value = nbtStack.getInteger(TanpopoNBTTags.MODE_TOOL_FLAG);
 
 			return (value == 1);
 		}
@@ -142,7 +140,7 @@ public abstract class ItemModeTool extends ItemTool
 
 		int value = isMode ? (1) : (0);
 
-		nbtStack.setInteger(TAG_KEY, value);
+		nbtStack.setInteger(TanpopoNBTTags.MODE_TOOL_FLAG, value);
 
 		stack.setTagCompound(nbtStack);
 	}

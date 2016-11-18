@@ -43,19 +43,26 @@ public class ItemToolMattock extends ItemModeTool
 	{
 		super.addInformation(stack, playerIn, tooltip, advanced);
 
+		tooltip.add(TextFormatting.GOLD + "SetBlock");
+
+		int num = 0;
+
 		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
 		{
 			if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
 			{
 				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
 				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
-				String title = TextFormatting.GOLD + "SetBlock";
-				String text = TextFormatting.WHITE + " : " + itemBlockInv.getItemStackDisplayName(stackInv) + " x " + stackInv.stackSize;
 
-				tooltip.add(title + text);
+				++num;
 
-				break;
+				tooltip.add(TextFormatting.GOLD + String.valueOf(num) + TextFormatting.WHITE + " : " + itemBlockInv.getItemStackDisplayName(stackInv) + " x " + stackInv.stackSize);
 			}
+		}
+
+		if (num <= 0)
+		{
+			tooltip.add(TextFormatting.DARK_RED + String.valueOf(num) + TextFormatting.WHITE + " : " + "NONE");
 		}
 	}
 
@@ -115,11 +122,16 @@ public class ItemToolMattock extends ItemModeTool
 			}
 		}
 
-		damegeCount = Math.min((damegeCount / 2), 1);
-
-		for (int count = 0; count <= damegeCount; ++count)
+		if (0 < damegeCount)
 		{
-			stack.damageItem(1, player);
+			stack.damageItem(2, player);
+		}
+		else
+		{
+			if ((double) state.getBlockHardness(worldIn, pos) != 0.0D)
+			{
+				stack.damageItem(1, player);
+			}
 		}
 
 		return true;

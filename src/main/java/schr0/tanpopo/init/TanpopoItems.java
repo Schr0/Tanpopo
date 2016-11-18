@@ -1,8 +1,13 @@
 package schr0.tanpopo.init;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
+import schr0.tanpopo.Tanpopo;
 import schr0.tanpopo.item.ItemAttachmentFellingAxe;
 import schr0.tanpopo.item.ItemAttachmentMattock;
 import schr0.tanpopo.item.ItemAttachmentMowingHoe;
@@ -94,45 +99,42 @@ public class TanpopoItems
 		register();
 	}
 
-	/**
-	 * Itemの登録.
-	 */
 	private static void register()
 	{
-		TanpopoForgeRegistry.registerItem(MATERIAL_ROOTS, NAME_MATERIAL_ROOTS, META_MATERIAL_ROOTS, new String[]
+		registerItem(MATERIAL_ROOTS, NAME_MATERIAL_ROOTS, META_MATERIAL_ROOTS, new String[]
 		{
 				"string"
 		});
-		TanpopoForgeRegistry.registerItem(MATERIAL_LEAF, NAME_MATERIAL_LEAF, META_MATERIAL_LEAF, new String[]
+		registerItem(MATERIAL_LEAF, NAME_MATERIAL_LEAF, META_MATERIAL_LEAF, new String[]
 		{
 				"feather"
 		});
-		TanpopoForgeRegistry.registerItem(MATERIAL_STALK, NAME_MATERIAL_STALK, META_MATERIAL_STALK, new String[]
+		registerItem(MATERIAL_STALK, NAME_MATERIAL_STALK, META_MATERIAL_STALK, new String[]
 		{
 				"stickWood"
 		});
-		TanpopoForgeRegistry.registerItem(MATERIAL_PETAL, NAME_MATERIAL_PETAL, META_MATERIAL_PETAL);
-		TanpopoForgeRegistry.registerItem(MATERIAL_FLUFF, NAME_MATERIAL_FLUFF, META_MATERIAL_FLUFF);
-		TanpopoForgeRegistry.registerItem(MATERIAL_MASS, NAME_MATERIAL_MASS, META_MATERIAL_MASS);
-		TanpopoForgeRegistry.registerItem(ESSENCE_GLASS_BOTTLE, NAME_ESSENCE_GLASS_BOTTLE, META_ESSENCE_GLASS_BOTTLE);
-		TanpopoForgeRegistry.registerItem(ESSENCE_SOLID_FUEL, NAME_ESSENCE_SOLID_FUEL, META_ESSENCE_SOLID_FUEL);
-		TanpopoForgeRegistry.registerItem(TOOL_MATTOCK, NAME_TOOL_MATTOCK, META_TOOL_MATTOCK);
-		TanpopoForgeRegistry.registerItem(TOOL_FELLING_AXE, NAME_TOOL_FELLING_AXE, META_TOOL_FELLING_AXE);
-		TanpopoForgeRegistry.registerItem(TOOL_MOWING_HOE, NAME_TOOL_MOWING_HOE, META_TOOL_MOWING_HOE);
-		TanpopoForgeRegistry.registerItem(ATTACHMENT_MATTOCK, NAME_ATTACHMENT_MATTOCK, META_ATTACHMENT_MATTOCK);
-		TanpopoForgeRegistry.registerItem(ATTACHMENT_FELLING_AXE, NAME_ATTACHMENT_FELLING_AXE, META_ATTACHMENT_FELLING_AXE);
-		TanpopoForgeRegistry.registerItem(ATTACHMENT_MOWING_HOE, NAME_ATTACHMENT_MOWING_HOE, META_ATTACHMENT_MOWING_HOE);
-		TanpopoForgeRegistry.registerItem(ESSENCE_IRON_INGOT, NAME_ESSENCE_IRON_INGOT, META_ESSENCE_IRON_INGOT);
+		registerItem(MATERIAL_PETAL, NAME_MATERIAL_PETAL, META_MATERIAL_PETAL);
+		registerItem(MATERIAL_FLUFF, NAME_MATERIAL_FLUFF, META_MATERIAL_FLUFF);
+		registerItem(MATERIAL_MASS, NAME_MATERIAL_MASS, META_MATERIAL_MASS);
+		registerItem(ESSENCE_GLASS_BOTTLE, NAME_ESSENCE_GLASS_BOTTLE, META_ESSENCE_GLASS_BOTTLE);
+		registerItem(ESSENCE_SOLID_FUEL, NAME_ESSENCE_SOLID_FUEL, META_ESSENCE_SOLID_FUEL);
+		registerItem(TOOL_MATTOCK, NAME_TOOL_MATTOCK, META_TOOL_MATTOCK);
+		registerItem(TOOL_FELLING_AXE, NAME_TOOL_FELLING_AXE, META_TOOL_FELLING_AXE);
+		registerItem(TOOL_MOWING_HOE, NAME_TOOL_MOWING_HOE, META_TOOL_MOWING_HOE);
+		registerItem(ATTACHMENT_MATTOCK, NAME_ATTACHMENT_MATTOCK, META_ATTACHMENT_MATTOCK);
+		registerItem(ATTACHMENT_FELLING_AXE, NAME_ATTACHMENT_FELLING_AXE, META_ATTACHMENT_FELLING_AXE);
+		registerItem(ATTACHMENT_MOWING_HOE, NAME_ATTACHMENT_MOWING_HOE, META_ATTACHMENT_MOWING_HOE);
+		registerItem(ESSENCE_IRON_INGOT, NAME_ESSENCE_IRON_INGOT, META_ESSENCE_IRON_INGOT);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void initClient()
 	{
-		registerModel();
+		registerClient();
 	}
 
 	@SideOnly(Side.CLIENT)
-	private static void registerModel()
+	private static void registerClient()
 	{
 		TanpopoModelLoader.registerModel(MATERIAL_ROOTS, META_MATERIAL_ROOTS);
 		TanpopoModelLoader.registerModel(MATERIAL_LEAF, META_MATERIAL_LEAF);
@@ -149,6 +151,35 @@ public class TanpopoItems
 		TanpopoModelLoader.registerModel(ATTACHMENT_FELLING_AXE, META_ATTACHMENT_FELLING_AXE);
 		TanpopoModelLoader.registerModel(ATTACHMENT_MOWING_HOE, META_ATTACHMENT_MOWING_HOE);
 		TanpopoModelLoader.registerModel(ESSENCE_IRON_INGOT, META_ESSENCE_IRON_INGOT);
+	}
+
+	// TODO /* ======================================== MOD START =====================================*/
+
+	private static void registerItem(Item item, String name, int meta)
+	{
+		GameRegistry.register(item, new ResourceLocation(Tanpopo.MOD_ID, name));
+
+		if (meta == 0)
+		{
+			OreDictionary.registerOre(name, item);
+		}
+		else
+		{
+			for (int i = 0; i <= meta; i++)
+			{
+				OreDictionary.registerOre(name + "_" + i, new ItemStack(item, 1, i));
+			}
+		}
+	}
+
+	private static void registerItem(Item item, String name, int meta, String[] oreNames)
+	{
+		registerItem(item, name, meta);
+
+		for (String ore : oreNames)
+		{
+			OreDictionary.registerOre(ore, item);
+		}
 	}
 
 }
