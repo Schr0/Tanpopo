@@ -149,16 +149,14 @@ public class TanpopoEvent
 
 		if ((stackLeft.getItem() instanceof ItemModeToolAttachment) && (stackRight.getItem() == TanpopoItems.MATERIAL_STALK))
 		{
-			ItemModeToolAttachment itemModeToolAttachment = (ItemModeToolAttachment) stackLeft.getItem();
-
-			if (itemModeToolAttachment.isBroken(stackLeft))
+			if (ItemModeToolAttachment.isBroken(stackLeft))
 			{
 				return;
 			}
 
 			event.setCost(5);
 			event.setMaterialCost(1);
-			event.setOutput(itemModeToolAttachment.getContainerModeTool(stackLeft));
+			event.setOutput(((ItemModeToolAttachment) stackLeft.getItem()).getContainerModeTool(stackLeft));
 		}
 	}
 

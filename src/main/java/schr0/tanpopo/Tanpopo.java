@@ -59,7 +59,7 @@ public class Tanpopo
 	public static final String MOD_DOMAIN = MOD_ID + ":";
 
 	/**
-	 * modの構築時イベント.
+	 * Modの構築時イベント.
 	 */
 	@Mod.EventHandler
 	public void constructingEvent(FMLConstructionEvent event)
@@ -68,7 +68,7 @@ public class Tanpopo
 	}
 
 	/**
-	 * modの事前・初期設定時イベント.
+	 * Modの事前・初期設定時イベント.
 	 */
 	@Mod.EventHandler
 	public void preInitEvent(FMLPreInitializationEvent event)
@@ -89,7 +89,7 @@ public class Tanpopo
 	}
 
 	/**
-	 * modの事中・初期設定時イベント.
+	 * Modの事中・初期設定時イベント.
 	 */
 	@Mod.EventHandler
 	public void initEvent(FMLInitializationEvent event)
@@ -104,7 +104,7 @@ public class Tanpopo
 	}
 
 	/**
-	 * modの事後・初期設定時イベント.
+	 * Modの事後・初期設定時イベント.
 	 */
 	@Mod.EventHandler
 	public void postInitEvent(FMLPostInitializationEvent event)

@@ -55,6 +55,11 @@ public abstract class ItemModeToolAttachment extends Item
 
 	public abstract Item getDefaultModeTool();
 
+	public static boolean isBroken(ItemStack stack)
+	{
+		return (stack != null) && (stack.getItem() instanceof ItemModeToolAttachment) && (stack.getItemDamage() == 1);
+	}
+
 	public ItemStack getContainerModeTool(ItemStack stack)
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
@@ -87,11 +92,6 @@ public abstract class ItemModeToolAttachment extends Item
 		nbtStack.setTag(TanpopoNBTTags.MODE_TOOL_CONTAINER, nbtFnished);
 
 		stack.setTagCompound(nbtStack);
-	}
-
-	public boolean isBroken(ItemStack stack)
-	{
-		return (stack.getItemDamage() == 1);
 	}
 
 }

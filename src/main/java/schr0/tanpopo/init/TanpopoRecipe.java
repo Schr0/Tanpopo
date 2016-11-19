@@ -2,6 +2,7 @@ package schr0.tanpopo.init;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.UniversalBucket;
@@ -23,9 +24,7 @@ public class TanpopoRecipe
 
 	private static void addRecipePlantFlower()
 	{
-		int maxAge = TanpopoBlocks.META_PLANT_FLOWER;
-
-		for (int age = 0; age <= maxAge; age++)
+		for (int age = 0; age <= TanpopoBlocks.META_PLANT_FLOWER; age++)
 		{
 			ItemStack plantFlower = new ItemStack(TanpopoBlocks.PLANT_FLOWER, 1, age);
 
@@ -98,9 +97,9 @@ public class TanpopoRecipe
 
 	private static void addRecipeMaterial()
 	{
-		for (int meta = 0; meta <= 1; meta++)
+		for (int itemMeta = 0; itemMeta <= 1; itemMeta++)
 		{
-			int blockMeta = (meta == 0) ? (0) : (4);
+			int blockMeta = (itemMeta == 0) ? (0) : (4);
 
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.MASS_PLANT, 1, blockMeta), new Object[]
 			{
@@ -108,16 +107,14 @@ public class TanpopoRecipe
 					"X X",
 					"XXX",
 
-					'X', new ItemStack(TanpopoItems.MATERIAL_MASS, 1, meta),
+					'X', new ItemStack(TanpopoItems.MATERIAL_MASS, 1, itemMeta),
 			}));
 		}
 
-		/*
-				GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Items.DYE, 4, EnumDyeColor.YELLOW.getDyeDamage()), new Object[]
-				{
-						TanpopoItems.MATERIAL_PETAL,
-				}));
-		//*/
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Items.DYE, 4, EnumDyeColor.YELLOW.getDyeDamage()), new Object[]
+		{
+				TanpopoItems.MATERIAL_PETAL,
+		}));
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.FLUFF_CUSHION), new Object[]
 		{
@@ -128,7 +125,7 @@ public class TanpopoRecipe
 				'X', new ItemStack(TanpopoItems.MATERIAL_FLUFF, 1),
 		}));
 
-		for (int color = 0; color <= 15; ++color)
+		for (int color = 0; color <= TanpopoBlocks.META_FLUFF_CUSHION; ++color)
 		{
 			GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TanpopoBlocks.FLUFF_CUSHION, 1, color), new Object[]
 			{
@@ -179,42 +176,33 @@ public class TanpopoRecipe
 				'X', new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT),
 		}));
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.TOOL_MATTOCK), new Object[]
+		Item[] tools = new Item[]
 		{
-				" X ",
-				"Y  ",
-				"   ",
+				TanpopoItems.TOOL_MATTOCK, TanpopoItems.TOOL_FELLING_AXE, TanpopoItems.TOOL_MOWING_HOE
+		};
 
-				'X', new ItemStack(TanpopoItems.ATTACHMENT_MATTOCK),
-				'Y', new ItemStack(TanpopoItems.MATERIAL_STALK),
-		}));
-
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.TOOL_FELLING_AXE), new Object[]
+		Item[] attachments = new Item[]
 		{
-				" X ",
-				"Y  ",
-				"   ",
+				TanpopoItems.ATTACHMENT_MATTOCK, TanpopoItems.ATTACHMENT_FELLING_AXE, TanpopoItems.ATTACHMENT_MOWING_HOE
+		};
 
-				'X', new ItemStack(TanpopoItems.ATTACHMENT_FELLING_AXE),
-				'Y', new ItemStack(TanpopoItems.MATERIAL_STALK),
-		}));
-
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.TOOL_MOWING_HOE), new Object[]
+		for (int num = 0; num < tools.length; num++)
 		{
-				" X ",
-				"Y  ",
-				"   ",
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(tools[num]), new Object[]
+			{
+					" X ",
+					"Y  ",
+					"   ",
 
-				'X', new ItemStack(TanpopoItems.ATTACHMENT_MOWING_HOE),
-				'Y', new ItemStack(TanpopoItems.MATERIAL_STALK),
-		}));
+					'X', new ItemStack(attachments[num]),
+					'Y', new ItemStack(TanpopoItems.MATERIAL_STALK),
+			}));
+		}
 	}
 
 	private static void addSmeltingRecipe()
 	{
-		int maxAge = TanpopoBlocks.META_PLANT_FLOWER;
-
-		for (int age = 0; age <= maxAge; age++)
+		for (int age = 0; age <= TanpopoBlocks.META_PLANT_FLOWER; age++)
 		{
 			int stackSize = (age + 1);
 

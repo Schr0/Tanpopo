@@ -15,7 +15,7 @@ import schr0.tanpopo.item.ItemMaterialMass;
 public class TanpopoBehaviorsDispenser
 {
 
-	private static final BehaviorDefaultDispenseItem RECIPE_ITEM_MATERIAL_MASS = new BehaviorDefaultDispenseItem()
+	private static final BehaviorDefaultDispenseItem ITEM_MATERIAL_MASS = new BehaviorDefaultDispenseItem()
 	{
 
 		@Override
@@ -37,7 +37,7 @@ public class TanpopoBehaviorsDispenser
 
 	};
 
-	private static final BehaviorDefaultDispenseItem RECIPE_BLOCK_MASS_PLANT = new BehaviorDefaultDispenseItem()
+	private static final BehaviorDefaultDispenseItem BLOCK_MASS_PLANT = new BehaviorDefaultDispenseItem()
 	{
 
 		@Override
@@ -61,8 +61,8 @@ public class TanpopoBehaviorsDispenser
 
 	public void init()
 	{
-		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(TanpopoItems.MATERIAL_MASS, RECIPE_ITEM_MATERIAL_MASS);
-		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Item.getItemFromBlock(TanpopoBlocks.MASS_PLANT), RECIPE_BLOCK_MASS_PLANT);
+		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(TanpopoItems.MATERIAL_MASS, ITEM_MATERIAL_MASS);
+		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Item.getItemFromBlock(TanpopoBlocks.MASS_PLANT), BLOCK_MASS_PLANT);
 	}
 
 }

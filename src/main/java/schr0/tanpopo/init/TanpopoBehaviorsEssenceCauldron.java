@@ -11,7 +11,7 @@ import schr0.tanpopo.item.ItemModeToolAttachment;
 public class TanpopoBehaviorsEssenceCauldron
 {
 
-	private static final EssenceCauldronCraft CRAFT_ITEM_ATTACHMENT_MATTOCK = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft ITEM_ATTACHMENT_MATTOCK = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -23,7 +23,7 @@ public class TanpopoBehaviorsEssenceCauldron
 		@Override
 		public ItemStack getResultStack(ItemStack stackKeyItem)
 		{
-			if ((stackKeyItem.getItem() instanceof ItemModeToolAttachment) && ((ItemModeToolAttachment) stackKeyItem.getItem()).isBroken(stackKeyItem))
+			if (ItemModeToolAttachment.isBroken(stackKeyItem))
 			{
 				stackKeyItem.setItemDamage(0);
 
@@ -47,7 +47,7 @@ public class TanpopoBehaviorsEssenceCauldron
 
 	};
 
-	private static final EssenceCauldronCraft CRAFT_ITEM_ATTACHMENT_FELLING_AXE = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft ITEM_ATTACHMENT_FELLING_AXE = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -59,7 +59,7 @@ public class TanpopoBehaviorsEssenceCauldron
 		@Override
 		public ItemStack getResultStack(ItemStack stackKeyItem)
 		{
-			if ((stackKeyItem.getItem() instanceof ItemModeToolAttachment) && ((ItemModeToolAttachment) stackKeyItem.getItem()).isBroken(stackKeyItem))
+			if (ItemModeToolAttachment.isBroken(stackKeyItem))
 			{
 				stackKeyItem.setItemDamage(0);
 
@@ -83,7 +83,7 @@ public class TanpopoBehaviorsEssenceCauldron
 
 	};
 
-	private static final EssenceCauldronCraft CRAFT_ITEM_ATTACHMENT_MOWING_HOE = new EssenceCauldronCraft()
+	private static final EssenceCauldronCraft ITEM_ATTACHMENT_MOWING_HOE = new EssenceCauldronCraft()
 	{
 
 		@Override
@@ -95,7 +95,7 @@ public class TanpopoBehaviorsEssenceCauldron
 		@Override
 		public ItemStack getResultStack(ItemStack stackKeyItem)
 		{
-			if ((stackKeyItem.getItem() instanceof ItemModeToolAttachment) && ((ItemModeToolAttachment) stackKeyItem.getItem()).isBroken(stackKeyItem))
+			if (ItemModeToolAttachment.isBroken(stackKeyItem))
 			{
 				stackKeyItem.setItemDamage(0);
 
@@ -123,9 +123,9 @@ public class TanpopoBehaviorsEssenceCauldron
 	{
 		TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraftSimple(Items.COAL, 1, new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL), 1, 1, (5 * 20)));
 		TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraftSimple(Items.IRON_INGOT, new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT), 1, 1, (10 * 20)));
-		TanpopoRegistry.registerEssenceCauldronCraft(CRAFT_ITEM_ATTACHMENT_MATTOCK);
-		TanpopoRegistry.registerEssenceCauldronCraft(CRAFT_ITEM_ATTACHMENT_FELLING_AXE);
-		TanpopoRegistry.registerEssenceCauldronCraft(CRAFT_ITEM_ATTACHMENT_MOWING_HOE);
+		TanpopoRegistry.registerEssenceCauldronCraft(ITEM_ATTACHMENT_MATTOCK);
+		TanpopoRegistry.registerEssenceCauldronCraft(ITEM_ATTACHMENT_FELLING_AXE);
+		TanpopoRegistry.registerEssenceCauldronCraft(ITEM_ATTACHMENT_MOWING_HOE);
 	}
 
 }
