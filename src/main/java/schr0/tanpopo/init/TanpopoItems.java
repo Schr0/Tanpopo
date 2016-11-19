@@ -96,11 +96,6 @@ public class TanpopoItems
 
 	public void init()
 	{
-		register();
-	}
-
-	private static void register()
-	{
 		registerItem(MATERIAL_ROOTS, NAME_MATERIAL_ROOTS, META_MATERIAL_ROOTS, new String[]
 		{
 				"string"
@@ -129,12 +124,6 @@ public class TanpopoItems
 
 	@SideOnly(Side.CLIENT)
 	public void initClient()
-	{
-		registerClient();
-	}
-
-	@SideOnly(Side.CLIENT)
-	private static void registerClient()
 	{
 		TanpopoModelLoader.registerModel(MATERIAL_ROOTS, META_MATERIAL_ROOTS);
 		TanpopoModelLoader.registerModel(MATERIAL_LEAF, META_MATERIAL_LEAF);

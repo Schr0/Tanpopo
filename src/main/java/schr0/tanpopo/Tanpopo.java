@@ -7,10 +7,10 @@ import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import schr0.tanpopo.init.TanpopoBlocks;
-import schr0.tanpopo.init.TanpopoConfiguration;
 import schr0.tanpopo.init.TanpopoBehaviorsDispenser;
 import schr0.tanpopo.init.TanpopoBehaviorsEssenceCauldron;
+import schr0.tanpopo.init.TanpopoBlocks;
+import schr0.tanpopo.init.TanpopoConfiguration;
 import schr0.tanpopo.init.TanpopoEvent;
 import schr0.tanpopo.init.TanpopoFluids;
 import schr0.tanpopo.init.TanpopoFuelHandler;
@@ -81,7 +81,11 @@ public class Tanpopo
 
 		(new TanpopoBlocks()).init();
 
-		this.proxy.preInitEventClient(event);
+		(new TanpopoBehaviorsDispenser()).init();
+
+		(new TanpopoBehaviorsEssenceCauldron()).init();
+
+		this.proxy.preInitEventProxy(event);
 	}
 
 	/**
@@ -90,17 +94,13 @@ public class Tanpopo
 	@Mod.EventHandler
 	public void initEvent(FMLInitializationEvent event)
 	{
-		(new TanpopoBehaviorsDispenser()).init();
-
-		(new TanpopoBehaviorsEssenceCauldron()).init();
-
 		(new TanpopoFuelHandler()).init();
 
 		(new TanpopoRecipe()).init();
 
 		(new TanpopoEvent()).init();
 
-		this.proxy.initEventClient(event);
+		this.proxy.initEventProxy(event);
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class Tanpopo
 	@Mod.EventHandler
 	public void postInitEvent(FMLPostInitializationEvent event)
 	{
-		this.proxy.postInitEventClient(event);
+		this.proxy.postInitEventProxy(event);
 	}
 
 }

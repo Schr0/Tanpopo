@@ -17,11 +17,6 @@ public class TanpopoConfiguration
 
 	public void init()
 	{
-		build();
-	}
-
-	private static void build()
-	{
 		Configuration cfg = new Configuration(new File(Loader.instance().getConfigDir(), "schr0/" + Tanpopo.MOD_ID + ".cfg"));
 
 		try

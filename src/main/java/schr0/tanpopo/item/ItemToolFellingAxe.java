@@ -38,8 +38,6 @@ public class ItemToolFellingAxe extends ItemModeTool
 			Material.WOOD, Material.LEAVES, Material.VINE,
 	});
 
-	private static final int FELLING_MODE_BLOCK_LIMIT = TanpopoConfiguration.fellingModeBlockLimit;
-
 	private static final int COOLDWON_TIME = (10 * 20);
 
 	public ItemToolFellingAxe()
@@ -213,7 +211,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 	private Set<BlockPos> getChainBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
-		if (FELLING_MODE_BLOCK_LIMIT < posSet.size())
+		if (TanpopoConfiguration.fellingModeBlockLimit < posSet.size())
 		{
 			return posSet;
 		}
@@ -236,7 +234,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 	private Set<BlockPos> getFellingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
-		if (FELLING_MODE_BLOCK_LIMIT < posSet.size())
+		if (TanpopoConfiguration.fellingModeBlockLimit < posSet.size())
 		{
 			return posSet;
 		}

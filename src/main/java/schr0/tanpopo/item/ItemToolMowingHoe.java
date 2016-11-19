@@ -49,8 +49,6 @@ public class ItemToolMowingHoe extends ItemModeTool
 			Material.PLANTS, Material.VINE, Material.CORAL, Material.GOURD
 	});
 
-	private static final int MOWING_MODE_BLOCK_LIMIT = TanpopoConfiguration.mowingModeBlockLimit;
-
 	public ItemToolMowingHoe()
 	{
 		super(1.5F, -3.0F, TanpopoToolMaterials.TIER_IRON);
@@ -217,7 +215,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 	private Set<BlockPos> getChainBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
-		if (MOWING_MODE_BLOCK_LIMIT < posSet.size())
+		if (TanpopoConfiguration.mowingModeBlockLimit < posSet.size())
 		{
 			return posSet;
 		}

@@ -121,11 +121,6 @@ public class TanpopoBehaviorsEssenceCauldron
 
 	public void init()
 	{
-		register();
-	}
-
-	private static void register()
-	{
 		TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraftSimple(Items.COAL, 1, new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL), 1, 1, (5 * 20)));
 		TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraftSimple(Items.IRON_INGOT, new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT), 1, 1, (10 * 20)));
 		TanpopoRegistry.registerEssenceCauldronCraft(CRAFT_ITEM_ATTACHMENT_MATTOCK);

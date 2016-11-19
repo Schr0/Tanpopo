@@ -24,11 +24,6 @@ public class TanpopoPacket
 	@SideOnly(Side.CLIENT)
 	public void initClient()
 	{
-		registerClient();
-	}
-
-	private static void registerClient()
-	{
 		DISPATCHER.registerMessage(MessageHandlerParticleBlock.class, MessageParticleBlock.class, ID_PARTICLE_BLOCK, Side.CLIENT);
 	}
 

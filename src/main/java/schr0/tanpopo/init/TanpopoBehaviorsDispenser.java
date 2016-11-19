@@ -61,11 +61,6 @@ public class TanpopoBehaviorsDispenser
 
 	public void init()
 	{
-		register();
-	}
-
-	private static void register()
-	{
 		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(TanpopoItems.MATERIAL_MASS, RECIPE_ITEM_MATERIAL_MASS);
 		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Item.getItemFromBlock(TanpopoBlocks.MASS_PLANT), RECIPE_BLOCK_MASS_PLANT);
 	}

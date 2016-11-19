@@ -14,11 +14,6 @@ public class TanpopoRecipe
 
 	public void init()
 	{
-		add();
-	}
-
-	private static void add()
-	{
 		addRecipePlantFlower();
 		addRecipeMaterial();
 		addRecipeEssence();

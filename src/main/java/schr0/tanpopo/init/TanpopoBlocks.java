@@ -36,14 +36,14 @@ public class TanpopoBlocks
 	public static final Block ESSENCE_CAULDRON;
 	public static final Block FLUFF_CUSHION;
 
+	public static final Material MATERIAL_LIQUID_ESSENCE = new MaterialLiquid(MapColor.TNT);
+
 	public static final String NAME_PLANT_ROOTS = "plant_roots";
 	public static final String NAME_PLANT_FLOWER = "plant_flower";
 	public static final String NAME_MASS_PLANT = "mass_plant";
 	public static final String NAME_ESSENCE = TanpopoFluids.NAME_ESSENCE;
 	public static final String NAME_ESSENCE_CAULDRON = "essence_cauldron";
 	public static final String NAME_FLUFF_CUSHION = "fluff_cushion";
-
-	public static final Material MATERIAL_LIQUID_ESSENCE = new MaterialLiquid(MapColor.TNT);
 
 	public static final int META_PLANT_ROOTS = 0;
 	public static final int META_PLANT_FLOWER = 15;
@@ -64,11 +64,6 @@ public class TanpopoBlocks
 
 	public void init()
 	{
-		register();
-	}
-
-	private static void register()
-	{
 		registerBlock(PLANT_ROOTS, new ItemBlockPlantRoots(PLANT_ROOTS), NAME_PLANT_ROOTS, META_PLANT_ROOTS);
 		registerBlock(PLANT_FLOWER, new ItemBlockPlantFlower(PLANT_FLOWER), NAME_PLANT_FLOWER, META_PLANT_FLOWER);
 		registerBlock(MASS_PLANT, new ItemBlockMassPlant(MASS_PLANT), NAME_MASS_PLANT, META_MASS_PLANT);
@@ -79,12 +74,6 @@ public class TanpopoBlocks
 
 	@SideOnly(Side.CLIENT)
 	public void initClient()
-	{
-		registerClient();
-	}
-
-	@SideOnly(Side.CLIENT)
-	private static void registerClient()
 	{
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(PLANT_ROOTS), META_PLANT_ROOTS);
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(PLANT_FLOWER), META_PLANT_FLOWER);

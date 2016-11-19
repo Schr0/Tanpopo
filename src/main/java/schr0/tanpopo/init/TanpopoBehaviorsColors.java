@@ -27,11 +27,6 @@ public class TanpopoBehaviorsColors
 
 	public void initClient()
 	{
-		register();
-	}
-
-	private static void register()
-	{
 		registerBlockArrayColor(TanpopoBlocks.FLUFF_CUSHION);
 	}
 

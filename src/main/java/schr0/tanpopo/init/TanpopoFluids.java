@@ -27,11 +27,6 @@ public class TanpopoFluids
 
 	public void init()
 	{
-		register();
-	}
-
-	private static void register()
-	{
 		registerFluid(ESSENCE);
 
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(ESSENCE, BOTTLE_VOLUME), new ItemStack(TanpopoItems.ESSENCE_GLASS_BOTTLE), new ItemStack(Items.GLASS_BOTTLE));
@@ -48,9 +43,8 @@ public class TanpopoFluids
 		if (UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid) != null)
 		{
 			ItemStack stack = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid);
-			UniversalBucket universalBucket = (UniversalBucket) stack.getItem();
 
-			universalBucket.setContainerItem(Items.BUCKET);
+			((UniversalBucket) stack.getItem()).setContainerItem(Items.BUCKET);
 
 			FluidContainerRegistry.registerFluidContainer(fluid, stack, new ItemStack(Items.BUCKET));
 		}
