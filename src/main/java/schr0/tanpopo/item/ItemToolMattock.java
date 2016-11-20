@@ -124,7 +124,10 @@ public class ItemToolMattock extends ItemModeTool
 
 		if (0 < damegeCount)
 		{
-			stack.damageItem(2, player);
+			for (int count = 0; count <= Math.min(damegeCount, 4); ++count)
+			{
+				stack.damageItem(1, player);
+			}
 		}
 		else
 		{

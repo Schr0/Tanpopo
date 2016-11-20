@@ -51,7 +51,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 	public ItemToolMowingHoe()
 	{
-		super(1.5F, -3.0F, TanpopoToolMaterials.TIER_IRON);
+		super(8.5F, -3.6F, TanpopoToolMaterials.TIER_IRON);
 	}
 
 	@Override
@@ -115,9 +115,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 		if (0 < damegeCount)
 		{
-			damegeCount = Math.min((damegeCount / 8), 1);
-
-			for (int count = 0; count <= damegeCount; ++count)
+			for (int count = 0; count <= Math.min(damegeCount, 16); ++count)
 			{
 				stack.damageItem(1, player);
 			}

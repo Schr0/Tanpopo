@@ -72,7 +72,7 @@ public abstract class ItemModeToolAttachment extends Item
 		return new ItemStack(this.getDefaultModeTool());
 	}
 
-	public void setContainerModeTool(ItemStack stack, ItemStack stackFinished)
+	public void setContainerModeTool(ItemStack stack, ItemStack stackContainer)
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
@@ -81,17 +81,23 @@ public abstract class ItemModeToolAttachment extends Item
 			nbtStack = new NBTTagCompound();
 		}
 
-		NBTTagCompound nbtFnished = new NBTTagCompound();
+		NBTTagCompound nbtContainer = new NBTTagCompound();
 
-		stackFinished.stackSize = 1;
+		if (stackContainer.getItem() instanceof ItemModeTool)
+		{
+			stackContainer.stackSize = 1;
 
-		stackFinished.setItemDamage(0);
+			stackContainer.setItemDamage(0);
 
-		stackFinished.writeToNBT(nbtFnished);
+			((ItemModeTool) stackContainer.getItem()).setMode(stackContainer, false);
 
-		nbtStack.setTag(TanpopoNBTTags.MODE_TOOL_CONTAINER, nbtFnished);
+			stackContainer.writeToNBT(nbtContainer);
 
-		stack.setTagCompound(nbtStack);
+			nbtStack.setTag(TanpopoNBTTags.MODE_TOOL_CONTAINER, nbtContainer);
+
+			stack.setTagCompound(nbtStack);
+		}
+
 	}
 
 }

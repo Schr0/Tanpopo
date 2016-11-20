@@ -1,7 +1,20 @@
 {
 	"parent": "item/handheld",
+
 	"textures":
 	{
 		"layer0": "schr0tanpopo:items/tool_mattock"
-	}
+	},
+
+	"overrides":
+	[
+	        {
+			"predicate":
+			{
+				"mode": 1
+			},
+				"model": "schr0tanpopo:item/tool_mattock_mode"
+	        }
+	]
+
 }

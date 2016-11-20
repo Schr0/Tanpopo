@@ -3,6 +3,8 @@ package schr0.tanpopo.item;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
@@ -10,6 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
@@ -17,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -35,6 +39,21 @@ public abstract class ItemModeTool extends ItemTool
 	protected ItemModeTool(float attackDamageIn, float attackSpeedIn, ToolMaterial materialIn)
 	{
 		super(attackDamageIn, attackSpeedIn, materialIn, EFFECTIVE_BLOCKS);
+
+		this.addPropertyOverride(new ResourceLocation("mode"), new IItemPropertyGetter()
+		{
+			@SideOnly(Side.CLIENT)
+			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+			{
+				if (stack != null && stack.getItem() instanceof ItemModeTool && ((ItemModeTool) stack.getItem()).isMode(stack))
+				{
+					return 1.0F;
+				}
+
+				return 0.0F;
+			}
+		});
+
 	}
 
 	@Override

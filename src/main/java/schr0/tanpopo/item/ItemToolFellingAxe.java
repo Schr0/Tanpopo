@@ -110,9 +110,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 		if (0 < damegeCount)
 		{
-			damegeCount = Math.min((damegeCount / 8), 1);
-
-			for (int count = 0; count <= damegeCount; ++count)
+			for (int count = 0; count <= Math.min(damegeCount, 16); ++count)
 			{
 				stack.damageItem(1, player);
 			}
