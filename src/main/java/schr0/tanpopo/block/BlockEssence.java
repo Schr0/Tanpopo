@@ -17,6 +17,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import schr0.tanpopo.init.TanpopoBlocks;
 import schr0.tanpopo.init.TanpopoFluids;
@@ -61,7 +62,7 @@ public class BlockEssence extends BlockFluidClassic
 
 		if (this.canCatchFire(worldIn, pos))
 		{
-			this.onCatchFire(worldIn, pos, state);
+			this.onCatchFire(worldIn, pos);
 		}
 	}
 
@@ -72,7 +73,7 @@ public class BlockEssence extends BlockFluidClassic
 
 		if (this.canCatchFire(world, pos))
 		{
-			this.onCatchFire(world, pos, state);
+			this.onCatchFire(world, pos);
 		}
 	}
 
@@ -83,8 +84,21 @@ public class BlockEssence extends BlockFluidClassic
 
 		if (this.canCatchFire(world, pos))
 		{
-			this.onCatchFire(world, pos, state);
+			this.onCatchFire(world, pos);
 		}
+	}
+
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+	{
+		if (this.canCatchFire(worldIn, pos))
+		{
+			this.onCatchFire(worldIn, pos);
+
+			return false;
+		}
+
+		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
 	}
 
 	@Override
@@ -94,21 +108,8 @@ public class BlockEssence extends BlockFluidClassic
 
 		if (this.canCatchFire(world, pos))
 		{
-			this.onCatchFire(world, pos, state);
+			this.onCatchFire(world, pos);
 		}
-	}
-
-	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
-	{
-		if (this.canCatchFire(worldIn, pos))
-		{
-			this.onCatchFire(worldIn, pos, state);
-
-			return true;
-		}
-
-		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, heldItem, side, hitX, hitY, hitZ);
 	}
 
 	// TODO /* ======================================== MOD START =====================================*/
@@ -141,14 +142,14 @@ public class BlockEssence extends BlockFluidClassic
 		return false;
 	}
 
-	private void onCatchFire(World world, BlockPos pos, IBlockState state)
+	private void onCatchFire(World world, BlockPos pos)
 	{
 		if (world.isRemote)
 		{
 			return;
 		}
 
-		float strength = (((Integer) state.getValue(LEVEL)).intValue() == 0) ? (6.0F) : (2.0F);
+		float strength = (((Integer) world.getBlockState(pos).getValue(BlockFluidBase.LEVEL)).intValue() == 0) ? (6.0F) : (2.0F);
 
 		world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), strength, true);
 

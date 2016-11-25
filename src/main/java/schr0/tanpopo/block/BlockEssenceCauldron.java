@@ -1,11 +1,14 @@
 package schr0.tanpopo.block;
 
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -22,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -40,6 +44,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 	public BlockEssenceCauldron()
 	{
 		super();
+		this.setTickRandomly(true);
 		this.isBlockContainer = true;
 	}
 
@@ -98,11 +103,31 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
 	{
-		float depth = (float) pos.getY() + (6.0F + (float) ((Integer) state.getValue(BlockCauldron.LEVEL)).intValue() * 4) / 16.0F;
-
-		if (!worldIn.isRemote && entityIn.isBurning() && (entityIn.getEntityBoundingBox().minY <= (double) depth))
+		if (this.canCatchFire(worldIn, pos))
 		{
-			this.onCatchFire(worldIn, pos, state);
+			this.onCatchFire(worldIn, pos);
+		}
+	}
+
+	@Override
+	public void onBlockAdded(World world, BlockPos pos, IBlockState state)
+	{
+		super.onBlockAdded(world, pos, state);
+
+		if (this.canCatchFire(world, pos))
+		{
+			this.onCatchFire(world, pos);
+		}
+	}
+
+	@Override
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
+	{
+		super.neighborChanged(state, world, pos, neighborBlock);
+
+		if (this.canCatchFire(world, pos))
+		{
+			this.onCatchFire(world, pos);
 		}
 	}
 
@@ -165,6 +190,17 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 		return false;
 	}
 
+	@Override
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
+	{
+		super.updateTick(world, pos, state, rand);
+
+		if (this.canCatchFire(world, pos))
+		{
+			this.onCatchFire(world, pos);
+		}
+	}
+
 	// TODO /* ======================================== MOD START =====================================*/
 
 	public void setEssenceLevel(World worldIn, BlockPos pos, IBlockState state, int level)
@@ -175,17 +211,40 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 
 	private int getCheckPosXyz()
 	{
-		return 4;
+		return 2;
 	}
 
-	private void onCatchFire(World world, BlockPos pos, IBlockState state)
+	private boolean canCatchFire(World world, BlockPos pos)
+	{
+		int checkPosXyz = this.getCheckPosXyz();
+
+		for (Entity entityAround : world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos).expandXyz((double) checkPosXyz)))
+		{
+			if (entityAround.isBurning())
+			{
+				return true;
+			}
+		}
+
+		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-checkPosXyz, -checkPosXyz, -checkPosXyz), pos.add(checkPosXyz, checkPosXyz, checkPosXyz)))
+		{
+			if (world.getBlockState(posAround).getMaterial() == Material.FIRE)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void onCatchFire(World world, BlockPos pos)
 	{
 		if (world.isRemote)
 		{
 			return;
 		}
 
-		float strength = ((Integer) state.getValue(BlockCauldron.LEVEL).intValue() == 0) ? (6.0F) : (2.0F);
+		float strength = ((Integer) world.getBlockState(pos).getValue(BlockCauldron.LEVEL).intValue() == 0) ? (6.0F) : (2.0F);
 
 		world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), strength, true);
 

@@ -1,5 +1,7 @@
 package schr0.tanpopo.init;
 
+import java.util.HashMap;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -19,77 +21,71 @@ public class TanpopoRecipe
 		addRecipeMaterial();
 		addRecipeEssence();
 		addRecipeModeTool();
-		addSmeltingRecipe();
+		addSmeltingFlower();
 	}
 
 	private static void addRecipePlantFlower()
 	{
 		for (int age = 0; age <= TanpopoBlocks.META_PLANT_FLOWER; age++)
 		{
-			ItemStack plantFlower = new ItemStack(TanpopoBlocks.PLANT_FLOWER, 1, age);
+			ItemStack stackFlower = new ItemStack(TanpopoBlocks.PLANT_FLOWER, 1, age);
 
-			if (1 <= age)
+			int amountRoots = (age + 1);
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_ROOTS, amountRoots), new Object[]
 			{
-				int rootsAmount = Math.min((age * 2), 16);
-				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_ROOTS, rootsAmount), new Object[]
-				{
-						"X  ",
-						"   ",
-						"   ",
+					"X  ",
+					"   ",
+					"   ",
 
-						'X', plantFlower,
-				}));
-			}
+					'X', stackFlower,
+			}));
 
-			if (2 <= age)
+			int amountLeaf = Math.min((age + 1), 4);
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_LEAF, amountLeaf), new Object[]
 			{
-				int leafAmount = Math.min(((age - 1) * 2), 16);
-				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_LEAF, leafAmount), new Object[]
-				{
-						" X ",
-						"   ",
-						"   ",
+					" X ",
+					"   ",
+					"   ",
 
-						'X', plantFlower,
-				}));
-			}
+					'X', stackFlower,
+			}));
 
-			if (4 <= age)
+			if (5 <= age)
 			{
-				int stalkAmount = Math.min(((age - 3) * 2), 16);
-				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_STALK, stalkAmount), new Object[]
+				int amountStalk = Math.min((age / 5), 1);
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_STALK, amountStalk), new Object[]
 				{
 						"   ",
 						"X  ",
 						"   ",
 
-						'X', plantFlower,
+						'X', stackFlower,
 				}));
 			}
 
 			if (6 <= age && age <= 11)
 			{
-				int petalAmount = (age == 11) ? (8) : Math.min(((age - 2) * 2), 16);
-				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_PETAL, petalAmount), new Object[]
+				int amountPetal = (age == 11) ? (8) : Math.min(((age - 2) * 2), 16);
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_PETAL, amountPetal), new Object[]
 				{
 						"   ",
 						" X ",
 						"   ",
 
-						'X', plantFlower,
+						'X', stackFlower,
 				}));
 			}
 
 			if (12 <= age)
 			{
-				int fluffAmount = Math.min(((age - 7) * 2), 16);
-				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_FLUFF, fluffAmount), new Object[]
+				int amountFluff = Math.min(((age - 7) * 2), 16);
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_FLUFF, amountFluff), new Object[]
 				{
 						"   ",
 						" X ",
 						"   ",
 
-						'X', plantFlower,
+						'X', stackFlower,
 				}));
 			}
 		}
@@ -104,7 +100,7 @@ public class TanpopoRecipe
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.MASS_PLANT, 1, blockMeta), new Object[]
 			{
 					"XXX",
-					"X X",
+					"XXX",
 					"XXX",
 
 					'X', new ItemStack(TanpopoItems.MATERIAL_MASS, 1, itemMeta),
@@ -176,37 +172,38 @@ public class TanpopoRecipe
 				'X', new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT),
 		}));
 
-		Item[] tools = new Item[]
+		HashMap<Item, Item> tools = new HashMap<Item, Item>()
 		{
-				TanpopoItems.TOOL_MATTOCK, TanpopoItems.TOOL_FELLING_AXE, TanpopoItems.TOOL_MOWING_HOE
+			{
+				put(TanpopoItems.TOOL_MATTOCK, TanpopoItems.ATTACHMENT_MATTOCK);
+				put(TanpopoItems.TOOL_FELLING_AXE, TanpopoItems.ATTACHMENT_FELLING_AXE);
+				put(TanpopoItems.TOOL_MOWING_HOE, TanpopoItems.ATTACHMENT_MOWING_HOE);
+			}
 		};
 
-		Item[] attachments = new Item[]
+		for (Item tool : tools.keySet())
 		{
-				TanpopoItems.ATTACHMENT_MATTOCK, TanpopoItems.ATTACHMENT_FELLING_AXE, TanpopoItems.ATTACHMENT_MOWING_HOE
-		};
+			Item attachment = tools.get(tool);
 
-		for (int num = 0; num < tools.length; num++)
-		{
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(tools[num]), new Object[]
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(tool), new Object[]
 			{
 					" X ",
 					"Y  ",
 					"   ",
 
-					'X', new ItemStack(attachments[num]),
+					'X', new ItemStack(attachment),
 					'Y', new ItemStack(TanpopoItems.MATERIAL_STALK),
 			}));
 		}
 	}
 
-	private static void addSmeltingRecipe()
+	private static void addSmeltingFlower()
 	{
 		for (int age = 0; age <= TanpopoBlocks.META_PLANT_FLOWER; age++)
 		{
-			int stackSize = (age + 1);
+			int amount = (age + 1);
 
-			GameRegistry.addSmelting(new ItemStack(TanpopoBlocks.PLANT_FLOWER, 1, age), new ItemStack(TanpopoItems.MATERIAL_MASS, stackSize), (0.2F * (float) stackSize));
+			GameRegistry.addSmelting(new ItemStack(TanpopoBlocks.PLANT_FLOWER, 1, age), new ItemStack(TanpopoItems.MATERIAL_MASS, amount), (0.2F * (float) amount));
 		}
 	}
 

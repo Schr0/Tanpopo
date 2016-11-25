@@ -53,12 +53,12 @@ public abstract class ItemModeToolAttachment extends Item
 
 	// TODO /* ======================================== MOD START =====================================*/
 
-	public abstract Item getDefaultModeTool();
-
 	public static boolean isBroken(ItemStack stack)
 	{
 		return (stack != null) && (stack.getItem() instanceof ItemModeToolAttachment) && (stack.getItemDamage() == 1);
 	}
+
+	public abstract Item getDefaultModeTool();
 
 	public ItemStack getContainerModeTool(ItemStack stack)
 	{

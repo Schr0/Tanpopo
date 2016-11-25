@@ -81,10 +81,6 @@ public class Tanpopo
 
 		(new TanpopoBlocks()).init();
 
-		(new TanpopoBehaviorsDispenser()).init();
-
-		(new TanpopoBehaviorsEssenceCauldron()).init();
-
 		this.proxy.preInitEventProxy(event);
 	}
 
@@ -94,9 +90,13 @@ public class Tanpopo
 	@Mod.EventHandler
 	public void initEvent(FMLInitializationEvent event)
 	{
-		(new TanpopoFuelHandler()).init();
+		(new TanpopoBehaviorsDispenser()).init();
+
+		(new TanpopoBehaviorsEssenceCauldron()).init();
 
 		(new TanpopoRecipe()).init();
+
+		(new TanpopoFuelHandler()).init();
 
 		(new TanpopoEvent()).init();
 

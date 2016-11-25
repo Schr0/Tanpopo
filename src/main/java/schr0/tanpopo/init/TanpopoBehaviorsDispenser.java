@@ -1,15 +1,12 @@
 package schr0.tanpopo.init;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
 import net.minecraft.dispenser.IBlockSource;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import schr0.tanpopo.block.BlockMassPlant;
 import schr0.tanpopo.item.ItemMaterialMass;
 
 public class TanpopoBehaviorsDispenser
@@ -17,44 +14,38 @@ public class TanpopoBehaviorsDispenser
 
 	private static final BehaviorDefaultDispenseItem ITEM_MATERIAL_MASS = new BehaviorDefaultDispenseItem()
 	{
+		private boolean succeeded = true;
 
 		@Override
 		public ItemStack dispenseStack(IBlockSource source, ItemStack stack)
 		{
-			if (8 <= stack.stackSize)
+			if (ItemMaterialMass.isWet(stack))
 			{
 				World world = source.getWorld();
-				EnumFacing facing = (EnumFacing) source.func_189992_e().getValue(BlockDispenser.FACING);
-				int meta = (ItemMaterialMass.isWet(stack)) ? 4 : 0;
+				BlockPos posFacing = source.getBlockPos().offset((EnumFacing) source.func_189992_e().getValue(BlockDispenser.FACING));
 
-				BehaviorDefaultDispenseItem.doDispense(world, new ItemStack(TanpopoBlocks.MASS_PLANT, 1, meta), 6, facing, BlockDispenser.getDispensePosition(source));
+				if (!ItemMaterialMass.applyEssence(stack, world, posFacing))
+				{
+					this.succeeded = false;
+				}
 
-				stack.stackSize -= 8;
+				return stack;
 			}
 
-			return stack;
+			return super.dispenseStack(source, stack);
 		}
 
-	};
-
-	private static final BehaviorDefaultDispenseItem BLOCK_MASS_PLANT = new BehaviorDefaultDispenseItem()
-	{
-
 		@Override
-		public ItemStack dispenseStack(IBlockSource source, ItemStack stack)
+		protected void playDispenseSound(IBlockSource source)
 		{
-			World world = source.getWorld();
-			BlockPos posFacing = source.getBlockPos().offset((EnumFacing) source.func_189992_e().getValue(BlockDispenser.FACING));
-			BlockMassPlant blockPlantMass = (BlockMassPlant) Block.getBlockFromItem(stack.getItem());
-
-			if (blockPlantMass.isReplaceable(world, posFacing))
+			if (this.succeeded)
 			{
-				world.setBlockState(posFacing, blockPlantMass.getStateFromMeta(stack.getItemDamage()), 2);
-
-				--stack.stackSize;
+				source.getWorld().playEvent(1000, source.getBlockPos(), 0);
 			}
-
-			return stack;
+			else
+			{
+				source.getWorld().playEvent(1001, source.getBlockPos(), 0);
+			}
 		}
 
 	};
@@ -62,7 +53,6 @@ public class TanpopoBehaviorsDispenser
 	public void init()
 	{
 		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(TanpopoItems.MATERIAL_MASS, ITEM_MATERIAL_MASS);
-		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Item.getItemFromBlock(TanpopoBlocks.MASS_PLANT), BLOCK_MASS_PLANT);
 	}
 
 }
