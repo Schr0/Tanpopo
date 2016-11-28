@@ -54,15 +54,15 @@ public class Tanpopo
 	public static final String MOD_ACCEPTED_MC_VERSIONS = "[1.10.2]";
 
 	/**
-	 * ModのDOMAIN.
+	 * ModのResourceLocationのDomain.
 	 */
-	public static final String MOD_DOMAIN = MOD_ID + ":";
+	public static final String MOD_RESOURCE_DOMAIN = MOD_ID + ":";
 
 	/**
 	 * Modの構築時イベント.
 	 */
 	@Mod.EventHandler
-	public void constructingEvent(FMLConstructionEvent event)
+	public void constructionEvent(FMLConstructionEvent event)
 	{
 		FluidRegistry.enableUniversalBucket();
 	}

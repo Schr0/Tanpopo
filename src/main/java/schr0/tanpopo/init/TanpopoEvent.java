@@ -56,7 +56,7 @@ public class TanpopoEvent
 		int quality = 0;
 		LootFunction[] lootFunctions = new LootFunction[0];
 		LootCondition[] lootConditions = new LootCondition[0];
-		String entryName = Tanpopo.MOD_DOMAIN + TanpopoBlocks.NAME_PLANT_ROOTS;
+		String entryName = Tanpopo.MOD_ID+":"+  TanpopoBlocks.NAME_PLANT_ROOTS;
 
 		if (event.getName().equals(LootTableList.CHESTS_ABANDONED_MINESHAFT))
 		{

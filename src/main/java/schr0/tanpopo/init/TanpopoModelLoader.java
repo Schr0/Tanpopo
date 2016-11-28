@@ -1,6 +1,6 @@
 package schr0.tanpopo.init;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import com.google.common.collect.Lists;
 
@@ -31,7 +31,7 @@ public class TanpopoModelLoader
 		}
 		else
 		{
-			List<ResourceLocation> models = Lists.newArrayList();
+			ArrayList<ResourceLocation> models = Lists.newArrayList();
 
 			for (int i = 0; i <= meta; i++)
 			{
@@ -46,7 +46,7 @@ public class TanpopoModelLoader
 
 	public static void registerModelFluid(Block fluid, String name)
 	{
-		ModelResourceLocation fluidModel = new ModelResourceLocation(Tanpopo.MOD_DOMAIN + name, "fluid");
+		ModelResourceLocation fluidModel = new ModelResourceLocation(Tanpopo.MOD_RESOURCE_DOMAIN + name, "fluid");
 
 		ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(fluid), new TanpopoModelLoader.FluidItemMeshDefinition(fluidModel));
 		ModelLoader.setCustomStateMapper(fluid, new TanpopoModelLoader.FluidStateMapper(fluidModel));

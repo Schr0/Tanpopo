@@ -122,7 +122,7 @@ public class BlockMassPlant extends Block
 	@Override
 	public int quantityDropped(Random random)
 	{
-		return 8;
+		return 9;
 	}
 
 	@Override

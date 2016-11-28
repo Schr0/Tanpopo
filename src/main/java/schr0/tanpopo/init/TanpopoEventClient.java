@@ -27,7 +27,7 @@ public class TanpopoEventClient
 	public void onRenderBlockOverlayEvent(RenderBlockOverlayEvent event)
 	{
 		Minecraft minecraft = Tanpopo.proxy.getMinecraft();
-		ResourceLocation resUnderEssence = new ResourceLocation(Tanpopo.MOD_DOMAIN + "textures/misc/under_essence.png");
+		ResourceLocation resUnderEssence = new ResourceLocation(Tanpopo.MOD_RESOURCE_DOMAIN + "textures/misc/under_essence.png");
 		EntityPlayer player = event.getPlayer();
 		float renderPartialTicks = event.getRenderPartialTicks();
 

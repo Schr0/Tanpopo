@@ -42,7 +42,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 	public ItemToolFellingAxe()
 	{
-		super(8.0F, -3.1F, TanpopoToolMaterials.TIER_IRON);
+		super(8.0F, -3.1F, TanpopoToolMaterials.IRON);
 	}
 
 	@Override

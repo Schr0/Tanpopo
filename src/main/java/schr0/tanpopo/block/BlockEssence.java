@@ -149,9 +149,16 @@ public class BlockEssence extends BlockFluidClassic
 			return;
 		}
 
-		float strength = (((Integer) world.getBlockState(pos).getValue(BlockFluidBase.LEVEL)).intValue() == 0) ? (6.0F) : (2.0F);
+		float strength = 2.0F;
 
-		world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), strength, true);
+		if (world.getBlockState(pos).getBlock() == this)
+		{
+			int level = ((Integer) world.getBlockState(pos).getValue(BlockFluidBase.LEVEL)).intValue();
+
+			strength = 8.0F - ((float) level / 2.0F);
+		}
+
+		world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 6.0F, true);
 
 		world.setBlockToAir(pos);
 

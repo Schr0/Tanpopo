@@ -1,5 +1,6 @@
 package schr0.tanpopo.init;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.UniversalBucket;
@@ -18,21 +19,28 @@ public class TanpopoFuelHandler implements IFuelHandler
 	@Override
 	public int getBurnTime(ItemStack fuel)
 	{
-		int baseBurnTime = (64 * 200);
+		int essenceBurnTime = (1600 * 8);// (COAL * 8)
 
 		if (ItemEssenceGlassBottle.isFill(fuel))
 		{
-			return baseBurnTime;// 8
+			return essenceBurnTime;
 		}
 
 		if (ItemStack.areItemStackTagsEqual(fuel, UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE)))
 		{
-			return (baseBurnTime * 4);// 32
+			return (essenceBurnTime * 4);
 		}
+
+		int fuelBurnTime = (int) (essenceBurnTime * 1.5);
 
 		if (fuel.getItem() == TanpopoItems.ESSENCE_SOLID_FUEL)
 		{
-			return (int) (baseBurnTime * 1.5);// 12
+			return fuelBurnTime;
+		}
+
+		if (fuel.getItem() == Item.getItemFromBlock(TanpopoBlocks.ESSENCE_SOLID_FUEL_BLOCK))
+		{
+			return (fuelBurnTime * 10);
 		}
 
 		return 0;

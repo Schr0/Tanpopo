@@ -46,6 +46,9 @@ tile.fluff_cushion_13.name=Green Tanpopo Fluff Cushion
 tile.fluff_cushion_14.name=Red Tanpopo Fluff Cushion
 tile.fluff_cushion_15.name=Black Tanpopo Fluff Cushion
 
+tile.essence_solid_fuel_block.name=Tanpopo Essence Solid Fuel Block
+tile.essence_iron_ingot_block.name=Tanpopo Essence Iron Ingot Block
+
 // ======================================== ITEM ===================================== //
 item.material_roots.name=Tanpopo Material Roots
 item.material_leaf.name=Tanpopo Material Leaf

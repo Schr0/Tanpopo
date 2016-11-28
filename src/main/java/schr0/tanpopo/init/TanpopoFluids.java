@@ -22,7 +22,7 @@ public class TanpopoFluids
 
 	static
 	{
-		ESSENCE = new Fluid(NAME_ESSENCE, new ResourceLocation(Tanpopo.MOD_DOMAIN + "blocks/fluid_essence_still"), new ResourceLocation(Tanpopo.MOD_DOMAIN + "blocks/fluid_essence_flow")).setUnlocalizedName(NAME_ESSENCE);
+		ESSENCE = new Fluid(NAME_ESSENCE, new ResourceLocation(Tanpopo.MOD_RESOURCE_DOMAIN + "blocks/fluid_essence_still"), new ResourceLocation(Tanpopo.MOD_RESOURCE_DOMAIN + "blocks/fluid_essence_flow")).setUnlocalizedName(NAME_ESSENCE);
 	}
 
 	public void init()

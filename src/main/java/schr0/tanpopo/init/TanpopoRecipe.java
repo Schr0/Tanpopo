@@ -1,6 +1,9 @@
 package schr0.tanpopo.init;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -21,7 +24,7 @@ public class TanpopoRecipe
 		addRecipeMaterial();
 		addRecipeEssence();
 		addRecipeModeTool();
-		addSmeltingFlower();
+		addSmeltingPlantFlower();
 	}
 
 	private static void addRecipePlantFlower()
@@ -96,7 +99,6 @@ public class TanpopoRecipe
 		for (int itemMeta = 0; itemMeta <= 1; itemMeta++)
 		{
 			int blockMeta = (itemMeta == 0) ? (0) : (4);
-
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.MASS_PLANT, 1, blockMeta), new Object[]
 			{
 					"XXX",
@@ -141,6 +143,24 @@ public class TanpopoRecipe
 					Items.BUCKET, TanpopoItems.ESSENCE_GLASS_BOTTLE, TanpopoItems.ESSENCE_GLASS_BOTTLE, TanpopoItems.ESSENCE_GLASS_BOTTLE, TanpopoItems.ESSENCE_GLASS_BOTTLE,
 			}));
 		}
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.ESSENCE_SOLID_FUEL_BLOCK), new Object[]
+		{
+				"XXX",
+				"XXX",
+				"XXX",
+
+				'X', new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL),
+		}));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.ESSENCE_IRON_INGOT_BLOCK), new Object[]
+		{
+				"XXX",
+				"XXX",
+				"XXX",
+
+				'X', new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT),
+		}));
 	}
 
 	private static void addRecipeModeTool()
@@ -197,13 +217,20 @@ public class TanpopoRecipe
 		}
 	}
 
-	private static void addSmeltingFlower()
+	private static void addSmeltingPlantFlower()
 	{
 		for (int age = 0; age <= TanpopoBlocks.META_PLANT_FLOWER; age++)
 		{
 			int amount = (age + 1);
 
 			GameRegistry.addSmelting(new ItemStack(TanpopoBlocks.PLANT_FLOWER, 1, age), new ItemStack(TanpopoItems.MATERIAL_MASS, amount), (0.2F * (float) amount));
+		}
+
+		ArrayList<Item> plantItems = Lists.newArrayList(TanpopoItems.MATERIAL_LEAF, TanpopoItems.MATERIAL_STALK, TanpopoItems.MATERIAL_ROOTS, Item.getItemFromBlock(TanpopoBlocks.PLANT_ROOTS));
+
+		for (Item item : plantItems)
+		{
+			GameRegistry.addSmelting(new ItemStack(item), new ItemStack(TanpopoItems.MATERIAL_MASS), 0.2F);
 		}
 	}
 

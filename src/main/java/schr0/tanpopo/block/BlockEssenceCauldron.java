@@ -244,7 +244,12 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 			return;
 		}
 
-		float strength = ((Integer) world.getBlockState(pos).getValue(BlockCauldron.LEVEL).intValue() == 0) ? (6.0F) : (2.0F);
+		float strength = 2.0F;
+
+		if (world.getBlockState(pos).getBlock() == this)
+		{
+			strength = ((((Integer) world.getBlockState(pos).getValue(BlockCauldron.LEVEL)).intValue() + 1) * 2);
+		}
 
 		world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), strength, true);
 

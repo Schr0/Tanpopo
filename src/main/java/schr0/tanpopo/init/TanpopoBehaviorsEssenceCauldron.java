@@ -64,10 +64,10 @@ public class TanpopoBehaviorsEssenceCauldron
 
 		for (final Item item : Item.REGISTRY)
 		{
-			boolean isVanilla = item.getRegistryName().getResourceDomain().equals("minecraft");
+			boolean isVanillaItem = item.getRegistryName().getResourceDomain().equals("minecraft");
 			boolean isModeTool = (item instanceof ItemModeTool);
 
-			if (item.isRepairable() && (isVanilla || isModeTool))
+			if (item.isRepairable() && (isVanillaItem || isModeTool))
 			{
 				TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraft()
 				{

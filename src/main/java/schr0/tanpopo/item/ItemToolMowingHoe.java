@@ -51,7 +51,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 	public ItemToolMowingHoe()
 	{
-		super(8.5F, -3.6F, TanpopoToolMaterials.TIER_IRON);
+		super(8.5F, -3.6F, TanpopoToolMaterials.IRON);
 	}
 
 	@Override
