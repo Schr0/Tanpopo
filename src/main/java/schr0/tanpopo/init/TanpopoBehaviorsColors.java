@@ -5,10 +5,8 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,9 +20,6 @@ import schr0.tanpopo.Tanpopo;
 public class TanpopoBehaviorsColors
 {
 
-	private static final BlockColors COLORS_BLOCK = Tanpopo.proxy.getMinecraft().getBlockColors();
-	private static final ItemColors COLORS_ITEM = Tanpopo.proxy.getMinecraft().getItemColors();
-
 	public void initClient()
 	{
 		registerBlockArrayColor(TanpopoBlocks.FLUFF_CUSHION);
@@ -34,7 +29,7 @@ public class TanpopoBehaviorsColors
 
 	private static void registerBlockArrayColor(Block block)
 	{
-		COLORS_BLOCK.registerBlockColorHandler(new IBlockColor()
+		Tanpopo.proxy.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor()
 		{
 
 			@Override
@@ -45,7 +40,7 @@ public class TanpopoBehaviorsColors
 
 		}, block);
 
-		COLORS_ITEM.registerItemColorHandler(new IItemColor()
+		Tanpopo.proxy.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor()
 		{
 
 			@Override

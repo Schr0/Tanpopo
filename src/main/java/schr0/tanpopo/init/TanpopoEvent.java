@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -28,6 +30,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -51,20 +54,13 @@ public class TanpopoEvent
 	@SubscribeEvent
 	public void onLootTableLoadEvent(LootTableLoadEvent event)
 	{
-		Item item = Item.getItemFromBlock(TanpopoBlocks.PLANT_ROOTS);
-		int weight = 100;
-		int quality = 0;
-		LootFunction[] lootFunctions = new LootFunction[0];
-		LootCondition[] lootConditions = new LootCondition[0];
-		String entryName = Tanpopo.MOD_ID+":"+  TanpopoBlocks.NAME_PLANT_ROOTS;
-
 		if (event.getName().equals(LootTableList.CHESTS_ABANDONED_MINESHAFT))
 		{
-			final LootPool main = event.getTable().getPool("main");
+			LootPool main = event.getTable().getPool("main");
 
 			if (main != null)
 			{
-				main.addEntry(new LootEntryItem(item, weight, quality, lootFunctions, lootConditions, entryName));
+				main.addEntry(new LootEntryItem(Item.getItemFromBlock(TanpopoBlocks.PLANT_ROOTS), 100, 0, new LootFunction[0], new LootCondition[0], Tanpopo.MOD_ID + ":" + TanpopoBlocks.NAME_PLANT_ROOTS));
 			}
 		}
 	}
@@ -89,9 +85,9 @@ public class TanpopoEvent
 	@SubscribeEvent
 	public void onLivingFallEvent(LivingFallEvent event)
 	{
-		EntityLivingBase livingBase = event.getEntityLiving();
-		World world = livingBase.worldObj;
-		BlockPos posDown = (new BlockPos(livingBase)).down();
+		EntityLivingBase entityLivingBase = event.getEntityLiving();
+		World world = entityLivingBase.worldObj;
+		BlockPos posDown = (new BlockPos(entityLivingBase)).down();
 
 		if (world.isAirBlock(posDown))
 		{
@@ -101,7 +97,7 @@ public class TanpopoEvent
 
 				if (blockAround == TanpopoBlocks.FLUFF_CUSHION)
 				{
-					((BlockFluffCushion) blockAround).onSpring(world, livingBase);
+					((BlockFluffCushion) blockAround).onSpring(world, entityLivingBase);
 
 					event.setDamageMultiplier(0.0F);
 				}
@@ -163,13 +159,14 @@ public class TanpopoEvent
 	@SubscribeEvent
 	public void onRightClickBlockEvent(PlayerInteractEvent.RightClickBlock event)
 	{
-		if (event.getItemStack() == null)
+		ItemStack stack = event.getItemStack();
+
+		if (stack == null)
 		{
 			return;
 		}
 
 		World world = event.getWorld();
-		ItemStack stack = event.getItemStack();
 		BlockPos pos = event.getPos();
 		IBlockState state = world.getBlockState(pos);
 		boolean isCauldronBlock = (state.getBlock() == Blocks.CAULDRON || state.getBlock() == TanpopoBlocks.ESSENCE_CAULDRON);
@@ -208,13 +205,12 @@ public class TanpopoEvent
 	@SubscribeEvent
 	public void onRightClickItemEvent(PlayerInteractEvent.RightClickItem event)
 	{
-		if (event.getItemStack() == null)
+		ItemStack stack = event.getItemStack();
+
+		if (stack == null)
 		{
 			return;
 		}
-
-		World world = event.getWorld();
-		ItemStack stack = event.getItemStack();
 
 		if (ItemStack.areItemStackTagsEqual(stack, UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE)))
 		{
@@ -223,6 +219,7 @@ public class TanpopoEvent
 
 			if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK)
 			{
+				World world = event.getWorld();
 				BlockPos posMop = mop.getBlockPos();
 
 				if (world.getBlockState(posMop).getBlock() == Blocks.CAULDRON)
@@ -235,6 +232,35 @@ public class TanpopoEvent
 
 					world.playSound(null, posMop, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1.0F, 1.0F);
 				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onLivingDropsEvent(LivingDropsEvent event)
+	{
+		EntityLivingBase entityLivingBase = event.getEntityLiving();
+		World world = entityLivingBase.worldObj;
+
+		if (world.isRemote)
+		{
+			return;
+		}
+
+		if ((entityLivingBase instanceof EntityEnderman) && (event.getSource().getSourceOfDamage() instanceof EntityLivingBase))
+		{
+			int chance = 50;
+
+			if (((EntityEnderman) entityLivingBase).getHeldBlockState() != null)
+			{
+				chance += 25;
+			}
+
+			if (world.rand.nextInt(100) < chance)
+			{
+				BlockPos pos = new BlockPos(entityLivingBase);
+
+				event.getDrops().add(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(TanpopoBlocks.PLANT_ROOTS)));
 			}
 		}
 	}

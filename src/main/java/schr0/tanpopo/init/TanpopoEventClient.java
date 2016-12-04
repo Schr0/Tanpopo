@@ -26,13 +26,14 @@ public class TanpopoEventClient
 	@SubscribeEvent
 	public void onRenderBlockOverlayEvent(RenderBlockOverlayEvent event)
 	{
-		Minecraft minecraft = Tanpopo.proxy.getMinecraft();
-		ResourceLocation resUnderEssence = new ResourceLocation(Tanpopo.MOD_RESOURCE_DOMAIN + "textures/misc/under_essence.png");
 		EntityPlayer player = event.getPlayer();
-		float renderPartialTicks = event.getRenderPartialTicks();
 
 		if (player.isInsideOfMaterial(TanpopoBlocks.MATERIAL_LIQUID_ESSENCE))
 		{
+			Minecraft minecraft = Tanpopo.proxy.getMinecraft();
+			ResourceLocation resUnderEssence = new ResourceLocation(Tanpopo.MOD_RESOURCE_DOMAIN + "textures/misc/under_essence.png");
+			float renderPartialTicks = event.getRenderPartialTicks();
+
 			minecraft.getTextureManager().bindTexture(resUnderEssence);
 			Tessellator tessellator = Tessellator.getInstance();
 			VertexBuffer vertexbuffer = tessellator.getBuffer();

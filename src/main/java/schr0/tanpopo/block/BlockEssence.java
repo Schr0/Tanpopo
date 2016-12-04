@@ -153,9 +153,9 @@ public class BlockEssence extends BlockFluidClassic
 
 		if (world.getBlockState(pos).getBlock() == this)
 		{
-			int level = ((Integer) world.getBlockState(pos).getValue(BlockFluidBase.LEVEL)).intValue();
+			float friction = (float) (((Integer) world.getBlockState(pos).getValue(BlockFluidBase.LEVEL)).intValue() / 2.0F);
 
-			strength = 8.0F - ((float) level / 2.0F);
+			strength = (8.0F - friction);
 		}
 
 		world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 6.0F, true);

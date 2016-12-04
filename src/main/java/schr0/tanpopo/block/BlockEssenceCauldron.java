@@ -67,11 +67,11 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
 	{
-		TileEntity tileentity = worldIn.getTileEntity(pos);
+		TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-		if (tileentity instanceof IInventory)
+		if (tileEntity instanceof IInventory)
 		{
-			InventoryHelper.dropInventoryItems(worldIn, pos, (IInventory) tileentity);
+			InventoryHelper.dropInventoryItems(worldIn, pos, (IInventory) tileEntity);
 		}
 
 		super.breakBlock(worldIn, pos, state);
@@ -83,9 +83,9 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 	public boolean eventReceived(IBlockState state, World worldIn, BlockPos pos, int id, int param)
 	{
 		super.eventReceived(state, worldIn, pos, id, param);
-		TileEntity tileentity = worldIn.getTileEntity(pos);
+		TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-		return tileentity == null ? false : tileentity.receiveClientEvent(id, param);
+		return tileEntity == null ? false : tileEntity.receiveClientEvent(id, param);
 	}
 
 	@Override
@@ -211,7 +211,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 
 	private int getCheckPosXyz()
 	{
-		return 2;
+		return 4;
 	}
 
 	private boolean canCatchFire(World world, BlockPos pos)

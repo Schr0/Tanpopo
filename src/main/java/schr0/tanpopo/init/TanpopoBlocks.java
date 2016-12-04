@@ -42,7 +42,7 @@ public class TanpopoBlocks
 	public static final Block ESSENCE_SOLID_FUEL_BLOCK;
 	public static final Block ESSENCE_IRON_INGOT_BLOCK;
 
-	public static final Material MATERIAL_LIQUID_ESSENCE = new MaterialLiquid(MapColor.TNT);
+	public static final Material MATERIAL_LIQUID_ESSENCE = new MaterialLiquid(MapColor.YELLOW);
 
 	public static final String NAME_PLANT_ROOTS = "plant_roots";
 	public static final String NAME_PLANT_FLOWER = "plant_flower";
@@ -109,14 +109,12 @@ public class TanpopoBlocks
 		if (meta == 0)
 		{
 			OreDictionary.registerOre(name, block);
-			OreDictionary.registerOre(name, itemBlock);
 		}
 		else
 		{
 			for (int i = 0; i <= meta; i++)
 			{
 				OreDictionary.registerOre(name + "_" + i, new ItemStack(block, 1, i));
-				OreDictionary.registerOre(name + "_" + i, new ItemStack(itemBlock, 1, i));
 			}
 		}
 	}
@@ -128,7 +126,6 @@ public class TanpopoBlocks
 		for (String ore : oreNames)
 		{
 			OreDictionary.registerOre(ore, block);
-			OreDictionary.registerOre(ore, itemBlock);
 		}
 	}
 

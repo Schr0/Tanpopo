@@ -76,7 +76,7 @@ public class BlockPlantFlower extends BlockBush implements IGrowable
 	@Override
 	public int damageDropped(IBlockState state)
 	{
-		return (Integer) state.getValue(this.getAgeProperty()).intValue();
+		return this.getAge(state);
 	}
 
 	@Override

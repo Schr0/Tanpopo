@@ -114,9 +114,7 @@ public class BlockMassPlant extends Block
 	@Override
 	public int damageDropped(IBlockState state)
 	{
-		int stage = (Integer) state.getValue(this.getStageProperty()).intValue();
-
-		return (this.getMaxStage() <= stage) ? (1) : (0);
+		return (this.getMaxStage() <= this.getStage(state)) ? (1) : (0);
 	}
 
 	@Override

@@ -8,18 +8,18 @@ public class EssenceCauldronCraftSimple extends EssenceCauldronCraft
 
 	private Item keyItem;
 	private int metaKeyItem;
-	private ItemStack resultStack;
-	private int essenceCost;
-	private int stackCost;
+	private ItemStack stackResult;
+	private int costEssence;
+	private int costStack;
 	private int tickTime;
 
-	public EssenceCauldronCraftSimple(Item keyItem, int metaKeyItem, ItemStack resultStack, int essenceCost, int stackCost, int tickTime)
+	public EssenceCauldronCraftSimple(Item keyItem, int metaKeyItem, ItemStack stackResult, int costEssence, int costStack, int tickTime)
 	{
 		this.keyItem = keyItem;
 		this.metaKeyItem = metaKeyItem;
-		this.resultStack = resultStack;
-		this.essenceCost = essenceCost;
-		this.stackCost = stackCost;
+		this.stackResult = stackResult;
+		this.costEssence = costEssence;
+		this.costStack = costStack;
 		this.tickTime = tickTime;
 	}
 
@@ -37,17 +37,17 @@ public class EssenceCauldronCraftSimple extends EssenceCauldronCraft
 	@Override
 	public ItemStack getResultStack(ItemStack stackKeyItem)
 	{
-		ItemStack resultStackCopy = this.resultStack.copy();
+		ItemStack stackResultCopy = this.stackResult.copy();
 
 		if (this.metaKeyItem < 0)
 		{
-			return resultStackCopy;
+			return stackResultCopy;
 		}
 		else
 		{
 			if (this.metaKeyItem == stackKeyItem.getItemDamage())
 			{
-				return resultStackCopy;
+				return stackResultCopy;
 			}
 		}
 
@@ -57,13 +57,13 @@ public class EssenceCauldronCraftSimple extends EssenceCauldronCraft
 	@Override
 	public int getEssenceCost(ItemStack stackKeyItem)
 	{
-		return this.essenceCost;
+		return this.costEssence;
 	}
 
 	@Override
 	public int getStackCost(ItemStack stackKeyItem)
 	{
-		return this.stackCost;
+		return this.costStack;
 	}
 
 	@Override
