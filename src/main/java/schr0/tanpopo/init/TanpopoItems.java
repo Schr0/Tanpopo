@@ -35,6 +35,7 @@ public class TanpopoItems
 	public static final Item MATERIAL_MASS;
 	public static final Item ESSENCE_GLASS_BOTTLE;
 	public static final Item ESSENCE_SOLID_FUEL;
+	// ↓ ver1.1.0 ↓
 	public static final Item TOOL_MATTOCK;
 	public static final Item TOOL_FELLING_AXE;
 	public static final Item TOOL_MOWING_HOE;

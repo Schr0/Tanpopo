@@ -54,13 +54,44 @@ public class TanpopoEvent
 	@SubscribeEvent
 	public void onLootTableLoadEvent(LootTableLoadEvent event)
 	{
-		if (event.getName().equals(LootTableList.CHESTS_ABANDONED_MINESHAFT))
-		{
-			LootPool main = event.getTable().getPool("main");
+		ResourceLocation resLootTable = event.getName();
 
-			if (main != null)
+		if (resLootTable.equals(LootTableList.CHESTS_STRONGHOLD_LIBRARY) || resLootTable.equals(LootTableList.CHESTS_STRONGHOLD_CROSSING) || resLootTable.equals(LootTableList.CHESTS_STRONGHOLD_CORRIDOR))
+		{
+			final LootPool pool = event.getTable().getPool("main");
+
+			if (pool != null)
 			{
-				main.addEntry(new LootEntryItem(Item.getItemFromBlock(TanpopoBlocks.PLANT_ROOTS), 100, 0, new LootFunction[0], new LootCondition[0], Tanpopo.MOD_ID + ":" + TanpopoBlocks.NAME_PLANT_ROOTS));
+				pool.addEntry(new LootEntryItem(Item.getItemFromBlock(TanpopoBlocks.PLANT_ROOTS), 100, 0, new LootFunction[0], new LootCondition[0], Tanpopo.MOD_ID + ":" + TanpopoBlocks.NAME_PLANT_ROOTS));
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onLivingDropsEvent(LivingDropsEvent event)
+	{
+		EntityLivingBase entityLivingBase = event.getEntityLiving();
+		World world = entityLivingBase.worldObj;
+
+		if (world.isRemote)
+		{
+			return;
+		}
+
+		if ((entityLivingBase instanceof EntityEnderman) && (event.getSource().getSourceOfDamage() instanceof EntityLivingBase))
+		{
+			int chance = 50;
+
+			if (((EntityEnderman) entityLivingBase).getHeldBlockState() != null)
+			{
+				chance += 30;
+			}
+
+			if (world.rand.nextInt(100) < chance)
+			{
+				BlockPos pos = new BlockPos(entityLivingBase);
+
+				event.getDrops().add(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(TanpopoBlocks.PLANT_ROOTS)));
 			}
 		}
 	}
@@ -232,35 +263,6 @@ public class TanpopoEvent
 
 					world.playSound(null, posMop, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1.0F, 1.0F);
 				}
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void onLivingDropsEvent(LivingDropsEvent event)
-	{
-		EntityLivingBase entityLivingBase = event.getEntityLiving();
-		World world = entityLivingBase.worldObj;
-
-		if (world.isRemote)
-		{
-			return;
-		}
-
-		if ((entityLivingBase instanceof EntityEnderman) && (event.getSource().getSourceOfDamage() instanceof EntityLivingBase))
-		{
-			int chance = 50;
-
-			if (((EntityEnderman) entityLivingBase).getHeldBlockState() != null)
-			{
-				chance += 25;
-			}
-
-			if (world.rand.nextInt(100) < chance)
-			{
-				BlockPos pos = new BlockPos(entityLivingBase);
-
-				event.getDrops().add(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(TanpopoBlocks.PLANT_ROOTS)));
 			}
 		}
 	}

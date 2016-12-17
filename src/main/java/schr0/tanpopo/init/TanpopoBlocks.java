@@ -39,6 +39,7 @@ public class TanpopoBlocks
 	public static final Block ESSENCE;
 	public static final Block ESSENCE_CAULDRON;
 	public static final Block FLUFF_CUSHION;
+	// ↓ ver1.1.0 ↓
 	public static final Block ESSENCE_SOLID_FUEL_BLOCK;
 	public static final Block ESSENCE_IRON_INGOT_BLOCK;
 
