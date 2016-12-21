@@ -18,6 +18,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import schr0.tanpopo.TanpopoVanillaHelper;
 import schr0.tanpopo.init.TanpopoItems;
 import schr0.tanpopo.init.TanpopoPacket;
 import schr0.tanpopo.packet.MessageParticleBlock;
@@ -62,12 +63,14 @@ public class ItemMaterialMass extends Item
 
 	public static boolean isDry(ItemStack stack)
 	{
-		return (stack != null) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 0);
+		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 0);
+		// return (stack != null) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 0);
 	}
 
 	public static boolean isWet(ItemStack stack)
 	{
-		return (stack != null) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 1);
+		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 1);
+		// return (stack != null) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 1);
 	}
 
 	public static boolean applyEssence(ItemStack stack, World world, BlockPos pos)

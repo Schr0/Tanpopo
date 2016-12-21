@@ -2,6 +2,7 @@ package schr0.tanpopo.api;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import schr0.tanpopo.TanpopoVanillaHelper;
 
 public class EssenceCauldronCraftSimple extends EssenceCauldronCraft
 {
@@ -51,7 +52,8 @@ public class EssenceCauldronCraftSimple extends EssenceCauldronCraft
 			}
 		}
 
-		return (ItemStack) null;
+		return TanpopoVanillaHelper.getEmptyItemStack();
+		// return (ItemStack) null;
 	}
 
 	@Override

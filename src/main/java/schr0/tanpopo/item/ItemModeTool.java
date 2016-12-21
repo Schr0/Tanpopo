@@ -29,6 +29,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import schr0.tanpopo.TanpopoVanillaHelper;
 import schr0.tanpopo.init.TanpopoNBTTags;
 
 public abstract class ItemModeTool extends ItemTool
@@ -45,7 +46,8 @@ public abstract class ItemModeTool extends ItemTool
 			@SideOnly(Side.CLIENT)
 			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
 			{
-				if (stack != null && stack.getItem() instanceof ItemModeTool && ((ItemModeTool) stack.getItem()).isMode(stack))
+				if (TanpopoVanillaHelper.isNotEmptyItemStack(stack) && stack.getItem() instanceof ItemModeTool && ((ItemModeTool) stack.getItem()).isMode(stack))
+				// if (stack != null && stack.getItem() instanceof ItemModeTool && ((ItemModeTool) stack.getItem()).isMode(stack))
 				{
 					return 1.0F;
 				}

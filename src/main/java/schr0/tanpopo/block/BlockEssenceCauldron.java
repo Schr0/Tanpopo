@@ -33,6 +33,7 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import schr0.tanpopo.TanpopoVanillaHelper;
 import schr0.tanpopo.init.TanpopoBlocks;
 import schr0.tanpopo.init.TanpopoFluids;
 import schr0.tanpopo.init.TanpopoItems;
@@ -134,7 +135,8 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
-		if (heldItem != null)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(heldItem))
+		// if (heldItem != null)
 		{
 			int level = ((Integer) state.getValue(BlockCauldron.LEVEL)).intValue();
 

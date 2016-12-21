@@ -26,6 +26,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import schr0.tanpopo.TanpopoVanillaHelper;
 import schr0.tanpopo.init.TanpopoItems;
 import schr0.tanpopo.init.TanpopoToolMaterials;
 
@@ -49,7 +50,8 @@ public class ItemToolMattock extends ItemModeTool
 
 		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
 		{
-			if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			if (TanpopoVanillaHelper.isNotEmptyItemStack(playerIn.inventory.getStackInSlot(slot)) && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			// if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
 			{
 				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
 				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
@@ -150,7 +152,8 @@ public class ItemToolMattock extends ItemModeTool
 
 		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
 		{
-			if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			if (TanpopoVanillaHelper.isNotEmptyItemStack(playerIn.inventory.getStackInSlot(slot)) && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			// if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
 			{
 				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
 				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
@@ -159,7 +162,8 @@ public class ItemToolMattock extends ItemModeTool
 				{
 					if (stackInv.stackSize <= 0)
 					{
-						playerIn.inventory.setInventorySlotContents(slot, (ItemStack) null);
+						playerIn.inventory.setInventorySlotContents(slot, TanpopoVanillaHelper.getEmptyItemStack());
+						// playerIn.inventory.setInventorySlotContents(slot, (ItemStack) null);
 					}
 
 					return EnumActionResult.SUCCESS;

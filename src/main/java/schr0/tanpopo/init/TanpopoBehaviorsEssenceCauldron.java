@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import schr0.tanpopo.TanpopoVanillaHelper;
 import schr0.tanpopo.api.EssenceCauldronCraft;
 import schr0.tanpopo.api.EssenceCauldronCraftSimple;
 import schr0.tanpopo.api.TanpopoRegistry;
@@ -44,7 +45,8 @@ public class TanpopoBehaviorsEssenceCauldron
 						return stackKeyItem;
 					}
 
-					return (ItemStack) null;
+					return TanpopoVanillaHelper.getEmptyItemStack();
+					// return (ItemStack) null;
 				}
 
 				@Override
@@ -88,7 +90,8 @@ public class TanpopoBehaviorsEssenceCauldron
 							return stackKeyItem;
 						}
 
-						return (ItemStack) null;
+						return TanpopoVanillaHelper.getEmptyItemStack();
+						// return (ItemStack) null;
 					}
 
 					@Override

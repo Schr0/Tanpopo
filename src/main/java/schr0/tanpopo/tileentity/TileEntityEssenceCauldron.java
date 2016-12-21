@@ -26,6 +26,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import schr0.tanpopo.TanpopoVanillaHelper;
 import schr0.tanpopo.api.EssenceCauldronCraft;
 import schr0.tanpopo.api.TanpopoRegistry;
 import schr0.tanpopo.block.BlockEssenceCauldron;
@@ -79,7 +80,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		for (int index = 0; index < this.inventoryContents.length; ++index)
 		{
-			if (this.inventoryContents[index] != null)
+			if (TanpopoVanillaHelper.isNotEmptyItemStack(this.inventoryContents[index]))
+			// if (this.inventoryContents[index] != null)
 			{
 				NBTTagCompound nbttagCompound = new NBTTagCompound();
 
@@ -99,7 +101,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
 	{
-		if (this.getStackInEssenceCauldron() != null)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(this.getStackInEssenceCauldron()))
+		// if (this.getStackInEssenceCauldron() != null)
 		{
 			Block.spawnAsEntity(world, pos, this.getStackInEssenceCauldron());
 		}
@@ -138,7 +141,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	{
 		ItemStack stack = ItemStackHelper.getAndSplit(this.inventoryContents, index, count);
 
-		if (stack != null)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(stack))
+		// if (stack != null)
 		{
 			this.markDirty();
 		}
@@ -158,7 +162,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	{
 		this.inventoryContents[index] = stack;
 
-		if (stack != null && this.getInventoryStackLimit() < stack.stackSize)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(stack) && this.getInventoryStackLimit() < stack.stackSize)
+		// if (stack != null && this.getInventoryStackLimit() < stack.stackSize)
 		{
 			stack.stackSize = this.getInventoryStackLimit();
 		}
@@ -263,7 +268,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			{
 				ItemStack putStack = TileEntityHopper.putStackInInventoryAllSlots(this, stackEntityItem, FACING_CAN_INSERT);
 
-				if (putStack != null && putStack.stackSize != 0)
+				if (TanpopoVanillaHelper.isNotEmptyItemStack(putStack) && putStack.stackSize != 0)
+				// if (putStack != null && putStack.stackSize != 0)
 				{
 					entityItem.setEntityItemStack(putStack);
 				}
@@ -281,7 +287,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			}
 		}
 
-		if (this.getStackInEssenceCauldron() != null)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(this.getStackInEssenceCauldron()))
+		// if (this.getStackInEssenceCauldron() != null)
 		{
 			ItemStack stackInv = this.getStackInEssenceCauldron();
 
@@ -314,7 +321,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			{
 				this.clearStackInEssenceCauldron();
 
-				if (stackInv != null)
+				if (TanpopoVanillaHelper.isNotEmptyItemStack(stackInv))
+				// if (stackInv != null)
 				{
 					Block.spawnAsEntity(world, posTile, stackInv);
 				}
@@ -393,7 +401,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			return this.getCraft(stackCopy).getResultStack(stackCopy).copy();
 		}
 
-		return (ItemStack) null;
+		return TanpopoVanillaHelper.getEmptyItemStack();
+		// return (ItemStack) null;
 	}
 
 	private int getCraftEssenceCost(ItemStack stack)
@@ -452,7 +461,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		if ((this.getCraft(stackCopy) != null) && (this.getCraftStackCost(stackCopy) <= stackSize) && (this.getCraftEssenceCost(stackCopy) <= level))
 		{
-			return this.getCraft(stackCopy).getResultStack(stackCopy) != null;
+			return TanpopoVanillaHelper.isNotEmptyItemStack(this.getCraft(stackCopy).getResultStack(stackCopy));
+			// return this.getCraft(stackCopy).getResultStack(stackCopy) != null;
 		}
 
 		return false;
@@ -471,14 +481,16 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		stackSize -= this.getCraftStackCost(stack);
 		level -= this.getCraftEssenceCost(stack);
 
-		if (resultStack != null && resultStack.stackSize != 0)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(resultStack) && resultStack.stackSize != 0)
+		// if (resultStack != null && resultStack.stackSize != 0)
 		{
 			Block.spawnAsEntity(world, posTile, resultStack);
 		}
 
 		if (stackSize <= 0)
 		{
-			stack = null;
+			TanpopoVanillaHelper.setEmptyItemStack(stack);
+			// stack = null;
 		}
 		else
 		{
@@ -494,7 +506,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			world.setBlockState(posTile, Blocks.CAULDRON.getDefaultState(), 2);
 		}
 
-		if (stack != null)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(stack))
+		// if (stack != null)
 		{
 			TileEntity tileEntity = world.getTileEntity(posTile);
 
@@ -504,7 +517,8 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 				{
 					ItemStack putStack = TileEntityHopper.putStackInInventoryAllSlots((IInventory) tileEntity, stack, FACING_CAN_INSERT);
 
-					if (putStack != null && putStack.stackSize != 0)
+					if (TanpopoVanillaHelper.isNotEmptyItemStack(putStack) && putStack.stackSize != 0)
+					// if (putStack != null && putStack.stackSize != 0)
 					{
 						Block.spawnAsEntity(world, posTile, putStack);
 					}

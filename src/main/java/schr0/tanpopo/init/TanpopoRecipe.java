@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import schr0.tanpopo.TanpopoVanillaHelper;
 
 public class TanpopoRecipe
 {
@@ -134,7 +135,8 @@ public class TanpopoRecipe
 
 	private static void addRecipeEssence()
 	{
-		if (UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE) != null)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE)))
+		// if (UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE) != null)
 		{
 			ItemStack universalBucket = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, TanpopoFluids.ESSENCE);
 

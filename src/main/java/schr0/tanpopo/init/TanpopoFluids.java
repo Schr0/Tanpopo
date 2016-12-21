@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.UniversalBucket;
 import schr0.tanpopo.Tanpopo;
+import schr0.tanpopo.TanpopoVanillaHelper;
 
 public class TanpopoFluids
 {
@@ -40,7 +41,8 @@ public class TanpopoFluids
 
 		FluidRegistry.addBucketForFluid(fluid);
 
-		if (UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid) != null)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid)))
+		// if (UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid) != null)
 		{
 			ItemStack stack = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, fluid);
 

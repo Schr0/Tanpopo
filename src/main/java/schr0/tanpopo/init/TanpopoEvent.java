@@ -37,6 +37,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import schr0.tanpopo.Tanpopo;
+import schr0.tanpopo.TanpopoVanillaHelper;
 import schr0.tanpopo.block.BlockEssenceCauldron;
 import schr0.tanpopo.block.BlockFluffCushion;
 import schr0.tanpopo.capabilities.FluidHandlerItemEssenceGlassBottle;
@@ -102,7 +103,8 @@ public class TanpopoEvent
 		Item item = event.getItem();
 		ItemStack stack = event.getItemStack();
 
-		if (item == null || stack == null)
+		if (item == null || !TanpopoVanillaHelper.isNotEmptyItemStack(stack))
+		// if (item == null || stack == null)
 		{
 			return;
 		}
@@ -153,7 +155,8 @@ public class TanpopoEvent
 
 			if (!player.worldObj.isRemote && !player.capabilities.isCreativeMode)
 			{
-				if (player.getHeldItem(hand) == null)
+				if (!TanpopoVanillaHelper.isNotEmptyItemStack(player.getHeldItem(hand)))
+				// if (player.getHeldItem(hand) == null)
 				{
 					player.setHeldItem(hand, stackModeAttachment);
 				}
@@ -192,7 +195,8 @@ public class TanpopoEvent
 	{
 		ItemStack stack = event.getItemStack();
 
-		if (stack == null)
+		if (!TanpopoVanillaHelper.isNotEmptyItemStack(stack))
+		// if (stack == null)
 		{
 			return;
 		}
@@ -238,7 +242,8 @@ public class TanpopoEvent
 	{
 		ItemStack stack = event.getItemStack();
 
-		if (stack == null)
+		if (!TanpopoVanillaHelper.isNotEmptyItemStack(stack))
+		// if (stack == null)
 		{
 			return;
 		}

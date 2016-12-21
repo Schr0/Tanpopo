@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import schr0.tanpopo.TanpopoVanillaHelper;
 import schr0.tanpopo.init.TanpopoNBTTags;
 
 public abstract class ItemModeToolAttachment extends Item
@@ -35,7 +36,8 @@ public abstract class ItemModeToolAttachment extends Item
 	{
 		ItemStack stackFinished = this.getContainerModeTool(stack);
 
-		if (stackFinished == null)
+		if (!TanpopoVanillaHelper.isNotEmptyItemStack(stackFinished))
+		// if (stackFinished == null)
 		{
 			tooltip.add("NONE");
 		}
