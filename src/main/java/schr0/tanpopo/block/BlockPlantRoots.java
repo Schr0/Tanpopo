@@ -114,7 +114,7 @@ public class BlockPlantRoots extends Block implements IPlantable, IGrowable
 				IBlockState stateAround = worldIn.getBlockState(posAround);
 				Block blockAround = stateAround.getBlock();
 
-				if (posAround.equals(pos) || (blockAround == TanpopoBlocks.PLANT_ROOTS))
+				if (posAround.equals(pos) || (blockAround.equals(TanpopoBlocks.PLANT_ROOTS)))
 				{
 					continue;
 				}
@@ -123,7 +123,7 @@ public class BlockPlantRoots extends Block implements IPlantable, IGrowable
 				{
 					Block blockUp = worldIn.getBlockState(posAround.up()).getBlock();
 
-					if (blockUp == TanpopoBlocks.PLANT_FLOWER)
+					if (blockUp.equals(TanpopoBlocks.PLANT_FLOWER))
 					{
 						worldIn.playEvent(2001, posAround, Block.getStateId(state));
 					}
@@ -165,7 +165,7 @@ public class BlockPlantRoots extends Block implements IPlantable, IGrowable
 
 	private boolean hasUpPlant(World world, BlockPos pos)
 	{
-		return (world.getBlockState(pos.up()).getBlock() == TanpopoBlocks.PLANT_FLOWER);
+		return (world.getBlockState(pos.up()).getBlock().equals(TanpopoBlocks.PLANT_FLOWER));
 	}
 
 	private boolean canUpdateGrow(World world, BlockPos pos)
@@ -185,7 +185,7 @@ public class BlockPlantRoots extends Block implements IPlantable, IGrowable
 
 		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-checkPosXyz, -checkPosXyz, -checkPosXyz), pos.add(checkPosXyz, checkPosXyz, checkPosXyz)))
 		{
-			if (world.getBlockState(posAround).getBlock() == this)
+			if (world.getBlockState(posAround).getBlock().equals(this))
 			{
 				++chance;
 			}

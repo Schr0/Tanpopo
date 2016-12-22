@@ -240,7 +240,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction)
 	{
-		if (direction == FACING_CAN_INSERT)
+		if (direction.equals(FACING_CAN_INSERT))
 		{
 			return this.isItemValidForSlot(index, itemStackIn);
 		}
@@ -268,7 +268,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 			{
 				ItemStack putStack = TileEntityHopper.putStackInInventoryAllSlots(this, stackEntityItem, FACING_CAN_INSERT);
 
-				if (TanpopoVanillaHelper.isNotEmptyItemStack(putStack) && putStack.stackSize != 0)
+				if (TanpopoVanillaHelper.isNotEmptyItemStack(putStack) && (putStack.stackSize != 0))
 				// if (putStack != null && putStack.stackSize != 0)
 				{
 					entityItem.setEntityItemStack(putStack);
@@ -543,7 +543,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 
 		for (EnumFacing facing : EnumFacing.VALUES)
 		{
-			if (facing == FACING_CAN_INSERT)
+			if (facing.equals(FACING_CAN_INSERT))
 			{
 				continue;
 			}

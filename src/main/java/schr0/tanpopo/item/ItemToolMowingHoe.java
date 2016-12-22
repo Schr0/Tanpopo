@@ -1,6 +1,5 @@
 package schr0.tanpopo.item;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -31,7 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import schr0.tanpopo.init.TanpopoConfiguration;
+import schr0.tanpopo.init.TanpopoConfig;
 import schr0.tanpopo.init.TanpopoItems;
 import schr0.tanpopo.init.TanpopoToolMaterials;
 
@@ -70,7 +69,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 		for (Material material : EFFECTIVE_MATERIALS)
 		{
-			if (material == blockIn.getMaterial())
+			if (material.equals(blockIn.getMaterial()))
 			{
 				return (blockIn.getBlock().getHarvestLevel(blockIn) <= this.getToolMaterial().getHarvestLevel());
 			}
@@ -88,7 +87,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 		}
 
 		EntityPlayer player = (EntityPlayer) entityLiving;
-		Set<BlockPos> posSet = new LinkedHashSet<>();
+		Set<BlockPos> posSet = Sets.newHashSet(pos);
 		int damegeCount = 0;
 
 		this.getChainBlockPos(posSet, worldIn, pos);
@@ -134,7 +133,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if (this.canChageMode(playerIn) || !playerIn.canPlayerEdit(pos, facing, stack) || (facing == EnumFacing.DOWN))
+		if (this.canChageMode(playerIn) || !playerIn.canPlayerEdit(pos, facing, stack) || (facing.equals(EnumFacing.DOWN)))
 		{
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}
@@ -202,7 +201,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 		for (Material material : MOWING_MATERIALS)
 		{
-			if (material == state.getMaterial())
+			if (material.equals(state.getMaterial()))
 			{
 				return (state.getBlock().getHarvestLevel(state) <= this.getToolMaterial().getHarvestLevel());
 			}
@@ -213,7 +212,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 	private Set<BlockPos> getChainBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
-		if (TanpopoConfiguration.mowingModeBlockLimit < posSet.size())
+		if (TanpopoConfig.mowingModeBlockLimit <= posSet.size())
 		{
 			return posSet;
 		}
@@ -224,6 +223,11 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 			if (this.isMowingBlocks(world, posFacing))
 			{
+				if (TanpopoConfig.mowingModeBlockLimit <= posSet.size())
+				{
+					return posSet;
+				}
+
 				if (posSet.add(posFacing))
 				{
 					this.getChainBlockPos(posSet, world, posFacing);
@@ -236,12 +240,22 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 	private Set<BlockPos> getMowingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
-		Set<BlockPos> posSetMowing = Sets.newHashSet();
+		if (TanpopoConfig.mowingModeBlockLimit <= posSet.size())
+		{
+			return posSet;
+		}
+
+		Set<BlockPos> posSetMowing = Sets.newHashSet(pos);
 
 		for (BlockPos posChain : posSet)
 		{
 			for (BlockPos posLimit : BlockPos.getAllInBox(pos.add(-4, 0, -4), pos.add(4, 0, 4)))
 			{
+				if (TanpopoConfig.mowingModeBlockLimit <= posSetMowing.size())
+				{
+					return posSetMowing;
+				}
+
 				if ((posLimit.getX() == posChain.getX()) && (posLimit.getZ() == posChain.getZ()))
 				{
 					posSetMowing.add(posChain);
@@ -263,12 +277,12 @@ public class ItemToolMowingHoe extends ItemModeTool
 			return (IBlockState) null;
 		}
 
-		if (state.getBlock() == Blocks.GRASS || state.getBlock() == Blocks.GRASS_PATH)
+		if (state.getBlock().equals(Blocks.GRASS) || state.getBlock().equals(Blocks.GRASS_PATH))
 		{
 			return stateFarmland;
 		}
 
-		if (state.getBlock() == Blocks.DIRT)
+		if (state.getBlock().equals(Blocks.DIRT))
 		{
 			switch ((BlockDirt.DirtType) state.getValue(BlockDirt.VARIANT))
 			{
@@ -285,7 +299,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 			}
 		}
 
-		if (state.getBlock() == Blocks.FARMLAND)
+		if (state.getBlock().equals(Blocks.FARMLAND))
 		{
 			if ((state.getBlock().getMetaFromState(state) < 7) && (stateFarmland.getBlock().getMetaFromState(stateFarmland) == 7))
 			{
@@ -302,7 +316,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 		for (BlockPos.MutableBlockPos blockpos$mutableblockpos : BlockPos.getAllInBoxMutable(pos.add(-4, 0, -4), pos.add(4, 1, 4)))
 		{
-			if (world.getBlockState(blockpos$mutableblockpos).getMaterial() == Material.WATER)
+			if (world.getBlockState(blockpos$mutableblockpos).getMaterial().equals(Material.WATER))
 			{
 				return state.withProperty(BlockFarmland.MOISTURE, 7);
 			}

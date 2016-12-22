@@ -62,14 +62,12 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 	{
 		FluidStack fluidStack = this.getFluid();
 
-		if ((fluidStack != null && resource != null) && fluidStack.isFluidEqual(resource))
+		if (((fluidStack != null) && (resource != null)) && fluidStack.isFluidEqual(resource))
 		{
 			return this.drain(resource.amount, doDrain);
 		}
-		else
-		{
-			return null;
-		}
+
+		return (FluidStack) null;
 	}
 
 	@Override
@@ -78,7 +76,11 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 	{
 		FluidStack fluidStack = this.getFluid();
 
-		if (fluidStack != null)
+		if (fluidStack == null)
+		{
+			return (FluidStack) null;
+		}
+		else
 		{
 			if (doDrain)
 			{
@@ -87,22 +89,18 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 
 			return fluidStack;
 		}
-		else
-		{
-			return null;
-		}
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing)
 	{
-		return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+		return capability.equals(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
 	}
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing)
 	{
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+		if (capability.equals(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY))
 		{
 			return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(this);
 		}
@@ -120,7 +118,7 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 		}
 		else
 		{
-			return null;
+			return (FluidStack) null;
 		}
 	}
 

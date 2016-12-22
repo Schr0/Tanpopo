@@ -1,3 +1,15 @@
+// ======================================== CONFIG ===================================== //
+config.title=Tanpopo
+config.tool=Tool
+config.tool.felling_mode_block_limit=Felling Mode Block Limit
+config.tool.felling_mode_block_limit.comment=The maximum number that can be destroyed by Felling Mode.
+config.tool.mowing_mode_block_limit=Mowing Mode Block Limit
+config.tool.mowing_mode_block_limit.comment=The maximum number that can be destroyed by Mowing Mode.
+
+// ======================================== CREATIVETABS ===================================== //
+itemGroup.schr0tanpopo.block=Tanpopo : Blocks
+itemGroup.schr0tanpopo.item=Tanpopo : Items
+
 // ======================================== BLOCK ===================================== //
 tile.plant_roots.name=Tanpopo Roots
 
@@ -78,10 +90,6 @@ item.attachment_felling_axe_0.name=Tanpopo Felling Axe Attachment
 item.attachment_felling_axe_1.name=Broken Tanpopo Felling Axe Attachment
 item.attachment_mowing_hoe_0.name=Tanpopo Mowing Hoe Attachment
 item.attachment_mowing_hoe_1.name=Broken Tanpopo Mowing Hoe Attachment
-
-// ======================================== CREATIVETABS ===================================== //
-itemGroup.schr0tanpopo.block=Tanpopo : Blocks
-itemGroup.schr0tanpopo.item=Tanpopo : Items
 
 // ======================================== FLUID ===================================== //
 fluid.fluid_essence=Tanpopo Essence

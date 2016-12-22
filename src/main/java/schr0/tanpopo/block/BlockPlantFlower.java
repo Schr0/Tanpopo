@@ -103,7 +103,7 @@ public class BlockPlantFlower extends BlockBush implements IGrowable
 	@Override
 	protected boolean canSustainBush(IBlockState state)
 	{
-		return (state.getBlock() == TanpopoBlocks.PLANT_ROOTS);
+		return (state.getBlock().equals(TanpopoBlocks.PLANT_ROOTS));
 	}
 
 	@Override
@@ -198,7 +198,7 @@ public class BlockPlantFlower extends BlockBush implements IGrowable
 
 	private boolean hasDownRoots(World world, BlockPos pos)
 	{
-		return (world.getBlockState(pos.down()).getBlock() == TanpopoBlocks.PLANT_ROOTS);
+		return (world.getBlockState(pos.down()).getBlock().equals(TanpopoBlocks.PLANT_ROOTS));
 	}
 
 	private boolean canUpdateGrow(World world, BlockPos pos)
@@ -233,7 +233,7 @@ public class BlockPlantFlower extends BlockBush implements IGrowable
 
 		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-checkPosXyz, -checkPosXyz, -checkPosXyz), pos.add(checkPosXyz, checkPosXyz, checkPosXyz)))
 		{
-			if (world.getBlockState(posAround).getBlock() == TanpopoBlocks.PLANT_ROOTS)
+			if (world.getBlockState(posAround).getBlock().equals(TanpopoBlocks.PLANT_ROOTS))
 			{
 				--chance;
 			}

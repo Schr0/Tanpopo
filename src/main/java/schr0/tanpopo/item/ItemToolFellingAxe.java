@@ -1,6 +1,5 @@
 package schr0.tanpopo.item;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -26,7 +25,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import schr0.tanpopo.init.TanpopoConfiguration;
+import schr0.tanpopo.init.TanpopoConfig;
 import schr0.tanpopo.init.TanpopoItems;
 import schr0.tanpopo.init.TanpopoToolMaterials;
 
@@ -56,7 +55,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 	{
 		for (Material material : EFFECTIVE_MATERIALS)
 		{
-			if (material == blockIn.getMaterial())
+			if (material.equals(blockIn.getMaterial()))
 			{
 				return (blockIn.getBlock().getHarvestLevel(blockIn) <= this.getToolMaterial().getHarvestLevel());
 			}
@@ -74,7 +73,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 		}
 
 		EntityPlayer player = (EntityPlayer) entityLiving;
-		Set<BlockPos> posSet = new LinkedHashSet<>();
+		Set<BlockPos> posSet = Sets.newHashSet(pos);
 		int damegeCount = 0;
 
 		this.getChainBlockPos(posSet, worldIn, pos);
@@ -209,7 +208,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 	private Set<BlockPos> getChainBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
-		if (TanpopoConfiguration.fellingModeBlockLimit < posSet.size())
+		if (TanpopoConfig.fellingModeBlockLimit <= posSet.size())
 		{
 			return posSet;
 		}
@@ -220,6 +219,11 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 			if (this.isFellingBlocks(world, posFacing))
 			{
+				if (TanpopoConfig.fellingModeBlockLimit <= posSet.size())
+				{
+					return posSet;
+				}
+
 				if (posSet.add(posFacing))
 				{
 					this.getChainBlockPos(posSet, world, posFacing);
@@ -232,23 +236,23 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 	private Set<BlockPos> getFellingBlockPos(Set<BlockPos> posSet, World world, BlockPos pos)
 	{
-		if (TanpopoConfiguration.fellingModeBlockLimit < posSet.size())
+		if (TanpopoConfig.fellingModeBlockLimit <= posSet.size())
 		{
 			return posSet;
 		}
 
-		Set<BlockPos> posSetFelling = Sets.newHashSet();
+		Set<BlockPos> posSetFelling = Sets.newHashSet(pos);
 
 		for (BlockPos posChain : posSet)
 		{
 			for (BlockPos posAround : BlockPos.getAllInBox(posChain.add(-1, -1, -1), posChain.add(1, 1, 1)))
 			{
-				if (posAround.getY() < pos.getY())
+				if (TanpopoConfig.fellingModeBlockLimit <= posSetFelling.size())
 				{
-					continue;
+					return posSetFelling;
 				}
 
-				if (this.isFellingBlocks(world, posAround))
+				if ((pos.getY() <= posAround.getY()) && this.isFellingBlocks(world, posAround))
 				{
 					posSetFelling.add(posAround);
 				}

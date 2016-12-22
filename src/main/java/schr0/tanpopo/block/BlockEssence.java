@@ -133,7 +133,7 @@ public class BlockEssence extends BlockFluidClassic
 
 		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-checkPosXyz, -checkPosXyz, -checkPosXyz), pos.add(checkPosXyz, checkPosXyz, checkPosXyz)))
 		{
-			if (world.getBlockState(posAround).getMaterial() == Material.FIRE)
+			if (world.getBlockState(posAround).getMaterial().equals(Material.FIRE))
 			{
 				return true;
 			}
@@ -151,7 +151,7 @@ public class BlockEssence extends BlockFluidClassic
 
 		float strength = 2.0F;
 
-		if (world.getBlockState(pos).getBlock() == this)
+		if (world.getBlockState(pos).getBlock().equals(this))
 		{
 			float friction = (float) (((Integer) world.getBlockState(pos).getValue(BlockFluidBase.LEVEL)).intValue() / 2.0F);
 

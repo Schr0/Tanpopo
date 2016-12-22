@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import schr0.tanpopo.init.TanpopoBehaviorsDispenser;
 import schr0.tanpopo.init.TanpopoBehaviorsEssenceCauldron;
 import schr0.tanpopo.init.TanpopoBlocks;
-import schr0.tanpopo.init.TanpopoConfiguration;
+import schr0.tanpopo.init.TanpopoConfig;
 import schr0.tanpopo.init.TanpopoEvent;
 import schr0.tanpopo.init.TanpopoFluids;
 import schr0.tanpopo.init.TanpopoFuelHandler;
@@ -18,23 +18,16 @@ import schr0.tanpopo.init.TanpopoItems;
 import schr0.tanpopo.init.TanpopoRecipe;
 import schr0.tanpopo.proxy.ProxyServer;
 
-@Mod(modid = Tanpopo.MOD_ID, name = Tanpopo.MOD_NAME, version = Tanpopo.MOD_VERSION, dependencies = Tanpopo.MOD_DEPENDENCIES, acceptedMinecraftVersions = Tanpopo.MOD_ACCEPTED_MC_VERSIONS, useMetadata = true)
+@Mod(modid = Tanpopo.MOD_ID, name = Tanpopo.MOD_NAME, version = Tanpopo.MOD_VERSION, dependencies = Tanpopo.MOD_DEPENDENCIES, guiFactory = Tanpopo.GUI_FACTORY)
 public class Tanpopo
 {
-
-	@Mod.Instance(Tanpopo.MOD_ID)
-	public static Tanpopo instance;
-
-	@SidedProxy(clientSide = "schr0.tanpopo.proxy.ProxyClient", serverSide = "schr0.tanpopo.proxy.ProxyServer")
-	public static ProxyServer proxy;
-
 	/**
 	 * ModのID.
 	 */
 	public static final String MOD_ID = "schr0tanpopo";
 
 	/**
-	 * Modの名称.
+	 * Modの名前.
 	 */
 	public static final String MOD_NAME = "Tanpopo";
 
@@ -49,12 +42,18 @@ public class Tanpopo
 	public static final String MOD_DEPENDENCIES = "required-after:Forge@[1.10.2-12.18.3.2185,)";
 
 	/**
-	 * Minecraftのバージョン.
+	 * GuiFactory.
 	 */
-	public static final String MOD_ACCEPTED_MC_VERSIONS = "[1.10.2]";
+	public static final String GUI_FACTORY = "schr0.tanpopo.init.TanpopoConfigGuiFactory";
+
+	@Mod.Instance(Tanpopo.MOD_ID)
+	public static Tanpopo instance;
+
+	@SidedProxy(clientSide = "schr0.tanpopo.proxy.ProxyClient", serverSide = "schr0.tanpopo.proxy.ProxyServer")
+	public static ProxyServer proxy;
 
 	/**
-	 * ModのResourceLocationのDomain.
+	 * ResourceLocationのDomain.
 	 */
 	public static final String MOD_RESOURCE_DOMAIN = MOD_ID + ":";
 
@@ -73,7 +72,7 @@ public class Tanpopo
 	@Mod.EventHandler
 	public void preInitEvent(FMLPreInitializationEvent event)
 	{
-		(new TanpopoConfiguration()).init();
+		TanpopoConfig.syncConfig();
 
 		(new TanpopoFluids()).init();
 

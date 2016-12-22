@@ -11,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -47,13 +48,14 @@ public class ItemToolMattock extends ItemModeTool
 		tooltip.add(TextFormatting.GOLD + "SetBlock");
 
 		int num = 0;
+		InventoryPlayer invPlayer = playerIn.inventory;
 
-		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
+		for (int slot = 0; slot < invPlayer.getHotbarSize(); ++slot)
 		{
-			if (TanpopoVanillaHelper.isNotEmptyItemStack(playerIn.inventory.getStackInSlot(slot)) && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
-			// if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			if (TanpopoVanillaHelper.isNotEmptyItemStack(invPlayer.getStackInSlot(slot)) && invPlayer.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			// if (invPlayer.getStackInSlot(slot) != null && invPlayer.getStackInSlot(slot).getItem() instanceof ItemBlock)
 			{
-				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
+				ItemStack stackInv = (ItemStack) invPlayer.getStackInSlot(slot);
 				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
 
 				++num;
@@ -103,7 +105,7 @@ public class ItemToolMattock extends ItemModeTool
 				continue;
 			}
 
-			if (worldIn.getBlockState(posRange) == state)
+			if (worldIn.getBlockState(posRange).equals(state))
 			{
 				IBlockState stateRange = worldIn.getBlockState(posRange);
 				Block blockRange = stateRange.getBlock();
@@ -150,20 +152,22 @@ public class ItemToolMattock extends ItemModeTool
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}
 
-		for (int slot = 0; slot < playerIn.inventory.getHotbarSize(); ++slot)
+		InventoryPlayer invPlayer = playerIn.inventory;
+
+		for (int slot = 0; slot < invPlayer.getHotbarSize(); ++slot)
 		{
-			if (TanpopoVanillaHelper.isNotEmptyItemStack(playerIn.inventory.getStackInSlot(slot)) && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
-			// if (playerIn.inventory.getStackInSlot(slot) != null && playerIn.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			if (TanpopoVanillaHelper.isNotEmptyItemStack(invPlayer.getStackInSlot(slot)) && invPlayer.getStackInSlot(slot).getItem() instanceof ItemBlock)
+			// if (invPlayer.getStackInSlot(slot) != null && invPlayer.getStackInSlot(slot).getItem() instanceof ItemBlock)
 			{
-				ItemStack stackInv = (ItemStack) playerIn.inventory.getStackInSlot(slot);
+				ItemStack stackInv = (ItemStack) invPlayer.getStackInSlot(slot);
 				ItemBlock itemBlockInv = (ItemBlock) stackInv.getItem();
 
-				if (itemBlockInv.onItemUse(stackInv, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS)
+				if (itemBlockInv.onItemUse(stackInv, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ).equals(EnumActionResult.SUCCESS))
 				{
 					if (stackInv.stackSize <= 0)
 					{
-						playerIn.inventory.setInventorySlotContents(slot, TanpopoVanillaHelper.getEmptyItemStack());
-						// playerIn.inventory.setInventorySlotContents(slot, (ItemStack) null);
+						invPlayer.setInventorySlotContents(slot, TanpopoVanillaHelper.getEmptyItemStack());
+						// invPlayer.setInventorySlotContents(slot, (ItemStack) null);
 					}
 
 					return EnumActionResult.SUCCESS;

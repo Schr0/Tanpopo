@@ -37,7 +37,7 @@ public class MessageHandlerParticleBlock implements IMessageHandler<MessageParti
 				break;
 		}
 
-		return null;
+		return (IMessage) null;
 	}
 
 	// TODO /* ======================================== MOD START =====================================*/

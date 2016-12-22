@@ -72,7 +72,7 @@ public class BlockFluffCushion extends BlockColored
 				break;
 			}
 
-			if (world.getBlockState(posDownBlock).getBlock() == this)
+			if (world.getBlockState(posDownBlock).getBlock().equals(this))
 			{
 				boost += 0.5D;
 			}

@@ -63,13 +63,13 @@ public class ItemMaterialMass extends Item
 
 	public static boolean isDry(ItemStack stack)
 	{
-		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 0);
+		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem().equals(TanpopoItems.MATERIAL_MASS)) && (stack.getItemDamage() == 0);
 		// return (stack != null) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 0);
 	}
 
 	public static boolean isWet(ItemStack stack)
 	{
-		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 1);
+		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem().equals(TanpopoItems.MATERIAL_MASS)) && (stack.getItemDamage() == 1);
 		// return (stack != null) && (stack.getItem() == TanpopoItems.MATERIAL_MASS) && (stack.getItemDamage() == 1);
 	}
 
@@ -90,9 +90,10 @@ public class ItemMaterialMass extends Item
 			return false;
 		}
 
-		int stackSizeSrc = stack.stackSize;
+		ItemStack stackCopy = stack.copy();
+		stackCopy.stackSize = stackCopy.getMaxStackSize();
 
-		if (ItemDye.applyBonemeal(stack, world, pos, player))
+		if (ItemDye.applyBonemeal(stackCopy, world, pos, player))
 		{
 			for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1)))
 			{
@@ -103,7 +104,7 @@ public class ItemMaterialMass extends Item
 					continue;
 				}
 
-				if (ItemDye.applyBonemeal(stack, world, posAround, player))
+				if (ItemDye.applyBonemeal(stackCopy, world, posAround, player))
 				{
 					spawnApplyEssenceParticles(world, posAround);
 				}
@@ -116,7 +117,7 @@ public class ItemMaterialMass extends Item
 							continue;
 						}
 
-						if (ItemDye.applyBonemeal(stack, world, posAroundUpDown, player))
+						if (ItemDye.applyBonemeal(stackCopy, world, posAroundUpDown, player))
 						{
 							spawnApplyEssenceParticles(world, posAroundUpDown);
 						}
@@ -124,7 +125,7 @@ public class ItemMaterialMass extends Item
 				}
 			}
 
-			stack.stackSize = (stackSizeSrc - 1);
+			--stack.stackSize;
 
 			world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
 

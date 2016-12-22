@@ -26,7 +26,7 @@ public class ProxyServer
 
 	public Minecraft getMinecraft()
 	{
-		return null;
+		return (Minecraft) null;
 	}
 
 	public void infoModLog(String format, Object... data)

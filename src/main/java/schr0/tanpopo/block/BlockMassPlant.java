@@ -165,7 +165,7 @@ public class BlockMassPlant extends Block
 		{
 			BlockPos posDown = pos.down();
 
-			if (worldIn.getBlockState(posDown).getBlock() == Blocks.CAULDRON)
+			if (worldIn.getBlockState(posDown).getBlock().equals(Blocks.CAULDRON))
 			{
 				worldIn.destroyBlock(pos, false);
 
@@ -234,7 +234,7 @@ public class BlockMassPlant extends Block
 		{
 			IBlockState stateAround = worldIn.getBlockState(posAround);
 
-			if (stateAround.getBlock() == this)
+			if (stateAround.getBlock().equals(this))
 			{
 				--chance;
 			}
@@ -253,7 +253,7 @@ public class BlockMassPlant extends Block
 		{
 			IBlockState stateAround = world.getBlockState(posAround);
 
-			if (stateAround.getMaterial() == Material.WATER)
+			if (stateAround.getMaterial().equals(Material.WATER))
 			{
 				return (world.getLight(pos) < 13);
 			}

@@ -35,6 +35,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fluids.UniversalBucket;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import schr0.tanpopo.Tanpopo;
 import schr0.tanpopo.TanpopoVanillaHelper;
@@ -50,6 +51,15 @@ public class TanpopoEvent
 	public void init()
 	{
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@SubscribeEvent
+	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event)
+	{
+		if (event.getModID().equals(Tanpopo.MOD_ID))
+		{
+			TanpopoConfig.syncConfig();
+		}
 	}
 
 	@SubscribeEvent
@@ -100,16 +110,15 @@ public class TanpopoEvent
 	@SubscribeEvent
 	public void onItemAttachCapabilitiesEvent(AttachCapabilitiesEvent.Item event)
 	{
-		Item item = event.getItem();
 		ItemStack stack = event.getItemStack();
 
-		if (item == null || !TanpopoVanillaHelper.isNotEmptyItemStack(stack))
-		// if (item == null || stack == null)
+		if (!TanpopoVanillaHelper.isNotEmptyItemStack(stack))
+		// if (stack == null)
 		{
 			return;
 		}
 
-		if (item == Items.GLASS_BOTTLE)
+		if (event.getItem().equals(Items.GLASS_BOTTLE))
 		{
 			event.addCapability(new ResourceLocation(Tanpopo.MOD_ID, "FluidHandlerItemEssenceGlassBottle"), new FluidHandlerItemEssenceGlassBottle(stack));
 		}
@@ -128,7 +137,7 @@ public class TanpopoEvent
 			{
 				Block blockAround = world.getBlockState(posAround).getBlock();
 
-				if (blockAround == TanpopoBlocks.FLUFF_CUSHION)
+				if (blockAround.equals(TanpopoBlocks.FLUFF_CUSHION))
 				{
 					((BlockFluffCushion) blockAround).onSpring(world, entityLivingBase);
 
@@ -155,17 +164,17 @@ public class TanpopoEvent
 
 			if (!player.worldObj.isRemote && !player.capabilities.isCreativeMode)
 			{
-				if (!TanpopoVanillaHelper.isNotEmptyItemStack(player.getHeldItem(hand)))
+				if (TanpopoVanillaHelper.isNotEmptyItemStack(player.getHeldItem(hand)))
 				// if (player.getHeldItem(hand) == null)
-				{
-					player.setHeldItem(hand, stackModeAttachment);
-				}
-				else
 				{
 					if (!player.inventory.addItemStackToInventory(stackModeAttachment))
 					{
 						player.dropItem(stackModeAttachment, false);
 					}
+				}
+				else
+				{
+					player.setHeldItem(hand, stackModeAttachment);
 				}
 			}
 		}
@@ -177,7 +186,7 @@ public class TanpopoEvent
 		ItemStack stackLeft = event.getLeft();
 		ItemStack stackRight = event.getRight();
 
-		if ((stackLeft.getItem() instanceof ItemModeToolAttachment) && (stackRight.getItem() == TanpopoItems.MATERIAL_STALK))
+		if ((stackLeft.getItem() instanceof ItemModeToolAttachment) && (stackRight.getItem().equals(TanpopoItems.MATERIAL_STALK)))
 		{
 			if (ItemModeToolAttachment.isBroken(stackLeft))
 			{
@@ -204,13 +213,13 @@ public class TanpopoEvent
 		World world = event.getWorld();
 		BlockPos pos = event.getPos();
 		IBlockState state = world.getBlockState(pos);
-		boolean isCauldronBlock = (state.getBlock() == Blocks.CAULDRON || state.getBlock() == TanpopoBlocks.ESSENCE_CAULDRON);
+		boolean isCauldronBlock = (state.getBlock().equals(Blocks.CAULDRON) || state.getBlock().equals(TanpopoBlocks.ESSENCE_CAULDRON));
 
-		if (isCauldronBlock && (stack.getItem() == TanpopoItems.ESSENCE_GLASS_BOTTLE))
+		if (isCauldronBlock && (stack.getItem().equals(TanpopoItems.ESSENCE_GLASS_BOTTLE)))
 		{
 			boolean isSuccess = false;
 
-			if (state.getBlock() == TanpopoBlocks.ESSENCE_CAULDRON)
+			if (state.getBlock().equals(TanpopoBlocks.ESSENCE_CAULDRON))
 			{
 				int level = ((Integer) state.getValue(BlockCauldron.LEVEL)).intValue();
 
@@ -253,12 +262,12 @@ public class TanpopoEvent
 			EntityPlayer player = event.getEntityPlayer();
 			RayTraceResult mop = ForgeHooks.rayTraceEyes(player, 5.0D);
 
-			if (mop != null && mop.typeOfHit == RayTraceResult.Type.BLOCK)
+			if ((mop != null) && mop.typeOfHit.equals(RayTraceResult.Type.BLOCK))
 			{
 				World world = event.getWorld();
 				BlockPos posMop = mop.getBlockPos();
 
-				if (world.getBlockState(posMop).getBlock() == Blocks.CAULDRON)
+				if (world.getBlockState(posMop).getBlock().equals(Blocks.CAULDRON))
 				{
 					event.setCanceled(true);
 

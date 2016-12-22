@@ -36,14 +36,14 @@ public abstract class ItemModeToolAttachment extends Item
 	{
 		ItemStack stackFinished = this.getContainerModeTool(stack);
 
-		if (!TanpopoVanillaHelper.isNotEmptyItemStack(stackFinished))
-		// if (stackFinished == null)
+		if (TanpopoVanillaHelper.isNotEmptyItemStack(stackFinished))
+		// if(stackFinished != null)
 		{
-			tooltip.add("NONE");
+			tooltip.add(stackFinished.getDisplayName());
 		}
 		else
 		{
-			tooltip.add(stackFinished.getDisplayName());
+			tooltip.add("NONE");
 		}
 	}
 
@@ -57,7 +57,8 @@ public abstract class ItemModeToolAttachment extends Item
 
 	public static boolean isBroken(ItemStack stack)
 	{
-		return (stack != null) && (stack.getItem() instanceof ItemModeToolAttachment) && (stack.getItemDamage() == 1);
+		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem() instanceof ItemModeToolAttachment) && (stack.getItemDamage() == 1);
+		// return (stack != null) && (stack.getItem() instanceof ItemModeToolAttachment) && (stack.getItemDamage() == 1);
 	}
 
 	public abstract Item getDefaultModeTool();
@@ -66,7 +67,7 @@ public abstract class ItemModeToolAttachment extends Item
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
-		if (nbtStack != null && nbtStack.hasKey(TanpopoNBTTags.MODE_TOOL_CONTAINER, 10))
+		if ((nbtStack != null) && nbtStack.hasKey(TanpopoNBTTags.MODE_TOOL_CONTAINER, 10))
 		{
 			return ItemStack.loadItemStackFromNBT(nbtStack.getCompoundTag(TanpopoNBTTags.MODE_TOOL_CONTAINER));
 		}

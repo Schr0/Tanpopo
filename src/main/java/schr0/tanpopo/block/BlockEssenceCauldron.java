@@ -86,7 +86,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 		super.eventReceived(state, worldIn, pos, id, param);
 		TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-		return tileEntity == null ? false : tileEntity.receiveClientEvent(id, param);
+		return (tileEntity == null) ? false : tileEntity.receiveClientEvent(id, param);
 	}
 
 	@Override
@@ -140,9 +140,9 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 		{
 			int level = ((Integer) state.getValue(BlockCauldron.LEVEL)).intValue();
 
-			if ((heldItem.getItem() == Items.BUCKET) || (heldItem.getItem() == Items.GLASS_BOTTLE))
+			if ((heldItem.getItem().equals(Items.BUCKET)) || (heldItem.getItem().equals(Items.GLASS_BOTTLE)))
 			{
-				boolean isBucket = (heldItem.getItem() == Items.BUCKET);
+				boolean isBucket = (heldItem.getItem().equals(Items.BUCKET));
 
 				if (isBucket)
 				{
@@ -230,7 +230,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 
 		for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-checkPosXyz, -checkPosXyz, -checkPosXyz), pos.add(checkPosXyz, checkPosXyz, checkPosXyz)))
 		{
-			if (world.getBlockState(posAround).getMaterial() == Material.FIRE)
+			if (world.getBlockState(posAround).getMaterial().equals(Material.FIRE))
 			{
 				return true;
 			}
@@ -248,7 +248,7 @@ public class BlockEssenceCauldron extends BlockCauldron implements ITileEntityPr
 
 		float strength = 2.0F;
 
-		if (world.getBlockState(pos).getBlock() == this)
+		if (world.getBlockState(pos).getBlock().equals(this))
 		{
 			strength = ((((Integer) world.getBlockState(pos).getValue(BlockCauldron.LEVEL)).intValue() + 1) * 2);
 		}

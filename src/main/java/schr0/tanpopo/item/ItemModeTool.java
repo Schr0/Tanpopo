@@ -140,7 +140,7 @@ public abstract class ItemModeTool extends ItemTool
 	{
 		NBTTagCompound nbtStack = stack.getTagCompound();
 
-		if (nbtStack != null && nbtStack.hasKey(TanpopoNBTTags.MODE_TOOL_FLAG, 3))
+		if ((nbtStack != null) && nbtStack.hasKey(TanpopoNBTTags.MODE_TOOL_FLAG, 3))
 		{
 			int value = nbtStack.getInteger(TanpopoNBTTags.MODE_TOOL_FLAG);
 

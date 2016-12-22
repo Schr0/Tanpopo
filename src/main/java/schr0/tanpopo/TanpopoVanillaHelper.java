@@ -20,11 +20,4 @@ public class TanpopoVanillaHelper
 		stack = null;
 	}
 
-	/*
-		public static void setItemStackStackSize(ItemStack stack, int newStackSize)
-		{
-			stack.stackSize = newStackSize;
-		}
-	//*/
-
 }

@@ -28,13 +28,13 @@ public class ItemEssenceGlassBottle extends Item
 
 	public static boolean isEmpty(ItemStack stack)
 	{
-		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem() == Items.GLASS_BOTTLE);
+		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem().equals(Items.GLASS_BOTTLE));
 		// return (stack != null) && (stack.getItem() == Items.GLASS_BOTTLE);
 	}
 
 	public static boolean isFill(ItemStack stack)
 	{
-		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem() == TanpopoItems.ESSENCE_GLASS_BOTTLE);
+		return TanpopoVanillaHelper.isNotEmptyItemStack(stack) && (stack.getItem().equals(TanpopoItems.ESSENCE_GLASS_BOTTLE));
 		// return (stack != null) && (stack.getItem() == TanpopoItems.ESSENCE_GLASS_BOTTLE);
 	}
 
