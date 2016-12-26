@@ -16,7 +16,7 @@ public class TanpopoConfigGui extends GuiConfig
 
 	public TanpopoConfigGui(GuiScreen parent)
 	{
-		super(parent, getListConfigElement(), Tanpopo.MOD_ID, false, false, I18n.format("config.title"));
+		super(parent, getListConfigElement(), Tanpopo.MOD_ID, false, false, I18n.format(TanpopoConfig.LANG_CONFIG + "title"));
 	}
 
 	private static List<IConfigElement> getListConfigElement()

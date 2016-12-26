@@ -18,7 +18,7 @@ import schr0.tanpopo.init.TanpopoItems;
 import schr0.tanpopo.init.TanpopoRecipe;
 import schr0.tanpopo.proxy.ProxyServer;
 
-@Mod(modid = Tanpopo.MOD_ID, name = Tanpopo.MOD_NAME, version = Tanpopo.MOD_VERSION, dependencies = Tanpopo.MOD_DEPENDENCIES, guiFactory = Tanpopo.GUI_FACTORY)
+@Mod(modid = Tanpopo.MOD_ID, name = Tanpopo.MOD_NAME, version = Tanpopo.MOD_VERSION, dependencies = Tanpopo.MOD_DEPENDENCIES, guiFactory = Tanpopo.MOD_GUI_FACTORY)
 public class Tanpopo
 {
 	/**
@@ -42,20 +42,20 @@ public class Tanpopo
 	public static final String MOD_DEPENDENCIES = "required-after:Forge@[1.10.2-12.18.3.2185,)";
 
 	/**
-	 * GuiFactory.
+	 * ModのGuiFactory.
 	 */
-	public static final String GUI_FACTORY = "schr0.tanpopo.init.TanpopoConfigGuiFactory";
+	public static final String MOD_GUI_FACTORY = "schr0.tanpopo.init.TanpopoConfigGuiFactory";
+
+	/**
+	 * ResourceLocationのDomain.
+	 */
+	public static final String MOD_RESOURCE_DOMAIN = MOD_ID + ":";
 
 	@Mod.Instance(Tanpopo.MOD_ID)
 	public static Tanpopo instance;
 
 	@SidedProxy(clientSide = "schr0.tanpopo.proxy.ProxyClient", serverSide = "schr0.tanpopo.proxy.ProxyServer")
 	public static ProxyServer proxy;
-
-	/**
-	 * ResourceLocationのDomain.
-	 */
-	public static final String MOD_RESOURCE_DOMAIN = MOD_ID + ":";
 
 	/**
 	 * Modの構築時イベント.

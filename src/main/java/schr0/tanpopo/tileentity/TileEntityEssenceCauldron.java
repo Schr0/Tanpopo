@@ -490,7 +490,7 @@ public class TileEntityEssenceCauldron extends TileEntity implements ITickable, 
 		if (stackSize <= 0)
 		{
 			TanpopoVanillaHelper.setEmptyItemStack(stack);
-			// stack = null;
+			stack = null;
 		}
 		else
 		{

@@ -1,10 +1,10 @@
 // ======================================== CONFIG ===================================== //
-config.title=Tanpopo
-config.tool=Tool
-config.tool.felling_mode_block_limit=Felling Mode Block Limit
-config.tool.felling_mode_block_limit.comment=The maximum number that can be destroyed by Felling Mode.
-config.tool.mowing_mode_block_limit=Mowing Mode Block Limit
-config.tool.mowing_mode_block_limit.comment=The maximum number that can be destroyed by Mowing Mode.
+config.schr0tanpopo.title=Tanpopo Configuration
+config.schr0tanpopo.tool=Tool
+config.schr0tanpopo.tool.felling_mode_block_limit=Felling Mode Block Limit
+config.schr0tanpopo.tool.felling_mode_block_limit.comment=The maximum number that can be destroyed by Felling Mode.
+config.schr0tanpopo.tool.mowing_mode_block_limit=Mowing Mode Block Limit
+config.schr0tanpopo.tool.mowing_mode_block_limit.comment=The maximum number that can be destroyed by Mowing Mode.
 
 // ======================================== CREATIVETABS ===================================== //
 itemGroup.schr0tanpopo.block=Tanpopo : Blocks

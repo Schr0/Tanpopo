@@ -34,29 +34,35 @@ public class TanpopoRecipe
 		{
 			ItemStack stackFlower = new ItemStack(TanpopoBlocks.PLANT_FLOWER, 1, age);
 
-			int amountRoots = (age + 1);
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_ROOTS, amountRoots), new Object[]
+			if (1 <= age)
 			{
-					"X  ",
-					"   ",
-					"   ",
+				int amountRoots = (age + 1);
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_ROOTS, amountRoots), new Object[]
+				{
+						"X  ",
+						"   ",
+						"   ",
 
-					'X', stackFlower,
-			}));
+						'X', stackFlower,
+				}));
+			}
 
-			int amountLeaf = Math.min((age + 1), 4);
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_LEAF, amountLeaf), new Object[]
+			if (2 <= age)
 			{
-					" X ",
-					"   ",
-					"   ",
+				int amountLeaf = 2;
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_LEAF, amountLeaf), new Object[]
+				{
+						" X ",
+						"   ",
+						"   ",
 
-					'X', stackFlower,
-			}));
+						'X', stackFlower,
+				}));
+			}
 
 			if (5 <= age)
 			{
-				int amountStalk = Math.min((age / 5), 1);
+				int amountStalk = 1;
 				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoItems.MATERIAL_STALK, amountStalk), new Object[]
 				{
 						"   ",
@@ -228,9 +234,9 @@ public class TanpopoRecipe
 			GameRegistry.addSmelting(new ItemStack(TanpopoBlocks.PLANT_FLOWER, 1, age), new ItemStack(TanpopoItems.MATERIAL_MASS, amount), (0.2F * (float) amount));
 		}
 
-		ArrayList<Item> plantItems = Lists.newArrayList(TanpopoItems.MATERIAL_LEAF, TanpopoItems.MATERIAL_STALK, TanpopoItems.MATERIAL_ROOTS, Item.getItemFromBlock(TanpopoBlocks.PLANT_ROOTS));
+		ArrayList<Item> plantMaterialItems = Lists.newArrayList(TanpopoItems.MATERIAL_LEAF, TanpopoItems.MATERIAL_STALK, TanpopoItems.MATERIAL_ROOTS, Item.getItemFromBlock(TanpopoBlocks.PLANT_ROOTS));
 
-		for (Item item : plantItems)
+		for (Item item : plantMaterialItems)
 		{
 			GameRegistry.addSmelting(new ItemStack(item), new ItemStack(TanpopoItems.MATERIAL_MASS), 0.2F);
 		}

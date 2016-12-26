@@ -15,12 +15,14 @@ import schr0.tanpopo.Tanpopo;
 public class TanpopoConfig
 {
 
+	public static final String LANG_CONFIG = "config." + Tanpopo.MOD_ID + ".";
+
+	public static final String CATEGORY_TOOL = "tool";
+
+	public static final String PROP_FELLING_MODE_BLOCK_LIMIT = "felling_mode_block_limit";
+	public static final String PROP_MOWING_MODE_BLOCK_LIMIT = "mowing_mode_block_limit";
+
 	public static Configuration config;
-
-	public static String CATEGORY_TOOL = "tool";
-
-	public static String PROP_FELLING_MODE_BLOCK_LIMIT = "felling_mode_block_limit";
-	public static String PROP_MOWING_MODE_BLOCK_LIMIT = "mowing_mode_block_limit";
 
 	public static int fellingModeBlockLimit;
 	public static int mowingModeBlockLimit;
@@ -31,22 +33,21 @@ public class TanpopoConfig
 
 		Property prop;
 		List<String> propOrder = Lists.newArrayList();
-		String langConfig = "config.";
 		String langComment = ".comment";
 
 		prop = config.get(CATEGORY_TOOL, PROP_FELLING_MODE_BLOCK_LIMIT, 1000).setMinValue(2).setMaxValue(Integer.MAX_VALUE);
-		prop.setLanguageKey(langConfig + CATEGORY_TOOL + "." + prop.getName());
+		prop.setLanguageKey(LANG_CONFIG + CATEGORY_TOOL + "." + prop.getName());
 		prop.setComment(I18n.format(prop.getLanguageKey() + langComment));
 		propOrder.add(prop.getName());
 		fellingModeBlockLimit = prop.getInt(fellingModeBlockLimit);
 
 		prop = config.get(CATEGORY_TOOL, PROP_MOWING_MODE_BLOCK_LIMIT, 1000).setMinValue(2).setMaxValue(Integer.MAX_VALUE);
-		prop.setLanguageKey(langConfig + CATEGORY_TOOL + "." + prop.getName());
+		prop.setLanguageKey(LANG_CONFIG + CATEGORY_TOOL + "." + prop.getName());
 		prop.setComment(I18n.format(prop.getLanguageKey() + langComment));
 		propOrder.add(prop.getName());
 		mowingModeBlockLimit = prop.getInt(mowingModeBlockLimit);
 
-		config.setCategoryLanguageKey(CATEGORY_TOOL, langConfig + CATEGORY_TOOL);
+		config.setCategoryLanguageKey(CATEGORY_TOOL, LANG_CONFIG + CATEGORY_TOOL);
 		config.setCategoryPropertyOrder(CATEGORY_TOOL, propOrder);
 
 		if (config.hasChanged())
