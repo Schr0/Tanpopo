@@ -152,13 +152,13 @@ public class TanpopoRecipe
 			}));
 		}
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.ESSENCE_SOLID_FUEL_BLOCK), new Object[]
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.ESSENCE_CHARCOAL_BLOCK), new Object[]
 		{
 				"XXX",
 				"XXX",
 				"XXX",
 
-				'X', new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL),
+				'X', new ItemStack(TanpopoItems.ESSENCE_CHARCOAL),
 		}));
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.ESSENCE_IRON_INGOT_BLOCK), new Object[]
@@ -234,7 +234,7 @@ public class TanpopoRecipe
 			GameRegistry.addSmelting(new ItemStack(TanpopoBlocks.PLANT_FLOWER, 1, age), new ItemStack(TanpopoItems.MATERIAL_MASS, amount), (0.2F * (float) amount));
 		}
 
-		ArrayList<Item> plantMaterialItems = Lists.newArrayList(TanpopoItems.MATERIAL_LEAF, TanpopoItems.MATERIAL_STALK, TanpopoItems.MATERIAL_ROOTS, Item.getItemFromBlock(TanpopoBlocks.PLANT_ROOTS));
+		ArrayList<Item> plantMaterialItems = Lists.newArrayList(Item.getItemFromBlock(TanpopoBlocks.PLANT_ROOTS), TanpopoItems.MATERIAL_LEAF, TanpopoItems.MATERIAL_STALK, TanpopoItems.MATERIAL_ROOTS);
 
 		for (Item item : plantMaterialItems)
 		{

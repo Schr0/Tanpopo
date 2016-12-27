@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -146,7 +145,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 			worldIn.setBlockToAir(pos);
 
-			stack.damageItem(2, playerIn);
+			stack.damageItem(1, playerIn);
 
 			int coolDwonTime = COOLDWON_TIME - (EnchantmentHelper.getEnchantmentLevel(Enchantments.EFFICIENCY, stack) * 20);
 
@@ -154,7 +153,7 @@ public class ItemToolFellingAxe extends ItemModeTool
 
 			playerIn.getCooldownTracker().setCooldown(this, coolDwonTime);
 
-			worldIn.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, pos.getX(), pos.getY(), pos.getZ(), 0.0D, 0.0D, 0.0D, new int[0]);
+			playerIn.spawnSweepParticles();
 
 			worldIn.playSound(playerIn, new BlockPos(playerIn), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0F, 1.0F);
 

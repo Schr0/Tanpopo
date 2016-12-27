@@ -15,8 +15,8 @@ import net.minecraftforge.oredict.OreDictionary;
 import schr0.tanpopo.Tanpopo;
 import schr0.tanpopo.block.BlockEssence;
 import schr0.tanpopo.block.BlockEssenceCauldron;
+import schr0.tanpopo.block.BlockEssenceCharcoalBlock;
 import schr0.tanpopo.block.BlockEssenceIronIngotBlock;
-import schr0.tanpopo.block.BlockEssenceSolidFuelBlock;
 import schr0.tanpopo.block.BlockFluffCushion;
 import schr0.tanpopo.block.BlockMassPlant;
 import schr0.tanpopo.block.BlockPlantFlower;
@@ -24,7 +24,7 @@ import schr0.tanpopo.block.BlockPlantRoots;
 import schr0.tanpopo.block.itemblock.ItemBlockEssence;
 import schr0.tanpopo.block.itemblock.ItemBlockEssenceCauldron;
 import schr0.tanpopo.block.itemblock.ItemBlockEssenceIronIngotBlock;
-import schr0.tanpopo.block.itemblock.ItemBlockEssenceSolidFuelBlock;
+import schr0.tanpopo.block.itemblock.ItemBlockEssenceCharcoalBlock;
 import schr0.tanpopo.block.itemblock.ItemBlockFluffCushion;
 import schr0.tanpopo.block.itemblock.ItemBlockMassPlant;
 import schr0.tanpopo.block.itemblock.ItemBlockPlantFlower;
@@ -40,7 +40,7 @@ public class TanpopoBlocks
 	public static final Block ESSENCE_CAULDRON;
 	public static final Block FLUFF_CUSHION;
 	// ↓ ver1.1.0 ↓
-	public static final Block ESSENCE_SOLID_FUEL_BLOCK;
+	public static final Block ESSENCE_CHARCOAL_BLOCK;
 	public static final Block ESSENCE_IRON_INGOT_BLOCK;
 
 	public static final Material MATERIAL_LIQUID_ESSENCE = new MaterialLiquid(MapColor.YELLOW);
@@ -51,7 +51,7 @@ public class TanpopoBlocks
 	public static final String NAME_ESSENCE = TanpopoFluids.NAME_ESSENCE;
 	public static final String NAME_ESSENCE_CAULDRON = "essence_cauldron";
 	public static final String NAME_FLUFF_CUSHION = "fluff_cushion";
-	public static final String NAME_ESSENCE_SOLID_FUEL_BLOCK = "essence_solid_fuel_block";
+	public static final String NAME_ESSENCE_CHARCOAL_BLOCK = "essence_charcoal_block";
 	public static final String NAME_ESSENCE_IRON_INGOT_BLOCK = "essence_iron_ingot_block";
 
 	public static final int META_PLANT_ROOTS = 0;
@@ -60,7 +60,7 @@ public class TanpopoBlocks
 	public static final int META_ESSENCE = 0;
 	public static final int META_ESSENCE_CAULDRON = 3;
 	public static final int META_FLUFF_CUSHION = 15;
-	public static final int META_ESSENCE_SOLID_FUEL_BLOCK = 0;
+	public static final int META_ESSENCE_CHARCOAL_BLOCK = 0;
 	public static final int META_ESSENCE_IRON_INGOT_BLOCK = 0;
 
 	static
@@ -71,7 +71,7 @@ public class TanpopoBlocks
 		ESSENCE = new BlockEssence().setUnlocalizedName(NAME_ESSENCE).setCreativeTab(TanpopoCreativeTabs.BLOCK);
 		ESSENCE_CAULDRON = new BlockEssenceCauldron().setUnlocalizedName(NAME_ESSENCE_CAULDRON).setCreativeTab(TanpopoCreativeTabs.BLOCK);
 		FLUFF_CUSHION = new BlockFluffCushion().setUnlocalizedName(NAME_FLUFF_CUSHION).setCreativeTab(TanpopoCreativeTabs.BLOCK);
-		ESSENCE_SOLID_FUEL_BLOCK = new BlockEssenceSolidFuelBlock().setUnlocalizedName(NAME_ESSENCE_SOLID_FUEL_BLOCK).setCreativeTab(TanpopoCreativeTabs.BLOCK);
+		ESSENCE_CHARCOAL_BLOCK = new BlockEssenceCharcoalBlock().setUnlocalizedName(NAME_ESSENCE_CHARCOAL_BLOCK).setCreativeTab(TanpopoCreativeTabs.BLOCK);
 		ESSENCE_IRON_INGOT_BLOCK = new BlockEssenceIronIngotBlock().setUnlocalizedName(NAME_ESSENCE_IRON_INGOT_BLOCK).setCreativeTab(TanpopoCreativeTabs.BLOCK);
 	}
 
@@ -83,7 +83,7 @@ public class TanpopoBlocks
 		registerBlock(ESSENCE, new ItemBlockEssence(ESSENCE), NAME_ESSENCE, META_ESSENCE);
 		registerBlock(ESSENCE_CAULDRON, new ItemBlockEssenceCauldron(ESSENCE_CAULDRON), NAME_ESSENCE_CAULDRON, META_ESSENCE_CAULDRON);
 		registerBlock(FLUFF_CUSHION, new ItemBlockFluffCushion(FLUFF_CUSHION), NAME_FLUFF_CUSHION, META_FLUFF_CUSHION);
-		registerBlock(ESSENCE_SOLID_FUEL_BLOCK, new ItemBlockEssenceSolidFuelBlock(ESSENCE_SOLID_FUEL_BLOCK), NAME_ESSENCE_SOLID_FUEL_BLOCK, META_ESSENCE_SOLID_FUEL_BLOCK);
+		registerBlock(ESSENCE_CHARCOAL_BLOCK, new ItemBlockEssenceCharcoalBlock(ESSENCE_CHARCOAL_BLOCK), NAME_ESSENCE_CHARCOAL_BLOCK, META_ESSENCE_CHARCOAL_BLOCK);
 		registerBlock(ESSENCE_IRON_INGOT_BLOCK, new ItemBlockEssenceIronIngotBlock(ESSENCE_IRON_INGOT_BLOCK), NAME_ESSENCE_IRON_INGOT_BLOCK, META_ESSENCE_IRON_INGOT_BLOCK);
 	}
 
@@ -96,7 +96,7 @@ public class TanpopoBlocks
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(ESSENCE_CAULDRON), META_ESSENCE_CAULDRON);
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(FLUFF_CUSHION), META_FLUFF_CUSHION);
 		TanpopoModelLoader.registerModelFluid(ESSENCE, NAME_ESSENCE);
-		TanpopoModelLoader.registerModel(Item.getItemFromBlock(ESSENCE_SOLID_FUEL_BLOCK), META_ESSENCE_SOLID_FUEL_BLOCK);
+		TanpopoModelLoader.registerModel(Item.getItemFromBlock(ESSENCE_CHARCOAL_BLOCK), META_ESSENCE_CHARCOAL_BLOCK);
 		TanpopoModelLoader.registerModel(Item.getItemFromBlock(ESSENCE_IRON_INGOT_BLOCK), META_ESSENCE_IRON_INGOT_BLOCK);
 	}
 

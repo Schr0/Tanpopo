@@ -39,13 +39,8 @@ public class ItemToolMowingHoe extends ItemModeTool
 
 	private static final Set<Material> EFFECTIVE_MATERIALS = Sets.newHashSet(new Material[]
 	{
-			Material.GRASS, Material.GROUND, Material.SAND, Material.SNOW, Material.CRAFTED_SNOW, Material.CLAY,
-			Material.PLANTS, Material.VINE, Material.CORAL, Material.GOURD
-	});
-
-	private static final Set<Material> MOWING_MATERIALS = Sets.newHashSet(new Material[]
-	{
-			Material.PLANTS, Material.VINE, Material.CORAL, Material.GOURD
+			Material.LEAVES, Material.VINE,
+			Material.PLANTS, Material.CORAL, Material.CACTUS, Material.GOURD
 	});
 
 	public ItemToolMowingHoe()
@@ -138,24 +133,13 @@ public class ItemToolMowingHoe extends ItemModeTool
 			return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		}
 
-		if (this.getTillBlockState(worldIn, pos) != null)
+		IBlockState stateTillBlock = this.getTillBlockState(worldIn, pos);
+
+		if (stateTillBlock != null)
 		{
-			worldIn.setBlockState(pos, this.getTillBlockState(worldIn, pos), 2);
+			worldIn.setBlockState(pos, stateTillBlock, 2);
 
-			for (BlockPos posAround : BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1)))
-			{
-				if (pos.equals(posAround))
-				{
-					continue;
-				}
-
-				if (this.getTillBlockState(worldIn, posAround) != null)
-				{
-					worldIn.setBlockState(posAround, this.getTillBlockState(worldIn, posAround), 2);
-				}
-			}
-
-			stack.damageItem(2, playerIn);
+			stack.damageItem(1, playerIn);
 
 			worldIn.playSound(playerIn, pos, SoundEvents.ITEM_HOE_TILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
@@ -199,7 +183,7 @@ public class ItemToolMowingHoe extends ItemModeTool
 			return true;
 		}
 
-		for (Material material : MOWING_MATERIALS)
+		for (Material material : EFFECTIVE_MATERIALS)
 		{
 			if (material.equals(state.getMaterial()))
 			{

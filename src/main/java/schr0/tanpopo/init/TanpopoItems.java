@@ -13,7 +13,7 @@ import schr0.tanpopo.item.ItemAttachmentMattock;
 import schr0.tanpopo.item.ItemAttachmentMowingHoe;
 import schr0.tanpopo.item.ItemEssenceGlassBottle;
 import schr0.tanpopo.item.ItemEssenceIronIngot;
-import schr0.tanpopo.item.ItemEssenceSolidFuel;
+import schr0.tanpopo.item.ItemEssenceCharcoal;
 import schr0.tanpopo.item.ItemMaterialFluff;
 import schr0.tanpopo.item.ItemMaterialLeaf;
 import schr0.tanpopo.item.ItemMaterialMass;
@@ -34,7 +34,7 @@ public class TanpopoItems
 	public static final Item MATERIAL_FLUFF;
 	public static final Item MATERIAL_MASS;
 	public static final Item ESSENCE_GLASS_BOTTLE;
-	public static final Item ESSENCE_SOLID_FUEL;
+	public static final Item ESSENCE_CHARCOAL;
 	// ↓ ver1.1.0 ↓
 	public static final Item TOOL_MATTOCK;
 	public static final Item TOOL_FELLING_AXE;
@@ -51,7 +51,7 @@ public class TanpopoItems
 	public static final String NAME_MATERIAL_FLUFF = "material_fluff";
 	public static final String NAME_MATERIAL_MASS = "material_mass";
 	public static final String NAME_ESSENCE_GLASS_BOTTLE = "essence_glass_bottle";
-	public static final String NAME_ESSENCE_SOLID_FUEL = "essence_solid_fuel";
+	public static final String NAME_ESSENCE_CHARCOAL = "essence_charcoal";
 	public static final String NAME_TOOL_MATTOCK = "tool_mattock";
 	public static final String NAME_TOOL_FELLING_AXE = "tool_felling_axe";
 	public static final String NAME_TOOL_MOWING_HOE = "tool_mowing_hoe";
@@ -67,7 +67,7 @@ public class TanpopoItems
 	public static final int META_MATERIAL_FLUFF = 0;
 	public static final int META_MATERIAL_MASS = 1;
 	public static final int META_ESSENCE_GLASS_BOTTLE = 0;
-	public static final int META_ESSENCE_SOLID_FUEL = 0;
+	public static final int META_ESSENCE_CHARCOAL = 0;
 	public static final int META_TOOL_MATTOCK = 0;
 	public static final int META_TOOL_FELLING_AXE = 0;
 	public static final int META_TOOL_MOWING_HOE = 0;
@@ -85,7 +85,7 @@ public class TanpopoItems
 		MATERIAL_FLUFF = new ItemMaterialFluff().setUnlocalizedName(NAME_MATERIAL_FLUFF).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		MATERIAL_MASS = new ItemMaterialMass().setUnlocalizedName(NAME_MATERIAL_MASS).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		ESSENCE_GLASS_BOTTLE = new ItemEssenceGlassBottle().setUnlocalizedName(NAME_ESSENCE_GLASS_BOTTLE).setCreativeTab(TanpopoCreativeTabs.ITEM);
-		ESSENCE_SOLID_FUEL = new ItemEssenceSolidFuel().setUnlocalizedName(NAME_ESSENCE_SOLID_FUEL).setCreativeTab(TanpopoCreativeTabs.ITEM);
+		ESSENCE_CHARCOAL = new ItemEssenceCharcoal().setUnlocalizedName(NAME_ESSENCE_CHARCOAL).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		TOOL_MATTOCK = new ItemToolMattock().setUnlocalizedName(NAME_TOOL_MATTOCK).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		TOOL_FELLING_AXE = new ItemToolFellingAxe().setUnlocalizedName(NAME_TOOL_FELLING_AXE).setCreativeTab(TanpopoCreativeTabs.ITEM);
 		TOOL_MOWING_HOE = new ItemToolMowingHoe().setUnlocalizedName(NAME_TOOL_MOWING_HOE).setCreativeTab(TanpopoCreativeTabs.ITEM);
@@ -113,7 +113,7 @@ public class TanpopoItems
 		registerItem(MATERIAL_FLUFF, NAME_MATERIAL_FLUFF, META_MATERIAL_FLUFF);
 		registerItem(MATERIAL_MASS, NAME_MATERIAL_MASS, META_MATERIAL_MASS);
 		registerItem(ESSENCE_GLASS_BOTTLE, NAME_ESSENCE_GLASS_BOTTLE, META_ESSENCE_GLASS_BOTTLE);
-		registerItem(ESSENCE_SOLID_FUEL, NAME_ESSENCE_SOLID_FUEL, META_ESSENCE_SOLID_FUEL);
+		registerItem(ESSENCE_CHARCOAL, NAME_ESSENCE_CHARCOAL, META_ESSENCE_CHARCOAL);
 		registerItem(TOOL_MATTOCK, NAME_TOOL_MATTOCK, META_TOOL_MATTOCK);
 		registerItem(TOOL_FELLING_AXE, NAME_TOOL_FELLING_AXE, META_TOOL_FELLING_AXE);
 		registerItem(TOOL_MOWING_HOE, NAME_TOOL_MOWING_HOE, META_TOOL_MOWING_HOE);
@@ -133,7 +133,7 @@ public class TanpopoItems
 		TanpopoModelLoader.registerModel(MATERIAL_FLUFF, META_MATERIAL_FLUFF);
 		TanpopoModelLoader.registerModel(MATERIAL_MASS, META_MATERIAL_MASS);
 		TanpopoModelLoader.registerModel(ESSENCE_GLASS_BOTTLE, META_ESSENCE_GLASS_BOTTLE);
-		TanpopoModelLoader.registerModel(ESSENCE_SOLID_FUEL, META_ESSENCE_SOLID_FUEL);
+		TanpopoModelLoader.registerModel(ESSENCE_CHARCOAL, META_ESSENCE_CHARCOAL);
 		TanpopoModelLoader.registerModel(TOOL_MATTOCK, META_TOOL_MATTOCK);
 		TanpopoModelLoader.registerModel(TOOL_FELLING_AXE, META_TOOL_FELLING_AXE);
 		TanpopoModelLoader.registerModel(TOOL_MOWING_HOE, META_TOOL_MOWING_HOE);

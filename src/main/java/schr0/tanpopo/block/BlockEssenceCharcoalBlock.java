@@ -7,10 +7,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-public class BlockEssenceSolidFuelBlock extends Block
+public class BlockEssenceCharcoalBlock extends Block
 {
 
-	public BlockEssenceSolidFuelBlock()
+	public BlockEssenceCharcoalBlock()
 	{
 		super(Material.ROCK);
 		this.setSoundType(SoundType.STONE);

@@ -2,6 +2,6 @@
 	"parent": "item/generated",
 	"textures":
 	{
-		"layer0": "schr0tanpopo:items/essence_solid_fuel"
+		"layer0": "schr0tanpopo:items/essence_charcoal"
 	}
 }

@@ -19,7 +19,7 @@ public class TanpopoBehaviorsEssenceCauldron
 
 	public void init()
 	{
-		TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraftSimple(Items.COAL, 1, new ItemStack(TanpopoItems.ESSENCE_SOLID_FUEL), 1, 1, (5 * 20)));
+		TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraftSimple(Items.COAL, 1, new ItemStack(TanpopoItems.ESSENCE_CHARCOAL), 1, 1, (5 * 20)));
 		TanpopoRegistry.registerEssenceCauldronCraft(new EssenceCauldronCraftSimple(Items.IRON_INGOT, new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT), 1, 1, (10 * 20)));
 
 		ArrayList<Item> attachments = Lists.newArrayList(TanpopoItems.ATTACHMENT_MATTOCK, TanpopoItems.ATTACHMENT_FELLING_AXE, TanpopoItems.ATTACHMENT_MOWING_HOE);

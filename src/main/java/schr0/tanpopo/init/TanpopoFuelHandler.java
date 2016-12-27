@@ -33,12 +33,12 @@ public class TanpopoFuelHandler implements IFuelHandler
 
 		int fuelBurnTime = (int) (essenceBurnTime * 1.5);
 
-		if (fuel.getItem().equals(TanpopoItems.ESSENCE_SOLID_FUEL))
+		if (fuel.getItem().equals(TanpopoItems.ESSENCE_CHARCOAL))
 		{
 			return fuelBurnTime;
 		}
 
-		if (fuel.getItem().equals(Item.getItemFromBlock(TanpopoBlocks.ESSENCE_SOLID_FUEL_BLOCK)))
+		if (fuel.getItem().equals(Item.getItemFromBlock(TanpopoBlocks.ESSENCE_CHARCOAL_BLOCK)))
 		{
 			return (fuelBurnTime * 10);
 		}

@@ -1,7 +1,0 @@
-{
-	"parent": "block/cube_all",
-	"textures":
-	{
-		"all": "schr0tanpopo:blocks/essence_solid_fuel_block"
-	}
-}

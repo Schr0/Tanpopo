@@ -45,8 +45,6 @@ public class ItemToolMattock extends ItemModeTool
 	{
 		super.addInformation(stack, playerIn, tooltip, advanced);
 
-		tooltip.add(TextFormatting.GOLD + "SetBlock");
-
 		int num = 0;
 		InventoryPlayer invPlayer = playerIn.inventory;
 

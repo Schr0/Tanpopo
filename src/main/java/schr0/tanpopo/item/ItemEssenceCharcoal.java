@@ -2,10 +2,10 @@ package schr0.tanpopo.item;
 
 import net.minecraft.item.Item;
 
-public class ItemEssenceSolidFuel extends Item
+public class ItemEssenceCharcoal extends Item
 {
 
-	public ItemEssenceSolidFuel()
+	public ItemEssenceCharcoal()
 	{
 		// none
 	}
