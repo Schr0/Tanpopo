@@ -1,0 +1,20 @@
+{
+	"parent": "item/handheld",
+
+	"textures":
+	{
+		"layer0": "schr0tanpopo:items/tool_mowing_hoe"
+	},
+
+	"overrides":
+	[
+	        {
+			"predicate":
+			{
+				"mode": 1
+			},
+				"model": "schr0tanpopo:item/tool_mowing_hoe_mode"
+	        }
+	]
+
+}

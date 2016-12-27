@@ -4,45 +4,31 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import schr0.tanpopo.init.TanpopoTileEntitys;
 
 public class ProxyServer
 {
 
-	/**
-	 * modの事前・初期設定時イベント(クライアント).
-	 */
-	public void preInitEventClient(FMLPreInitializationEvent event)
+	public void preInitEventProxy(FMLPreInitializationEvent event)
 	{
 		// none
 	}
 
-	/**
-	 * modの事中・初期設定時イベント(クライアント).
-	 */
-	public void initEventClient(FMLInitializationEvent event)
+	public void initEventProxy(FMLInitializationEvent event)
+	{
+		(new TanpopoTileEntitys()).init();
+	}
+
+	public void postInitEventProxy(FMLPostInitializationEvent event)
 	{
 		// none
 	}
 
-	/**
-	 * modの事後・初期設定時イベント(クライアント).
-	 */
-	public void postInitEventClient(FMLPostInitializationEvent event)
-	{
-		// none
-	}
-
-	/**
-	 * Minecraft.
-	 */
 	public Minecraft getMinecraft()
 	{
-		return null;
+		return (Minecraft) null;
 	}
 
-	/**
-	 * ログの出力
-	 */
 	public void infoModLog(String format, Object... data)
 	{
 		// none

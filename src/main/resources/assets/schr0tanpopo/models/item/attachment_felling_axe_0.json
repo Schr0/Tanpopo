@@ -1,0 +1,8 @@
+{
+	"parent": "item/generated",
+	"textures":
+	{
+		"layer0": "schr0tanpopo:items/attachment_0",
+		"layer1": "schr0tanpopo:items/attachment_felling_axe"
+	}
+}
