@@ -34,7 +34,7 @@ public class Tanpopo
 	/**
 	 * Modのバージョン.
 	 */
-	public static final String MOD_VERSION = "1.2.0";
+	public static final String MOD_VERSION = "1.1.1";
 
 	/**
 	 * Forgeのバージョン.

@@ -161,6 +161,11 @@ public class TanpopoRecipe
 				'X', new ItemStack(TanpopoItems.ESSENCE_CHARCOAL),
 		}));
 
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TanpopoItems.ESSENCE_CHARCOAL, 9), new Object[]
+		{
+				new ItemStack(TanpopoBlocks.ESSENCE_CHARCOAL_BLOCK),
+		}));
+
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TanpopoBlocks.ESSENCE_IRON_INGOT_BLOCK), new Object[]
 		{
 				"XXX",
@@ -168,6 +173,11 @@ public class TanpopoRecipe
 				"XXX",
 
 				'X', new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT),
+		}));
+
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TanpopoItems.ESSENCE_IRON_INGOT, 9), new Object[]
+		{
+				new ItemStack(TanpopoBlocks.ESSENCE_IRON_INGOT_BLOCK),
 		}));
 	}
 
