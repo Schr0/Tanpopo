@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.EnumDyeColor;
@@ -12,13 +13,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import schr0.tanpopo.Tanpopo;
 
 @SideOnly(Side.CLIENT)
 public class TanpopoBehaviorsColors
 {
+
+	private static final Minecraft MINECRAFT = FMLClientHandler.instance().getClient();
 
 	public void initClient()
 	{
@@ -29,7 +32,7 @@ public class TanpopoBehaviorsColors
 
 	private static void registerBlockArrayColor(Block block)
 	{
-		Tanpopo.proxy.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor()
+		MINECRAFT.getBlockColors().registerBlockColorHandler(new IBlockColor()
 		{
 
 			@Override
@@ -40,7 +43,7 @@ public class TanpopoBehaviorsColors
 
 		}, block);
 
-		Tanpopo.proxy.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor()
+		MINECRAFT.getItemColors().registerItemColorHandler(new IItemColor()
 		{
 
 			@Override

@@ -6,10 +6,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import schr0.tanpopo.Tanpopo;
 
 public class MessageHandlerParticleBlock implements IMessageHandler<MessageParticleBlock, IMessage>
 {
@@ -17,7 +17,7 @@ public class MessageHandlerParticleBlock implements IMessageHandler<MessageParti
 	@Override
 	public IMessage onMessage(MessageParticleBlock message, MessageContext ctx)
 	{
-		Minecraft mc = Tanpopo.proxy.getMinecraft();
+		Minecraft mc = FMLClientHandler.instance().getClient();
 		World world = mc.theWorld;
 		BlockPos pos = message.getParticlePos();
 		Random random = world.rand;

@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -30,14 +31,14 @@ public class TanpopoEventClient
 
 		if (player.isInsideOfMaterial(TanpopoBlocks.MATERIAL_LIQUID_ESSENCE))
 		{
-			Minecraft minecraft = Tanpopo.proxy.getMinecraft();
+			Minecraft mc = FMLClientHandler.instance().getClient();
 			ResourceLocation resUnderEssence = new ResourceLocation(Tanpopo.MOD_RESOURCE_DOMAIN + "textures/misc/under_essence.png");
 			float renderPartialTicks = event.getRenderPartialTicks();
 
-			minecraft.getTextureManager().bindTexture(resUnderEssence);
+			mc.getTextureManager().bindTexture(resUnderEssence);
 			Tessellator tessellator = Tessellator.getInstance();
 			VertexBuffer vertexbuffer = tessellator.getBuffer();
-			float f = minecraft.thePlayer.getBrightness(renderPartialTicks);
+			float f = mc.thePlayer.getBrightness(renderPartialTicks);
 			GlStateManager.color(f, f, f, 0.5F);
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -48,8 +49,8 @@ public class TanpopoEventClient
 			float f4 = -1.0F;
 			float f5 = 1.0F;
 			float f6 = -0.5F;
-			float f7 = -minecraft.thePlayer.rotationYaw / 64.0F;
-			float f8 = minecraft.thePlayer.rotationPitch / 64.0F;
+			float f7 = -mc.thePlayer.rotationYaw / 64.0F;
+			float f8 = mc.thePlayer.rotationPitch / 64.0F;
 			vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
 			vertexbuffer.pos(-1.0D, -1.0D, -0.5D).tex((double) (4.0F + f7), (double) (4.0F + f8)).endVertex();
 			vertexbuffer.pos(1.0D, -1.0D, -0.5D).tex((double) (0.0F + f7), (double) (4.0F + f8)).endVertex();

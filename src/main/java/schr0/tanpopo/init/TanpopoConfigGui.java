@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
@@ -16,7 +16,7 @@ public class TanpopoConfigGui extends GuiConfig
 
 	public TanpopoConfigGui(GuiScreen parent)
 	{
-		super(parent, getListConfigElement(), Tanpopo.MOD_ID, false, false, I18n.format(TanpopoConfig.LANG_CONFIG + "title"));
+		super(parent, getListConfigElement(), Tanpopo.MOD_ID, false, false, new TextComponentTranslation(TanpopoConfig.LANG_CONFIG + "title").getFormattedText());
 	}
 
 	private static List<IConfigElement> getListConfigElement()

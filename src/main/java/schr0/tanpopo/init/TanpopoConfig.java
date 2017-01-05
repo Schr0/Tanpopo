@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.FMLLog;
@@ -37,13 +37,13 @@ public class TanpopoConfig
 
 		prop = config.get(CATEGORY_TOOL, PROP_FELLING_MODE_BLOCK_LIMIT, 1000).setMinValue(2).setMaxValue(Integer.MAX_VALUE);
 		prop.setLanguageKey(LANG_CONFIG + CATEGORY_TOOL + "." + prop.getName());
-		prop.setComment(I18n.format(prop.getLanguageKey() + langComment));
+		prop.setComment(new TextComponentTranslation(prop.getLanguageKey() + langComment).getFormattedText());
 		propOrder.add(prop.getName());
 		fellingModeBlockLimit = prop.getInt(fellingModeBlockLimit);
 
 		prop = config.get(CATEGORY_TOOL, PROP_MOWING_MODE_BLOCK_LIMIT, 1000).setMinValue(2).setMaxValue(Integer.MAX_VALUE);
 		prop.setLanguageKey(LANG_CONFIG + CATEGORY_TOOL + "." + prop.getName());
-		prop.setComment(I18n.format(prop.getLanguageKey() + langComment));
+		prop.setComment(new TextComponentTranslation(prop.getLanguageKey() + langComment).getFormattedText());
 		propOrder.add(prop.getName());
 		mowingModeBlockLimit = prop.getInt(mowingModeBlockLimit);
 

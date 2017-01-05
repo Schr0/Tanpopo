@@ -1,6 +1,7 @@
 package schr0.tanpopo;
 
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
@@ -109,6 +110,13 @@ public class Tanpopo
 	public void postInitEvent(FMLPostInitializationEvent event)
 	{
 		this.proxy.postInitEventProxy(event);
+	}
+
+	// TODO /* ======================================== MOD START =====================================*/
+
+	public void logInfo(String format, Object... data)
+	{
+		FMLLog.info(format, data);
 	}
 
 }
