@@ -7,11 +7,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fluids.capability.wrappers.FluidContainerRegistryWrapper;
 import schr0.tanpopo.init.TanpopoFluids;
 import schr0.tanpopo.init.TanpopoItems;
 import schr0.tanpopo.item.ItemEssenceGlassBottle;
@@ -22,52 +24,95 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 	private static final int CAPACITY = TanpopoFluids.BOTTLE_VOLUME;
 	private final ItemStack container;
 
+	/**
+	 * @author defeatedcrow 2017.5.26
+	 */
+
+	 /**
+	 * 他modがボトルを容器登録している場合に備えて、FluidContainerRegistryWrapper を用意している<br>
+	 * AttachCapabilitiesEventが競合した場合の策は現状なし
+	 */
+	private final FluidContainerRegistryWrapper wrapper;
+
 	public FluidHandlerItemEssenceGlassBottle(ItemStack container)
 	{
 		this.container = container;
+		wrapper = new FluidContainerRegistryWrapper(container);
 	}
 
 	@Override
 	public IFluidTankProperties[] getTankProperties()
 	{
-		return new FluidTankProperties[]
+		// 場合分け
+		if(ItemEssenceGlassBottle.isFill(container))
 		{
-				new FluidTankProperties(this.getFluid(), CAPACITY)
-		};
+			// タンポポエッセンスの場合
+			return new FluidTankProperties[]{new FluidTankProperties(this.getFluid(), CAPACITY)};
+		}
+		else if(FluidContainerRegistry.isFilledContainer(container))
+		{
+			// その他の液体が入っている
+			return wrapper.getTankProperties();
+		}
+		else
+		{
+			return new FluidTankProperties[] {};
+		}
 	}
 
 	@Override
 	public int fill(FluidStack resource, boolean doFill)
 	{
-		FluidStack fluidStack = this.getFluid();
-
-		if (fluidStack != null)
+		// 液体種のチェック & Nullチェック
+		if(matchFluid(resource))
 		{
-			return 0;
+			FluidStack fluidStack = this.getFluid();
+
+			if (fluidStack != null)
+			{
+				return 0;
+			}
+			else
+			{
+				if (doFill)
+				{
+					this.setFill();
+				}
+
+				return CAPACITY;
+			}
 		}
 		else
 		{
-			if (doFill)
-			{
-				this.setFill();
-			}
-
-			return CAPACITY;
+			// エッセンス以外の場合はwrapperの処理を返す
+			return wrapper.fill(resource, doFill);
 		}
+
 	}
 
 	@Override
 	@Nullable
 	public FluidStack drain(FluidStack resource, boolean doDrain)
 	{
-		FluidStack fluidStack = this.getFluid();
-
-		if (((fluidStack != null) && (resource != null)) && fluidStack.isFluidEqual(resource))
+		// 液体種のチェック & Nullチェック
+		if(matchFluid(resource))
 		{
-			return this.drain(resource.amount, doDrain);
-		}
+			FluidStack fluidStack = this.getFluid();
 
-		return (FluidStack) null;
+			if (fluidStack != null)
+			{
+				return this.drain(resource.amount, doDrain);
+			}
+			else
+			{
+				return null;
+			}
+		}
+		else
+		{
+			// エッセンス以外の場合はwrapperの処理を返す
+			return wrapper.drain(resource, doDrain);
+		}
 	}
 
 	@Override
@@ -76,11 +121,7 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 	{
 		FluidStack fluidStack = this.getFluid();
 
-		if (fluidStack == null)
-		{
-			return (FluidStack) null;
-		}
-		else
+		if (fluidStack != null)
 		{
 			if (doDrain)
 			{
@@ -88,6 +129,10 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 			}
 
 			return fluidStack;
+		}
+		else
+		{
+			return wrapper.drain(maxDrain, doDrain);
 		}
 	}
 
@@ -130,6 +175,21 @@ public class FluidHandlerItemEssenceGlassBottle implements IFluidHandler, ICapab
 	private void setEmpty()
 	{
 		this.container.deserializeNBT(new ItemStack(Items.GLASS_BOTTLE).serializeNBT());
+	}
+
+	/**
+	 * @author defeatedcrow
+	 */
+	private boolean matchFluid(FluidStack fluidstack)
+	{
+		if(fluidstack != null && fluidstack.getFluid() != null)
+		{
+			return fluidstack.getFluid() == TanpopoFluids.ESSENCE;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 }
